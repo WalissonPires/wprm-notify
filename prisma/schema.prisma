@@ -39,8 +39,8 @@ model Group {
 model Contact {
   id        String   @id @db.Char(26)
   name      String   @db.VarChar(40)
-  email     String   @db.VarChar(60)
-  phone     String   @db.Char(11)
+  email     String?  @db.VarChar(60)
+  phone     String?  @db.Char(11)
   createdAt DateTime @default(now())
   updatedAt DateTime
 

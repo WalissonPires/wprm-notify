@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db-migrate": "dotenv -e .env.development.local -- npx prisma migrate dev",
+    "db-apply": "dotenv -e .env.development.local -- npx prisma db push"
   },
   "engines": {
     "node": ">=16 <17"
