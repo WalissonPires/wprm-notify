@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id         String    @id @db.Char(26)
+  name       String    @db.VarChar(40)
+  email      String    @db.VarChar(60)
+  password   String    @db.Char(64)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime
+  lastAccess DateTime?
+
+  groups   Group[]
+  contacts Contact[]
+}
+
+model Group {
+  id        String   @id @db.Char(26)
+  name      String   @db.VarChar(30)
+  color     String   @db.Char(7)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  accountId String         @db.Char(26)
+  account   Account        @relation(fields: [accountId], references: [id])
+  contacts  ContactGroup[]
+}
+
+model Contact {
+  id        String   @id @db.Char(26)
+  name      String   @db.VarChar(40)
+  email     String   @db.VarChar(60)
+  phone     String   @db.Char(11)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  accountId String            @db.Char(26)
+  account   Account           @relation(fields: [accountId], references: [id])
+  groups    ContactGroup[]
+  metadata  ContactMetadata[]
+}
+
+model ContactGroup {
+  contactId String @db.Char(26)
+  groupId   String @db.Char(26)
+
+  contact Contact @relation(fields: [contactId], references: [id])
+  group   Group   @relation(fields: [groupId], references: [id])
+
+  @@id(fields: [contactId, groupId])
+}
+
+model ContactMetadata {
+  contactId String   @db.Char(26)
+  name      String   @db.VarChar(20)
+  value     String   @db.VarChar(200)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  contact Contact @relation(fields: [contactId], references: [id])
+
+  @@id(fields: [contactId, name])
+}
