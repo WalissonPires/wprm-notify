@@ -1,4 +1,4 @@
-import { Contact } from "../../common/contacts/models";
+import { Contact } from "@/domains/contacts/entities";
 import ContactCard from "../ContactCard";
 
 export default function ContactsView({ contacts }: ContactsViewProps) {

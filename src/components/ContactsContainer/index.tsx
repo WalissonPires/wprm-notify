@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { Contact } from "../../common/contacts/models";
-import { ContactsApi } from "../../common/contacts/api";
+import { Contact } from "@/domains/contacts/entities";
+import { ContactsApi } from "@/domains/contacts/api";
 import ContactsView from "../ContactsView";
 
 export default function ContactsContainer() {
