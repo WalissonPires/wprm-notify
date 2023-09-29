@@ -44,7 +44,10 @@ export class HttpClient {
 
   private async send<TResult>(args: SendArgs): Promise<TResult | undefined> {
 
-    const slash = this._options.baseUrl.endsWith('/') ? '' : '/';
+    let slash = this._options.baseUrl.endsWith('/') ? '' : '/';
+    if (args.url.startsWith('?'))
+      slash = '';
+
     const url = this._options.baseUrl + slash + args.url;
 
     const response = await fetch(url, {
