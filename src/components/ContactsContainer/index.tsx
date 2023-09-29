@@ -1,30 +1,18 @@
 'use client'
 
-import { useEffect, useState } from "react";
-import { Contact } from "@/domains/contacts/entities";
-import { ContactsApi } from "@/domains/contacts/api";
 import ContactsView from "../ContactsView";
+import { useContacts } from "./hooks/use-contacts";
 
 export default function ContactsContainer() {
 
-  const [contacts, setContacts] = useState<Contact[]>([]);
-
-  useEffect(() => {
-
-    (async () => {
-
-      const result = await new ContactsApi().getAll({
-        offset: 0,
-        limit: 20
-      });
-
-      setContacts(data => [...data, ...result.data]);
-
-    })();
-
-  }, []);
+  const { data, isLoading, error, hasMore, loadNextPage } = useContacts();
 
   return (
-    <ContactsView contacts={contacts} />
+    <ContactsView
+      contacts={data}
+      isLoading={isLoading}
+      error={error}
+      hasMore={hasMore}
+      triggerLoadMore={() => loadNextPage()} />
   )
 }

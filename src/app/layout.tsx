@@ -1,4 +1,5 @@
 import './globals.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
