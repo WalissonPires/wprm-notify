@@ -22,6 +22,8 @@ model Account {
 
   groups   Group[]
   contacts Contact[]
+  templatesMessage TemplateMessage[]
+  notifications Notification[]
 }
 
 model Group {
@@ -40,7 +42,7 @@ model Contact {
   id        String   @id @db.Char(26)
   name      String   @db.VarChar(40)
   email     String?  @db.VarChar(60)
-  phone     String?  @db.Char(11)
+  phone     String?  @db.VarChar(11)
   createdAt DateTime @default(now())
   updatedAt DateTime
 
@@ -48,6 +50,7 @@ model Contact {
   account   Account           @relation(fields: [accountId], references: [id])
   groups    ContactGroup[]
   metadata  ContactMetadata[]
+  triggers  NotificationTrigger[]
 }
 
 model ContactGroup {
@@ -70,4 +73,48 @@ model ContactMetadata {
   contact Contact @relation(fields: [contactId], references: [id])
 
   @@id(fields: [contactId, name])
+}
+
+model TemplateMessage {
+  id String @db.Char(26) @id
+  accountId String @db.Char(26)
+  name String @db.Char(100)
+  content String @db.Char(2000)
+  params String @db.Char(5000)
+
+  account Account @relation(fields: [accountId], references: [id])
+  triggers NotificationTrigger[]
+}
+
+
+model NotificationTrigger {
+  id String @db.Char(26) @id
+  contactId String @db.Char(26)
+  type TriggerType
+  day Int?
+  month Int?
+  templateMessageId String? @db.Char(26)
+  paramsValue String @db.VarChar(5000)
+
+  contact Contact @relation(fields: [contactId], references: [id])
+  templateMessage TemplateMessage? @relation(fields: [templateMessageId], references: [id])
+  notifications Notification[]
+}
+
+enum TriggerType {
+  Daily
+  Monthy
+  Yearly
+}
+
+model Notification {
+  id String @db.Char(26) @id
+  accountId String @db.Char(26)
+  triggerId String? @db.Char(26)
+  scheduledAt DateTime
+  sendedAt DateTime?
+  content String @db.VarChar(2000)
+
+  account Account @relation(fields: [accountId], references: [id])
+  trigger NotificationTrigger? @relation(fields: [triggerId], references: [id])
 }
