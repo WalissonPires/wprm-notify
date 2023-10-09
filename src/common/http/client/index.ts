@@ -50,10 +50,32 @@ export class HttpClient {
 
     const url = this._options.baseUrl + slash + args.url;
 
-    const response = await fetch(url, {
-      method: args.method,
-      body: args.data ? JSON.stringify(args.data) : undefined
-    });
+    const headers: Record<string, string> = {};
+
+    const requestOptions: RequestInit = {
+      method: args.method
+    };
+
+    if (args.data) {
+      headers['Content-Type'] = 'application/json';
+      requestOptions.body = JSON.stringify(args.data);
+    }
+
+    if (this._options.defaultHeaders) {
+
+      for(const headerName in this._options.defaultHeaders) {
+
+        const headerValue = this._options.defaultHeaders[headerName];
+        if (!Array.isArray(headerValue))
+          continue;
+
+        headers[headerName] = headerValue.join(', ');
+      }
+    }
+
+    requestOptions.headers = headers;
+
+    const response = await fetch(url, requestOptions);
 
     if (response.status / 100 !== 2)
       throw new Error('Server returned status code ' + response.status);
@@ -70,12 +92,13 @@ export class HttpClient {
       return result as TResult;
     }
 
-    throw new Error('Unhandled content type ' + contentType);
+    return undefined;
   }
 }
 
 export interface HttpClientOptions {
   baseUrl: string;
+  defaultHeaders: Record<string, string[]>;
 }
 
 interface SendArgs {
