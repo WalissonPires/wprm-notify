@@ -78,9 +78,9 @@ model ContactMetadata {
 model TemplateMessage {
   id String @db.Char(26) @id
   accountId String @db.Char(26)
-  name String @db.Char(100)
-  content String @db.Char(2000)
-  params String @db.Char(5000)
+  name String @db.VarChar(100)
+  content String @db.VarChar(2000)
+  params String @db.VarChar(5000)
 
   account Account @relation(fields: [accountId], references: [id])
   triggers NotificationTrigger[]
