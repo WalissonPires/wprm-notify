@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { SendPendingNotifications } from "@/domains/notifications/use-cases/send-pending-nofitications";
+import { GenerateNotificationsByTriggers } from "@/domains/notifications/use-cases/generate-notification-by-triggers";
 
 export async function POST(request: NextRequest) {
 
-  const useCase = new SendPendingNotifications();
+  const useCase = new GenerateNotificationsByTriggers();
   await useCase.execute();
 
   return new Response(null, {

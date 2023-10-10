@@ -11,7 +11,7 @@
     "db-apply": "dotenv -e .env.development.local -- npx prisma db push"
   },
   "engines": {
-    "node": ">=16 <17"
+    "node": "18.x"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -23,6 +23,8 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "javascript-time-ago": "^2.5.9",
+    "luxon": "^3.4.3",
+    "nanoid": "^5.0.1",
     "next": "13.4.19",
     "postcss": "8.4.29",
     "react": "18.2.0",
@@ -33,6 +35,8 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/luxon": "^3.3.2",
+    "dotenv-cli": "^7.3.0",
     "prisma": "^5.3.1"
   }
 }
