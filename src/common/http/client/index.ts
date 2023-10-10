@@ -98,7 +98,7 @@ export class HttpClient {
 
 export interface HttpClientOptions {
   baseUrl: string;
-  defaultHeaders: Record<string, string[]>;
+  defaultHeaders?: Record<string, string[]>;
 }
 
 interface SendArgs {
