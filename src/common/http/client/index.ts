@@ -1,3 +1,4 @@
+import { AppError } from "@/common/error";
 
 export class HttpClient {
 
@@ -76,23 +77,26 @@ export class HttpClient {
     requestOptions.headers = headers;
 
     const response = await fetch(url, requestOptions);
-
-    if (response.status / 100 !== 2)
-      throw new Error('Server returned status code ' + response.status);
-
-    // const contentLength = response.headers.get("content-length");
-    // if (!contentLength || contentLength === '0')
-    //   return;
+    let result: any = undefined;
 
     const contentType = response.headers.get("content-type") ?? '';
-
     if (contentType.indexOf("application/json") !== -1) {
 
-      const result = await response.json();
-      return result as TResult;
+      result = await response.json();
     }
 
-    return undefined;
+    if (response.status === 422 && typeof result?.message === 'string') {
+
+      const details = typeof result?.details === 'object' ? result.details : null;
+      const error = new AppError(result.message, details ?? {});
+      throw error;
+    }
+
+    if (response.status / 100 !== 2) {
+      throw new Error('Server returned status code ' + response.status);
+    }
+
+    return result;
   }
 }
 
