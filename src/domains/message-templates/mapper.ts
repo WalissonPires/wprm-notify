@@ -1,5 +1,5 @@
 import { TemplateMessage as MessageTemplateDb } from "@prisma/client";
-import { MessageTemplate } from "./entities";
+import { MessageTemplate, MessageTemplate1 } from "./entities";
 
 
 export class MessageTemplateMapper {
@@ -8,8 +8,20 @@ export class MessageTemplateMapper {
 
     const template = new MessageTemplate({
       content: templateDb.content,
-      params: templateDb.params ? JSON.parse(templateDb.params) : {}
+      params: templateDb.params ? JSON.parse(templateDb.params) : []
     });
+
+    return template;
+  }
+
+  public mapToView1(templateDb: MessageTemplateDb): MessageTemplate1 {
+
+    const template: MessageTemplate1 = {
+      id: templateDb.id,
+      name: templateDb.name,
+      content: templateDb.content,
+      params: templateDb.params ? JSON.parse(templateDb.params) : []
+    };
 
     return template;
   }

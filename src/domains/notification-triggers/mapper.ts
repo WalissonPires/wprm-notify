@@ -32,4 +32,20 @@ export class TriggerMapper {
 
       return typeMapped;
   }
+
+  public mapTriggerType2(type: TriggerType): TriggerTypeDb {
+
+    const map: Record<TriggerType, TriggerTypeDb> = {
+      daily: TriggerTypeDb.Daily,
+      monthy: TriggerTypeDb.Monthy,
+      yearly: TriggerTypeDb.Yearly
+    };
+
+    const typeMapped = map[type];
+
+    if (typeMapped === undefined)
+      throw new AppError('Invalid type: ' + type);
+
+      return typeMapped;
+  }
 }

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { IdGenerator } from "@/common/identity/generate";
 import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
-import { TriggerMapper } from "../mapper";
+import { TriggerMapper } from "../../notification-triggers/mapper";
 import { MessageTemplateMapper } from "../../message-templates/mapper";
 
 

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import useSWRInfinite from "swr/infinite";
 import { AppError } from "@/common/error";
 import { FetcherKey, getKey, flatResult, DataResult } from "@/common/swr/models";
-import { ContactsApi } from "@/domains/contacts/api";
+import { ContactsApi } from "@/domains/contacts/client-api";
 import { Contact } from "@/domains/contacts/entities";
 
 

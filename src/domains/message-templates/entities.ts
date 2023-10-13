@@ -37,3 +37,11 @@ interface MessageTempplateParamWithValue {
   name: string;
   value: string;
 }
+
+
+export interface MessageTemplate1 {
+  id: string;
+  name: string;
+  content: string;
+  params: MessageTempplateParam[];
+}
