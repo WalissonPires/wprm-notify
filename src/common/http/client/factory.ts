@@ -5,7 +5,7 @@ export class HttpClientFactory {
   public static create(endpoint: string): HttpClient {
 
     return new HttpClient({
-      baseUrl: window.location.href + 'api/' + endpoint
+      baseUrl: window.location.origin + '/api/' + endpoint
     });
   }
 }
