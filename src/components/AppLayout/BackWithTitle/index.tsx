@@ -9,7 +9,7 @@ export function AppLayoutBackWithTitle({ title }: AppLayoutBackWithTitleProps) {
   const handleBackClick = () => router.back();
 
   return (
-    <div className="flex items-center">
+    <div className="inline-flex items-center">
       <span  onClick={handleBackClick}><ArrowLeftIcon className="h-5 w-5 mr-4 cursor-pointer hover:scale-110" title="Menu" /></span>
       <h1 className="text-base inline-block">{title}</h1>
     </div>
