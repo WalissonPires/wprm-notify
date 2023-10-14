@@ -13,7 +13,7 @@ export class UrlFormatter {
         throw new Error(`Value for param ${uriParam} not found`);
 
       const valueType = typeof value;
-      if (valueType !== 'string' && valueType !== 'number')
+      if (valueType !== 'string' && valueType !== 'number' && valueType !== 'boolean')
         throw new Error('Uri params only allow string or number values');
 
       return value.toString();
@@ -27,7 +27,7 @@ export class UrlFormatter {
         return qs;
 
       const valueType = typeof value;
-      if (valueType !== 'string' && valueType !== 'number')
+      if (valueType !== 'string' && valueType !== 'number' && valueType !== 'boolean')
         throw new Error('Query params only allow string or number values');
 
       const pair = encodeURIComponent(key) + '=' + value;
