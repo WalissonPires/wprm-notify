@@ -8,6 +8,10 @@ export interface FetcherKey {
   context: string;
 }
 
+export interface GetKeyResult {
+  <T>(pageIndex: number, previousData: PagedResult<T>): FetcherKey | null;
+}
+
 export interface DataResult<T> {
   data: T[];
   isLoading: boolean;
