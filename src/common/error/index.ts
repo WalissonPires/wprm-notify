@@ -1,4 +1,4 @@
-
+import { ZodError } from "zod";
 
 export class AppError extends Error {
 
@@ -35,11 +35,30 @@ export class AppError extends Error {
     if (error instanceof AppError)
       return error;
 
+    if (error instanceof ZodError)
+      return AppError.fromZodError(error);
+
     const message = error?.message ?? 'Unknow error';
 
     return new AppError(message, {
       cause: error
     });
+  }
+
+  public static fromZodError(error: ZodError) {
+
+    if (!(error instanceof ZodError))
+      throw new AppError('Is not zod error', {}, error);
+
+    const validation = error.errors.reduce((obj, error) => {
+
+      obj[error.path.join('.')] = [ error.message ];
+
+      return obj;
+
+    }, {} as Record<string, string[]>);
+
+    return new AppError(AppError.invalidFieldsMessage, validation);
   }
 
   public static is(error: any): error is AppError {
