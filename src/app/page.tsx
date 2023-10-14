@@ -14,9 +14,9 @@ export default function Home() {
         <AppLayoutMenuWithTitle />
       </AppLayoutHeader>
       <AppLayoutTabs>
-        <AppLayoutTabItem label="Contatos" title="Contatos" href="/" active />
-        <AppLayoutTabItem label="Eventos" title="Eventos" href="/events" />
-        <AppLayoutTabItem label="Mensagens" title="Mensagens" href="/template-messages" />
+        <AppLayoutTabItem label="Contatos" title="Contatos" href="/" replace active />
+        <AppLayoutTabItem label="Eventos" title="Eventos" href="/events" replace />
+        <AppLayoutTabItem label="Mensagens" title="Mensagens" href="/template-messages" replace />
       </AppLayoutTabs>
       <AppLayoutBody>
         <ContactsContainer />
