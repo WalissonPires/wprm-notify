@@ -15,7 +15,10 @@ export class GetMessageTemplates implements UseCase<GetMessageTemplatesInput, Pa
 
     const messageTemplates = await db.templateMessage.findMany({
       skip: input.offset,
-      take: input.limit
+      take: input.limit,
+      orderBy: {
+        name: 'asc'
+      }
     });
 
     const mapper = new MessageTemplateMapper();

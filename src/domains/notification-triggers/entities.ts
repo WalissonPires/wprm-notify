@@ -101,6 +101,7 @@ export class Trigger {
 }
 
 export interface TriggerProps {
+  id: string;
   type: TriggerType;
   day: number | null;
   month: number | null;
@@ -113,7 +114,25 @@ export enum TriggerType {
   Yearly = 'yearly'
 }
 
+export const TriggerTypeDisplay = {
+  [TriggerType.Daily]: 'Diário',
+  [TriggerType.Monthy]: 'Mensal',
+  [TriggerType.Yearly]: 'Anual'
+}
+
 export interface TriggerParamValue {
   name: string;
   value: string;
+}
+
+export interface Trigger1 {
+  id: string;
+  type: TriggerType;
+  day: number | null;
+  month: number | null;
+  paramsValue: TriggerParamValue[];
+  templateMessage: {
+    id: string;
+    name: string;
+  } | null;
 }

@@ -1,6 +1,6 @@
-import { NotificationTrigger as NotificationTriggerDb, TriggerType as TriggerTypeDb } from "@prisma/client";
+import { NotificationTrigger as NotificationTriggerDb, TemplateMessage as TemplateMessageDb, TriggerType as TriggerTypeDb } from "@prisma/client";
 import { AppError } from "@/common/error";
-import { Trigger, TriggerType } from "./entities";
+import { Trigger, Trigger1, TriggerType } from "./entities";
 
 
 export class TriggerMapper {
@@ -8,11 +8,29 @@ export class TriggerMapper {
   public map(triggerDb: NotificationTriggerDb): Trigger {
 
     const trigger = new Trigger({
+      id: triggerDb.id,
       day: triggerDb.day,
       month: triggerDb.month,
       type: this.mapTriggerType(triggerDb.type),
       paramsValue: triggerDb.paramsValue ? JSON.parse(triggerDb.paramsValue) : {}
     });
+
+    return trigger;
+  }
+
+  public mapToView1(triggerDb: NotificationTriggerDb1): Trigger1 {
+
+    const trigger: Trigger1 = {
+      id: triggerDb.id,
+      day: triggerDb.day,
+      month: triggerDb.month,
+      type: this.mapTriggerType(triggerDb.type),
+      paramsValue: triggerDb.paramsValue ? JSON.parse(triggerDb.paramsValue) : {},
+      templateMessage: triggerDb.templateMessage ? {
+        id: triggerDb.templateMessage.id,
+        name: triggerDb.templateMessage.name
+      } : null
+    };
 
     return trigger;
   }
@@ -48,4 +66,8 @@ export class TriggerMapper {
 
       return typeMapped;
   }
+}
+
+type NotificationTriggerDb1 = NotificationTriggerDb & {
+  templateMessage: Pick<TemplateMessageDb, 'id' | 'name'> | null;
 }

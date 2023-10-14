@@ -21,6 +21,9 @@ export class GetContacts implements UseCase<GetContactInput, PagedResult<Contact
             group: true
           }
         }
+      },
+      orderBy: {
+        name: 'asc'
       }
     });
 

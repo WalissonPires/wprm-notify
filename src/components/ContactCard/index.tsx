@@ -51,7 +51,8 @@ export default function ContactCard({ contact }: ContactItemProps) {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <span onClick={() => setVisible(() => false)}>
-              <EyeIcon className="h-5 w-5 inline-block" /> Ver notificações
+            <Link href={AppRoutes.contactNotificationTriggers(contact.id)}><EyeIcon className="h-5 w-5 inline-block" /> Ver notificações</Link>
+
             </span>
           </DropdownMenuItem>
         </DropdownMenu>

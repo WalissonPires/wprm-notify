@@ -86,14 +86,6 @@ export class RegisterNotificationTrigger implements UseCase<RegisterNotification
     if (result.success)
       return;
 
-    const validation = result.error.errors.reduce((obj, error) => {
-
-      obj[error.path.join('.')] = [ error.message ];
-
-      return obj;
-
-    }, {} as Record<string, string[]>);
-
-    throw new AppError(AppError.invalidFieldsMessage, validation);
+    throw AppError.fromZodError(result.error);
   }
 }
