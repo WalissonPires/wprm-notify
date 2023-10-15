@@ -4,7 +4,7 @@ import { Trigger1 } from "@/domains/notification-triggers/entities";
 import { NotificationTriggersApi } from "@/domains/notification-triggers/client-api";
 
 
-export const fetcher = (contactId: string) => async (args: FetcherKey) => {
+export const fetcher = (contactId?: string) => async (args: FetcherKey) => {
 
   const result = await new NotificationTriggersApi().getAll({
     offset: args.offset,
@@ -18,7 +18,7 @@ export const fetcher = (contactId: string) => async (args: FetcherKey) => {
 export const useNotificationTriggers = ({ contactId }: UseNotificationTriggersProps) => {
 
   return useFetchData<Trigger1>({
-    getKey: getKey('notification-triggers-by-contact'),
+    getKey: getKey('notification-triggers-by-contact-' + (contactId ?? 'all')),
     fetcher: fetcher(contactId)
   });
 }
