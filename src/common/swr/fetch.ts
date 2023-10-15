@@ -8,7 +8,8 @@ import { flatResult, DataResult, FetcherKey, GetKeyResult } from "./models";
 export const useFetchData = <TData extends { id: string }>({ getKey, fetcher }: FetchDataArgs<TData>) => {
 
   const { data, size, setSize, isLoading, isValidating, error } = useSWRInfinite(getKey, fetcher, {
-    revalidateFirstPage: false,
+    revalidateFirstPage: true,
+    revalidateIfStale: true,
     keepPreviousData: true
   });
 
