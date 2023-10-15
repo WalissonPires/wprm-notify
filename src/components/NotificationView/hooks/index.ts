@@ -1,6 +1,7 @@
 'use client'
 
 import z from "zod";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, SubmitHandler,useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +21,7 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
 
   const [ isSaving, setIsLoading ] = useState(false);
   const { messageTemplates, isLoading: isLoadingMessageTemplates } = useMessageTemplates();
+  const router = useRouter();
 
   const { register, handleSubmit, watch, setValue, formState: { errors }, control } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
@@ -53,6 +55,8 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
       });
 
       AppToast.success('Notificação agendada');
+
+      router.back();
     }
     catch(e) {
 
