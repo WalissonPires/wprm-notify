@@ -3,7 +3,7 @@
 import { Controller } from "react-hook-form";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TriggerType } from "@/domains/notification-triggers/entities";
-import { FormRow, FormColumn, Input, Select, ButtonsGroup, ButtonItem, Button } from "../Form";
+import { FormRow, FormColumn, Input, Select, ButtonsGroup, ButtonItem, Button, DaysOfMonthSelect, MonthsSelect } from "../Form";
 import { useNotificationView } from "./hooks";
 
 
@@ -56,15 +56,14 @@ export function NotificationView({ contactId }: NotificationViewProps) {
               {values.triggerType !== TriggerType.Daily &&
               <div className="inline-flex flex-row h-full items-center">
                 {(values.triggerType === TriggerType.Monthy || values.triggerType === TriggerType.Yearly) &&
-                <div className="w-16">
-                  <Input {...register('day')} type="number" placeholder="Dia" aria-label="Dia de acionamento do evento" />
+                <div className="w-14">
+                  <DaysOfMonthSelect {...register('day')} />
                 </div>}
                 {values.triggerType === TriggerType.Yearly &&
                 <>
                   <span className="mx-2 inline-block">/</span>
-                  <div className="w-16">
-                    <Input {...register('month')} type="number" placeholder="Mês" aria-label="Mês de acionamento do evento" />
-
+                  <div className="w-24">
+                    <MonthsSelect {...register('month')} />
                   </div>
                 </>}
               </div>}
@@ -96,6 +95,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
     </div>
   );
 }
+
 
 export interface NotificationViewProps {
   contactId: string;

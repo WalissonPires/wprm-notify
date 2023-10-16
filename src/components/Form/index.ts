@@ -5,3 +5,5 @@ export * from "./DropdownMenu";
 export * from "./Input";
 export * from "./Row";
 export * from "./Select";
+export * from "./DaysOfMonthSelect";
+export * from "./MonthsSelect";

@@ -1,6 +1,7 @@
 'use client'
 
 import z from "zod";
+import { DateTime } from "luxon";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, SubmitHandler,useFieldArray } from "react-hook-form";
@@ -124,6 +125,12 @@ const baseValidationSchema = z.object({
   })),
   day: z.coerce.number().optional(),
   month: z.coerce.number().optional(),
+}).refine(obj => {
+
+  return obj.day && obj.month ? DateTime.fromISO(`2024-${obj.month.toString().padStart(2, '0')}-${obj.day.toString().padStart(2, '0')}`).isValid : true;
+}, {
+  message: 'Dia inválido para o mês selecionado',
+  path: [ 'day' ]
 });
 
 const dailyValidationSchema = z.object({
