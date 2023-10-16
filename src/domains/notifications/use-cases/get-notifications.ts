@@ -35,6 +35,18 @@ export class GetNotifications implements UseCase<GetNotificationsInput, PagedRes
       where: filter,
       skip: input.offset,
       take: input.limit,
+      include: {
+        trigger: {
+          include: {
+            contact: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        }
+      },
       orderBy: {
         scheduledAt: 'desc'
       }

@@ -18,7 +18,7 @@ export default function ContactNotificationsView({ contactId }: ContactNotificat
         <ul className="divide-y">
           {data.map(item =>
             <li key={item.id}>
-              <NotificationCard notification={item} />
+              <NotificationCard notification={item} showContact={!contactId} />
             </li>)}
           {isEmpty && <p className="text-center text-slate-400 p-4">Nenhuma notificação encontrada</p>}
           {isFirstLoading && <NotificationCard.Skeleton />}
@@ -34,5 +34,5 @@ export default function ContactNotificationsView({ contactId }: ContactNotificat
 }
 
 interface ContactNotificationsViewProps {
-    contactId: string;
+    contactId?: string;
 }
