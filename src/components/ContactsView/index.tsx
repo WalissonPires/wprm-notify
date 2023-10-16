@@ -23,7 +23,7 @@ export default function ContactsView({ contacts, isLoading, error, hasMore, trig
         </ul>
       </div>
       {hasMore &&
-        <div className="text-center">
+        <div className="text-center mb-4">
           <Button onClick={triggerLoadMore} disabled={isLoading} variant="textOnly"><ArrowDownTrayIcon className="h-5 w-5 inline-block" /> {isLoading ? 'Carregando...' : 'Carregar dados'}</Button>
         </div>}
     </div>

@@ -1,10 +1,9 @@
-import { AppLayout } from '../components/AppLayout';
-import { AppLayoutBody } from '../components/AppLayout/Body';
-import { AppLayoutHeader } from '../components/AppLayout/Header';
-import { AppLayoutMenuWithTitle } from '../components/AppLayout/MenuWithTitle';
-import { AppLayoutTabItem } from '../components/AppLayout/TabItem';
-import { AppLayoutTabs } from '../components/AppLayout/Tabs';
-import ContactsContainer from '../components/ContactsContainer';
+import { AppLayout } from '@/components/AppLayout';
+import { AppLayoutBody } from '@/components/AppLayout/Body';
+import { AppLayoutHeader } from '@/components/AppLayout/Header';
+import { AppLayoutMenuWithTitle } from '@/components/AppLayout/MenuWithTitle';
+import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
+import ContactsContainer from '@/components/ContactsContainer';
 
 export default function Home() {
 
@@ -13,14 +12,10 @@ export default function Home() {
       <AppLayoutHeader>
         <AppLayoutMenuWithTitle />
       </AppLayoutHeader>
-      <AppLayoutTabs>
-        <AppLayoutTabItem label="Contatos" title="Contatos" href="/" replace active />
-        <AppLayoutTabItem label="Eventos" title="Eventos" href="/events" replace />
-        <AppLayoutTabItem label="Mensagens" title="Mensagens" href="/template-messages" replace />
-      </AppLayoutTabs>
       <AppLayoutBody>
         <ContactsContainer />
       </AppLayoutBody>
+      <AppNavMenuDefault active={AppNavMenuItens.contacts} />
     </AppLayout>
   );
 }

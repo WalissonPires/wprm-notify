@@ -6,6 +6,7 @@ import { AppLayoutTabItem } from '@/components/AppLayout/TabItem';
 import { AppLayoutTabs } from '@/components/AppLayout/Tabs';
 import { AppLayoutBackWithTitle } from '@/components/AppLayout/BackWithTitle';
 import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Actions';
+import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
 import ContactNotificationTriggersView from '@/components/ContactNotificationTriggersView';
 import { AppRoutes } from '@/common/routes';
 
@@ -26,6 +27,7 @@ export default function ContactNotifications({ params }: PageProps) {
       <AppLayoutBody>
         <ContactNotificationTriggersView contactId={params.contactId} />
       </AppLayoutBody>
+      <AppNavMenuDefault active={AppNavMenuItens.contacts} />
     </AppLayout>
   );
 }

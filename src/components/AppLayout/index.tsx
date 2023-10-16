@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export function AppLayout({ children }: AppLayoutProps) {
 
   return (
-    <main className="h-screen w-screen overflow-x-hidden flex flex-col bg-stone-50">
+    <main className="h-screen w-screen overflow-hidden flex flex-col bg-stone-50">
       {children}
       <ToastContainer
         position="bottom-center" />
