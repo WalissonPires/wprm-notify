@@ -18,6 +18,7 @@ export interface DataResult<T> {
   error: AppError | null;
   hasMore: boolean;
   loadNextPage: () => void;
+  removeItem: (select: (item: T) => boolean) => void;
 }
 
 export const Defaults = {

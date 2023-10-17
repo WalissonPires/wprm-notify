@@ -7,7 +7,7 @@ import { flatResult, DataResult, FetcherKey, GetKeyResult } from "./models";
 
 export const useFetchData = <TData extends { id: string }>({ getKey, fetcher }: FetchDataArgs<TData>) => {
 
-  const { data, size, setSize, isLoading, isValidating, error } = useSWRInfinite(getKey, fetcher, {
+  const { data, size, setSize, isLoading, isValidating, error, mutate } = useSWRInfinite(getKey, fetcher, {
     revalidateFirstPage: true,
     revalidateIfStale: true,
     keepPreviousData: true
@@ -25,6 +25,26 @@ export const useFetchData = <TData extends { id: string }>({ getKey, fetcher }: 
     error: error ? AppError.parse(error) : null,
     hasMore,
     loadNextPage: () => setSize(size + 1),
+    removeItem: (select: (item: TData) => boolean) => {
+
+      let removedCount = 0;
+
+      if (!data) return;
+
+      const newData = data.map(result => {
+
+        const newResult = { ...result };
+        newResult.data = result.data.filter(item => !select(item));
+
+        return newResult;
+
+      });
+
+      for(const r of newData)
+        r.count -= removedCount;
+
+      mutate(newData);
+    }
   };
 
   return result;
