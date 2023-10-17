@@ -5,17 +5,21 @@ import { AppError } from "@/common/error";
 import { AppToast } from "@/common/ui/toast";
 import { NotificationTriggersApi } from "@/domains/notification-triggers/client-api";
 import { Button } from "../Form";
+import { useLoading } from "../AppLayout/Loading/hooks";
 import NotificationTriggerCard from "../NotificationTriggerCard";
 import { useNotificationTriggers } from "./hooks";
 
 export default function ContactNotificationTriggersView({ contactId }: ContactNotificationTriggersViewProps) {
 
-  const { data, isLoading, error, hasMore, loadNextPage, removeItem } = useNotificationTriggers({ contactId });
+  const { data, isLoading: isLoadingTriggers, error, hasMore, loadNextPage, removeItem } = useNotificationTriggers({ contactId });
+  const { isLoading, setLoading } = useLoading();
 
-  const isEmpty = data.length == 0 && !isLoading && !error;
-  const isFirstLoading = isLoading && data.length === 0;
+  const isEmpty = data.length == 0 && !isLoadingTriggers && !error;
+  const isFirstLoading = isLoadingTriggers && data.length === 0;
 
   const handleDeleteTrigger = (triggerId: string) => async () => {
+
+    setLoading(true);
 
     try {
       const api = new NotificationTriggersApi();
@@ -29,6 +33,9 @@ export default function ContactNotificationTriggersView({ contactId }: ContactNo
 
       const error = AppError.parse(e);
       AppToast.error(error.message);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +54,7 @@ export default function ContactNotificationTriggersView({ contactId }: ContactNo
       </div>
       {hasMore &&
         <div className="text-center">
-          <Button onClick={() => loadNextPage()} disabled={isLoading} variant="textOnly"><ArrowDownTrayIcon className="h-5 w-5 inline-block" /> {isLoading ? 'Carregando...' : 'Carregar dados'}</Button>
+          <Button onClick={() => loadNextPage()} disabled={isLoadingTriggers} variant="textOnly"><ArrowDownTrayIcon className="h-5 w-5 inline-block" /> {isLoadingTriggers ? 'Carregando...' : 'Carregar dados'}</Button>
         </div>}
     </div>
   );

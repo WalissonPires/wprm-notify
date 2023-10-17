@@ -13,6 +13,16 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      animation: {
+        'loading-slade': 'loading-slade 4s ease-in-out infinite'
+      },
+      keyframes: {
+        'loading-slade': {
+          '0%': { marginLeft: '-100%', width: '0%' },
+          '50%': { width: '30%' },
+          '100%': { marginLeft: '100%', width: '0%' }
+        }
+      }
     },
   },
   plugins: [],
