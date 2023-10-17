@@ -7,7 +7,7 @@ import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Trigger1, TriggerType, TriggerTypeDisplay } from "@/domains/notification-triggers/entities";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form/DropdownMenu";
 
-export default function NotificationTriggerCard({ trigger }: NotificationTriggerCardProps) {
+export default function NotificationTriggerCard({ trigger, onDeleteClick }: NotificationTriggerCardProps) {
 
   const { templateMessage, type, day, month } = trigger;
   const [ visible, setVisible ] = useState(false);
@@ -38,7 +38,7 @@ export default function NotificationTriggerCard({ trigger }: NotificationTrigger
         <DropdownMenu
           visible={visible}
           toggle={<DropdownMenuToggle onClick={() => setVisible(visible => !visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={onDeleteClick}>
             <span><XMarkIcon className="h-5 w-5 inline-block" /> Excluir notificação</span>
           </DropdownMenuItem>
         </DropdownMenu>
@@ -67,4 +67,5 @@ NotificationTriggerCard.Skeleton = function NotificationTriggerCardSkeleton() {
 
 export interface NotificationTriggerCardProps {
   trigger: Trigger1;
+  onDeleteClick: () => void;
 }

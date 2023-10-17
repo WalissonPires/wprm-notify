@@ -3,7 +3,7 @@ import { HttpClient } from "@/common/http/client";
 import { PagedInput, PagedResult } from "@/common/http/pagination";
 import { UrlFormatter } from "@/common/http/url/url-formatter";
 import { RegisterNotificationTriggerInput } from "./use-cases/register-notification-trigger-types";
-import { Trigger, Trigger1, TriggerProps } from "./entities";
+import { Trigger1, TriggerProps } from "./entities";
 
 export class NotificationTriggersApi {
 
@@ -33,6 +33,12 @@ export class NotificationTriggersApi {
       throw new Error('Server did not return results');
 
     return result;
+  }
+
+  public async delete(id: string): Promise<void> {
+
+    const url = UrlFormatter.format('{id}', { id: id });
+    await this._client.delete<void>(url);
   }
 }
 

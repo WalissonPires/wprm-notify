@@ -49,11 +49,15 @@ export interface DropdownMenuToggleProps extends PropsWithChildren {
 }
 
 
-export function DropdownMenuItem({ children }: PropsWithChildren) {
+export function DropdownMenuItem({ children, onClick }: DropdownMenuItemProps) {
 
   return (
-    <div className="block px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700" >
+    <div onClick={onClick} className="block px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700" >
       {children}
     </div>
   );
+}
+
+export interface DropdownMenuItemProps extends PropsWithChildren {
+  onClick?: () => void;
 }
