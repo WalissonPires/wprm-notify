@@ -1,17 +1,18 @@
 'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { TimeAgo } from "@/common/datetime/time-ago";
 import { AppRoutes } from "@/common/routes";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form/DropdownMenu";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form";
+import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 
 export default function ContactCard({ contact }: ContactItemProps) {
 
   const { name, phone, email, nextNotification, groups } = contact;
-  const [ visible, setVisible ] = useState(false);
+  const { visible, setVisible } = useDrodownMenu(ContactCard.name);
 
   const triggerAt = useMemo(() => nextNotification?.triggerAt ? new TimeAgo().format(new Date(nextNotification.triggerAt)) : null, [nextNotification?.triggerAt]);
 
@@ -45,15 +46,12 @@ export default function ContactCard({ contact }: ContactItemProps) {
       <div className="flex items-center justify-center">
         <DropdownMenu
           visible={visible}
-          toggle={<DropdownMenuToggle onClick={() => setVisible(visible => !visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
-          <DropdownMenuItem>
+          toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
+          <DropdownMenuItem onClick={() => setVisible(false)}>
             <Link href={AppRoutes.newContactNotification(contact.id)}><BoltIcon className="h-5 w-5 inline-block" /> Criar notificação</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <span onClick={() => setVisible(() => false)}>
-            <Link href={AppRoutes.contactNotificationTriggers(contact.id)}><EyeIcon className="h-5 w-5 inline-block" /> Ver notificações</Link>
-
-            </span>
+          <DropdownMenuItem onClick={() => setVisible(false)}>
+              <Link href={AppRoutes.contactNotificationTriggers(contact.id)}><EyeIcon className="h-5 w-5 inline-block" /> Ver notificações</Link>
           </DropdownMenuItem>
         </DropdownMenu>
       </div>

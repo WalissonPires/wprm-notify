@@ -1,16 +1,18 @@
 'use client';
 
 import { Info } from "luxon";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
 import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Trigger1, TriggerType, TriggerTypeDisplay } from "@/domains/notification-triggers/entities";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form/DropdownMenu";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form";
+import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 
 export default function NotificationTriggerCard({ trigger, onDeleteClick }: NotificationTriggerCardProps) {
 
   const { templateMessage, type, day, month } = trigger;
-  const [ visible, setVisible ] = useState(false);
+
+  const { visible, setVisible } = useDrodownMenu(NotificationTriggerCard.name);
 
   const triggerAt = useMemo(() => {
 
@@ -37,7 +39,7 @@ export default function NotificationTriggerCard({ trigger, onDeleteClick }: Noti
       <div className="flex items-center justify-center ml-3">
         <DropdownMenu
           visible={visible}
-          toggle={<DropdownMenuToggle onClick={() => setVisible(visible => !visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
+          toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
           <DropdownMenuItem onClick={onDeleteClick}>
             <span><XMarkIcon className="h-5 w-5 inline-block" /> Excluir notificação</span>
           </DropdownMenuItem>
