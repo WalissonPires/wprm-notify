@@ -92,7 +92,8 @@ export class HttpClient {
       throw error;
     }
 
-    if (response.status / 100 !== 2) {
+    const statusClass = Math.trunc(response.status / 100);
+    if (statusClass !== 2) {
       throw new Error('Server returned status code ' + response.status);
     }
 
