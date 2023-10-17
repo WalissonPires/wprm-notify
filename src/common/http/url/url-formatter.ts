@@ -2,11 +2,12 @@
 
 export class UrlFormatter {
 
-  public static format(url: string, params: UrlParams) {
+  public static format(url: string, p: UrlParams) {
 
-    url = url.replace(/{([^\/]+})/g, match => {
+    const params = { ...p };
 
-      const uriParam = match[1];
+    url = url.replace(/{([^\/]+)}/g, (_, uriParam) => {
+
       const value = params[uriParam];
 
       if (value === undefined)
@@ -15,6 +16,8 @@ export class UrlFormatter {
       const valueType = typeof value;
       if (valueType !== 'string' && valueType !== 'number' && valueType !== 'boolean')
         throw new Error('Uri params only allow string or number values');
+
+        params[uriParam] = undefined;
 
       return value.toString();
     });
