@@ -3,19 +3,19 @@ import { AppLayoutBody } from '@/components/AppLayout/Body';
 import { AppLayoutHeader } from '@/components/AppLayout/Header';
 import { AppLayoutMenuWithTitle } from '@/components/AppLayout/MenuWithTitle';
 import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
-import ContactsContainer from '@/components/ContactsContainer';
+import MessageTemplatesView from '@/components/MessageTemplatesView';
 
-export default function Home() {
+export default function MessageTemplates() {
 
   return (
     <AppLayout>
       <AppLayoutHeader>
-        <AppLayoutMenuWithTitle title="Contatos" />
+        <AppLayoutMenuWithTitle title="Modelos de mensagens" />
       </AppLayoutHeader>
       <AppLayoutBody>
-        <ContactsContainer />
+        <MessageTemplatesView />
       </AppLayoutBody>
-      <AppNavMenuDefault active={AppNavMenuItens.contacts} />
+      <AppNavMenuDefault active={AppNavMenuItens.messageTemplates} />
     </AppLayout>
   );
 }

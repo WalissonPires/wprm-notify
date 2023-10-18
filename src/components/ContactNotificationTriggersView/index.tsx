@@ -12,7 +12,7 @@ import { useNotificationTriggers } from "./hooks";
 export default function ContactNotificationTriggersView({ contactId }: ContactNotificationTriggersViewProps) {
 
   const { data, isLoading: isLoadingTriggers, error, hasMore, loadNextPage, removeItem } = useNotificationTriggers({ contactId });
-  const { isLoading, setLoading } = useLoading();
+  const { setLoading } = useLoading();
 
   const isEmpty = data.length == 0 && !isLoadingTriggers && !error;
   const isFirstLoading = isLoadingTriggers && data.length === 0;

@@ -1,7 +1,7 @@
 import { PagedInput, PagedResult } from "@/common/http/pagination";
-import { HttpClientFactory } from "../../common/http/client/factory";
-import { UrlFormatter } from "../../common/http/url/url-formatter";
-import { HttpClient } from "../../common/http/client";
+import { HttpClientFactory } from "@/common/http/client/factory";
+import { UrlFormatter } from "@/common/http/url/url-formatter";
+import { HttpClient } from "@/common/http/client";
 import { MessageTemplate1 } from "./entities";
 
 export class MessageTemplatesApi {
@@ -22,5 +22,11 @@ export class MessageTemplatesApi {
       throw new Error('Server did not return results');
 
     return result;
+  }
+
+  public async delete(id: string): Promise<void> {
+
+    const url = UrlFormatter.format('{id}', { id: id });
+    await this._client.delete<void>(url);
   }
 }

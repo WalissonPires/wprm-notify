@@ -41,7 +41,7 @@ export default function NotificationTriggerCard({ trigger, onDeleteClick }: Noti
           visible={visible}
           toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
           <DropdownMenuItem onClick={onDeleteClick}>
-            <span><XMarkIcon className="h-5 w-5 inline-block" /> Excluir notificação</span>
+            <span><XMarkIcon className="h-5 w-5 inline-block" /> Excluir</span>
           </DropdownMenuItem>
         </DropdownMenu>
       </div>

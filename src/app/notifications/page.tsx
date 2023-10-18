@@ -10,7 +10,7 @@ export default function Notifications() {
   return (
     <AppLayout>
       <AppLayoutHeader>
-        <AppLayoutMenuWithTitle />
+        <AppLayoutMenuWithTitle title="Notificações" />
       </AppLayoutHeader>
       <AppLayoutBody>
         <ContactNotificationsView />
