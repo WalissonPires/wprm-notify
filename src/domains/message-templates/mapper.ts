@@ -7,6 +7,8 @@ export class MessageTemplateMapper {
   public map(templateDb: MessageTemplateDb): MessageTemplate {
 
     const template = new MessageTemplate({
+      id: templateDb.id,
+      name: templateDb.name,
       content: templateDb.content,
       params: templateDb.params ? JSON.parse(templateDb.params) : []
     });

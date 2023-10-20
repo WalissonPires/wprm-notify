@@ -8,4 +8,5 @@ export abstract class AppRoutes {
   public static home() { return '/'; }
   public static notifications() { return '/notifications'; }
   public static messageTemplates() { return '/message-templates'; }
+  public static newMessageTemplates() { return '/message-templates/new'; }
 }
