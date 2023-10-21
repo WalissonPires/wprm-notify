@@ -64,10 +64,13 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
           data: {
             id: idGen.new(),
             triggerId: triggerDb.id,
+            contactId: triggerDb.contactId,
             accountId: triggerDb.contact.accountId,
             scheduledAt: nextTriggerDate,
             content: messageContent,
-            sendedAt: null
+            createdAt: new Date(),
+            sendedAt: null,
+            notes: `Agendamento ${trigger.toString()} usando modelo de mensagem "${triggerDb.templateMessage.name}".`
           }
         });
       }

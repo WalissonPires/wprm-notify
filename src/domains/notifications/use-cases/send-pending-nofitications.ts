@@ -17,14 +17,10 @@ export class SendPendingNotifications implements UseCase<void, void> {
         }
       },
       include: {
-        trigger: {
-          include: {
-            contact: {
-              select: {
-                phone: true,
-                email: true,
-              }
-            }
+        contact: {
+          select: {
+            phone: true,
+            email: true,
           }
         }
       }
@@ -38,9 +34,9 @@ export class SendPendingNotifications implements UseCase<void, void> {
 
       try {
 
-        if (!notify.trigger) continue;
+        if (!notify.contact) continue;
 
-        const { phone, email } = notify.trigger.contact;
+        const { phone, email } = notify.contact;
 
         if (!phone) continue;
 

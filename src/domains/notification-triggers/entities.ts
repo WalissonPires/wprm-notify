@@ -98,6 +98,19 @@ export class Trigger {
 
     throw new AppError('Invalid trigger type: ' + this._fields.type);
   }
+
+  toString() {
+
+    let info = TriggerTypeDisplay[this._fields.type];
+
+    if (this._fields.day)
+      info += ', todo dia ' + this._fields.day.toString().padStart(2, '0');
+
+    if (this._fields.month)
+      info += ' de ' + DateTime.fromObject({ day: 1, month: this._fields.month, year: 2024 }).setLocale('pt').monthLong;
+
+    return info;
+  }
 }
 
 export interface TriggerProps {
