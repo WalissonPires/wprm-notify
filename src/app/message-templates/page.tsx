@@ -7,6 +7,7 @@ import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMe
 import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Actions';
 import { AppRoutes } from '@/common/routes';
 import MessageTemplatesView from '@/components/MessageTemplatesView';
+import { AppLoading } from '@/components/AppLayout/Loading';
 
 export default function MessageTemplates() {
 
@@ -19,6 +20,7 @@ export default function MessageTemplates() {
         </AppLayoutActions>
       </AppLayoutHeader>
       <AppLayoutBody>
+        <AppLoading />
         <MessageTemplatesView />
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.messageTemplates} />
