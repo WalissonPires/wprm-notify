@@ -1,10 +1,13 @@
-import { Contact as ContactDb, Group as GroupDb, ContactGroup as ContactGroupDb } from "@prisma/client";
+import { Contact as ContactDb, Group as GroupDb, ContactGroup as ContactGroupDb, Notification as NotificationDb } from "@prisma/client";
 import { Contact } from "./entities";
+import { sortAsc } from "@/common/primitives/array/sort-utils";
 
 
 export class ContactMapper {
 
   public mapFromDb(contact: ContactEty): Contact {
+
+    const nextNotification = contact.notifications?.sort((a, b) => sortAsc(a.scheduledAt, b.scheduledAt)).at(0);
 
     return {
       id: contact.id,
@@ -16,7 +19,11 @@ export class ContactMapper {
         name: contactGroup.group.name,
         color: contactGroup.group.color
       })) ?? [],
-      nextNotification: null
+      nextNotification: nextNotification ? {
+        id: nextNotification.id,
+        description: nextNotification.notes || nextNotification.content,
+        triggerAt: nextNotification.scheduledAt.toISOString()
+      } : null
     };
   }
 }
@@ -25,4 +32,5 @@ export interface ContactEty extends ContactDb {
   groups?: (ContactGroupDb & {
     group: GroupDb;
   })[];
+  notifications?: NotificationDb[]
 }

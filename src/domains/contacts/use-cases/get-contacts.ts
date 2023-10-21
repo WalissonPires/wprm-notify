@@ -20,6 +20,15 @@ export class GetContacts implements UseCase<GetContactInput, PagedResult<Contact
           include: {
             group: true
           }
+        },
+        notifications: {
+          where: {
+            sendedAt: null
+          },
+          orderBy: {
+            scheduledAt: 'asc',
+          },
+          take: 1
         }
       },
       orderBy: {

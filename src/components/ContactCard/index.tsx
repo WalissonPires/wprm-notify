@@ -14,11 +14,12 @@ export default function ContactCard({ contact }: ContactItemProps) {
   const { name, phone, email, nextNotification, groups } = contact;
   const { visible, setVisible } = useDrodownMenu(ContactCard.name);
 
-  const triggerAt = useMemo(() => nextNotification?.triggerAt ? new TimeAgo().format(new Date(nextNotification.triggerAt)) : null, [nextNotification?.triggerAt]);
+  const triggerAgo = useMemo(() => nextNotification?.triggerAt ? new TimeAgo().format(new Date(nextNotification.triggerAt)) : null, [nextNotification?.triggerAt]);
+  const triggerAt = useMemo(() => nextNotification?.triggerAt ? new Date(nextNotification.triggerAt).toLocaleDateString() : null, [nextNotification?.triggerAt]);
 
   return (
     <div className="flex flex-row justify-between px-4 py-6 hover:bg-slate-50">
-      <div className="">
+      <div className="flex-1">
         <span className="text-lg font-semibold text-slate-700">{name}</span>
         <div className="mt-2">
           {phone &&
@@ -39,11 +40,11 @@ export default function ContactCard({ contact }: ContactItemProps) {
           {nextNotification &&
             <div className="inline-flex flex-row items-center justify-between text-sm w-full text-slate-800 bg-slate-100 p-4 rounded mt-2">
               <span><BoltIcon className="h-5 w-5 inline-block mr-2" /> {nextNotification.description}</span>
-              <span className="text-slate-400 text-xs">{triggerAt}</span>
+              <span className="text-slate-400 text-xs" title={triggerAt ?? undefined}>{triggerAgo}</span>
             </div>}
         </div>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center ml-3">
         <DropdownMenu
           visible={visible}
           toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
