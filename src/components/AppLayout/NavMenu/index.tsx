@@ -33,16 +33,13 @@ export function AppNavMenuDefault({ active }: AppNavMenuDefaultProps) {
   return (
     <AppNavMenu>
       <AppNavMenuItem active={active === AppNavMenuItens.contacts}>
-        <UserGroupIcon className="h-5 w-5" />
-        <Link href={AppRoutes.home()}>Contatos</Link>
+        <Link href={AppRoutes.home()} className="flex flex-col items-center"><UserGroupIcon className="h-5 w-5" /> Contatos</Link>
       </AppNavMenuItem>
       <AppNavMenuItem active={active === AppNavMenuItens.notifications}>
-        <BoltIcon className="h-5 w-5" />
-        <Link href={AppRoutes.notifications()}>Notificações</Link>
+        <Link href={AppRoutes.notifications()} className="flex flex-col items-center"><BoltIcon className="h-5 w-5" /> Notificações</Link>
       </AppNavMenuItem>
       <AppNavMenuItem active={active === AppNavMenuItens.messageTemplates}>
-        <EnvelopeIcon className="h-5 w-5" />
-        <Link href={AppRoutes.messageTemplates()}>Mensagens</Link>
+        <Link href={AppRoutes.messageTemplates()} className="flex flex-col items-center"><EnvelopeIcon className="h-5 w-5" /> Mensagens</Link>
       </AppNavMenuItem>
     </AppNavMenu>
   );
