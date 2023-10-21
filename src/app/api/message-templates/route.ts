@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { PagedInputExtract } from "@/common/http/pagination/paged-input-parser";
 import { GetMessageTemplates } from "@/domains/message-templates/use-cases/get-message-templates";
@@ -6,6 +5,7 @@ import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { CreateMessageTemplate } from "@/domains/message-templates/use-cases/create-message-template";
 import { createMessateTemplateInputSchema } from "@/domains/message-templates/use-cases/create-message-template-types";
 import { UserLogged } from "@/common/auth/user";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 
 export async function GET(request: NextRequest) {
 
@@ -32,7 +32,7 @@ export const POST = async (request: NextRequest) => {
 
     const useCase = new CreateMessageTemplate({
       userLogged: UserLogged.fromRequest(request),
-      prismaClient: new PrismaClient
+      prismaClient: PrismaClientFactory.create()
     });
 
     const result = await useCase.execute(input);
