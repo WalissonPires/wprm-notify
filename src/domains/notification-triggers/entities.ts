@@ -46,7 +46,8 @@ export class Trigger {
 
   nextTriggerDate(): Date {
 
-    const currentDate = DateTime.utc();
+    const zone = 'utc'; // [ToDo] get user timezone
+    const currentDate = DateTime.now().setZone(zone);
 
     if (this._fields.type === TriggerType.Daily) {
       return currentDate.plus({ day: 1 }).startOf('day').toJSDate();
@@ -67,13 +68,13 @@ export class Trigger {
       let nextTriggerDate = DateTime.fromObject({
         day: day,
         month: currentDate.month,
-        year: currentDate.year
-      });
+        year: currentDate.year,
+      }, { zone });
 
       if (nextTriggerDate < currentDate)
         nextTriggerDate = nextTriggerDate.plus({ month: 1 });
 
-      return nextTriggerDate.toJSDate();
+      return nextTriggerDate.startOf('day').toJSDate();
     }
 
     if (this._fields.type === TriggerType.Yearly) {
@@ -88,12 +89,12 @@ export class Trigger {
         day: this._fields.day,
         month: this._fields.month,
         year: currentDate.year
-      });
+      }, { zone });
 
       if (nextTriggerDate < currentDate)
         nextTriggerDate = nextTriggerDate.plus({ year: 1 });
 
-      return nextTriggerDate.toJSDate();
+      return nextTriggerDate.startOf('day').toJSDate();
     }
 
     throw new AppError('Invalid trigger type: ' + this._fields.type);
