@@ -1,5 +1,5 @@
 import { AppLayout } from "@/components/AppLayout";
-import { AppLayoutBackWithTitle } from "@/components/AppLayout/BackWithTitle";
+import { AppLayoutBackWithContactTitle } from "@/components/AppLayout/BackWithTitle/WithContact";
 import { AppLayoutHeader } from "@/components/AppLayout/Header";
 import { AppLayoutBody } from "@/components/AppLayout/Body";
 import { AppNavMenuDefault, AppNavMenuItens } from "@/components/AppLayout/NavMenu";
@@ -11,7 +11,7 @@ export default function NewContactNotification({ params }: PageProps) {
   return (
     <AppLayout>
       <AppLayoutHeader>
-        <AppLayoutBackWithTitle title="Nome do contato" />
+      <AppLayoutBackWithContactTitle contactId={params.contactId} />
       </AppLayoutHeader>
       <AppLayoutBody>
         <ValidationInit />

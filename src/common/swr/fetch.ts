@@ -4,6 +4,27 @@ import { AppError } from "../error";
 import { PagedResult } from "../http/pagination";
 import { flatResult, DataResult, FetcherKey, GetKeyResult } from "./models";
 
+export const useFetchObjectData =  <TData extends { id: string }>({ getKey, fetcher }: SingleFetchDataArgs<TData>) => {
+
+  const { data, isValidating, error } = useSWRInfinite(getKey, fetcher, {
+    revalidateFirstPage: true,
+    revalidateIfStale: true,
+    keepPreviousData: true
+  });
+
+  return {
+    data: data?.at(0),
+    isLoading: isValidating, //, isLoading
+    error: error ? AppError.parse(error) : null,
+  }
+}
+
+export interface SingleFetchDataArgs<TData> {
+  getKey: GetKeyResult;
+  fetcher: (args: FetcherKey) => Promise<TData>;
+}
+
+
 
 export const useFetchData = <TData extends { id: string }>({ getKey, fetcher }: FetchDataArgs<TData>) => {
 

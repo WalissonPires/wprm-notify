@@ -4,7 +4,7 @@ import { AppLayoutBody } from '@/components/AppLayout/Body';
 import { AppLayoutHeader } from '@/components/AppLayout/Header';
 import { AppLayoutTabItem } from '@/components/AppLayout/TabItem';
 import { AppLayoutTabs } from '@/components/AppLayout/Tabs';
-import { AppLayoutBackWithTitle } from '@/components/AppLayout/BackWithTitle';
+import { AppLayoutBackWithContactTitle } from '@/components/AppLayout/BackWithTitle/WithContact';
 import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Actions';
 import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
 import ContactNotificationsView from '@/components/ContactNotificationsView';
@@ -15,7 +15,7 @@ export default function ContactNotifications({ params }: PageProps) {
   return (
     <AppLayout>
       <AppLayoutHeader>
-        <AppLayoutBackWithTitle title="Nome do contato" />
+        <AppLayoutBackWithContactTitle contactId={params.contactId} />
         <AppLayoutActions>
           <AppLayoutAction title="Criar notificação" href={AppRoutes.newContactNotification(params.contactId)}><PlusIcon className="h-5 w-5"></PlusIcon></AppLayoutAction>
         </AppLayoutActions>
