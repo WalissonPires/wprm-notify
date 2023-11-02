@@ -1,19 +1,22 @@
-import { PropsWithChildren } from "react";
+import { ButtonHTMLAttributes, PropsWithChildren } from "react";
 import Link from "next/link";
 
 
 export function AppLayoutActions({ children }: PropsWithChildren) {
 
   return (
-    <div className="inline-flex items-center">
+    <div className="inline-flex items-center justify-end flex-1 ml-3">
       {children}
     </div>
   );
 }
 
-export function AppLayoutAction({ children, href, ...props }: AppLayoutActionProps) {
+export function AppLayoutAction({ children, href, onClick, ...props }: AppLayoutActionProps) {
 
   if (href) {
+
+    if (onClick)
+      throw new Error('OnClick cannot be used with href');
 
     return (
       <Link href={href} className="border-0 rounded-sm p-1 bg-transparent hover:bg-[#ffffff22] focus:bg-[#ffffff22]" {...props}>
@@ -23,7 +26,7 @@ export function AppLayoutAction({ children, href, ...props }: AppLayoutActionPro
   }
 
   return (
-    <button type="button" className="border-0 rounded-sm p-1 bg-transparent hover:bg-[#ffffff22] focus:bg-[#ffffff22]" {...props}>
+    <button onClick={onClick} type="button" className="border-0 rounded-sm p-1 bg-transparent hover:bg-[#ffffff22] focus:bg-[#ffffff22]" {...props}>
       {children}
     </button>
   );
@@ -32,4 +35,5 @@ export function AppLayoutAction({ children, href, ...props }: AppLayoutActionPro
 export interface AppLayoutActionProps extends PropsWithChildren  {
   title?: string;
   href?: string;
+  onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick'];
 }

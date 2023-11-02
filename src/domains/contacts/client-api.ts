@@ -24,7 +24,7 @@ export class ContactsApi {
     return result;
   }
 
-  public async getAll(args: PagedInput): Promise<PagedResult<Contact>> {
+  public async getAll(args: GetAllArgs): Promise<PagedResult<Contact>> {
 
     const url = UrlFormatter.format('', args);
     const result = await this._client.get<PagedResult<Contact>>(url);
@@ -34,4 +34,8 @@ export class ContactsApi {
 
     return result;
   }
+}
+
+export interface GetAllArgs extends PagedInput {
+  query?: string;
 }

@@ -1,20 +1,51 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { PagedInput, PagedResult } from "@/common/http/pagination";
 import { UseCase } from "@/common/use-cases";
+import { UserLogged } from "@/common/auth/user";
 import { Contact } from "../entities";
 import { ContactMapper } from "../mapper";
 
-export class GetContacts implements UseCase<GetContactInput, PagedResult<Contact>> {
+export class GetContacts implements UseCase<GetContactsInput, PagedResult<Contact>> {
 
-  public async execute(input: GetContactInput): Promise<PagedResult<Contact>> {
+  private _db: PrismaClient;
+  private _user: UserLogged;
 
-    const db = new PrismaClient();
+  constructor({ prismaClient, userLogged }: { prismaClient: PrismaClient, userLogged: UserLogged }) {
 
-    const count = await db.contact.count();
+    this._db = prismaClient;
+    this._user = userLogged;
+  }
 
-    const contacts = await db.contact.findMany({
+  public async execute(input: GetContactsInput): Promise<PagedResult<Contact>> {
+
+    const filter: Prisma.ContactWhereInput = {};
+
+    if (input.query?.length! > 0) {
+
+      filter.OR = [{
+        name: {
+          contains: input.query,
+          mode: 'insensitive'
+        }
+      }, {
+        phone: {
+        contains: input.query
+      }}, {
+        email: {
+          contains: input.query,
+          mode: 'insensitive'
+        }
+      }];
+    }
+
+    const count = await this._db.contact.count({
+      where: filter
+    });
+
+    const contacts = await this._db.contact.findMany({
       skip: input.offset,
       take: input.limit,
+      where: filter,
       include: {
         groups: {
           include: {
@@ -51,6 +82,6 @@ export class GetContacts implements UseCase<GetContactInput, PagedResult<Contact
 
 }
 
-export interface GetContactInput extends PagedInput {
-
+export interface GetContactsInput extends PagedInput {
+  query?: string;
 }

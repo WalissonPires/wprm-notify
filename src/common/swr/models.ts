@@ -6,6 +6,7 @@ export interface FetcherKey {
   offset: number;
   limit: number;
   context: string;
+  additionalParams?: string;
 }
 
 export interface GetKeyResult {
@@ -25,7 +26,7 @@ export const Defaults = {
   limit: 50
 }
 
-export const getKey = (context: string) => <T>(pageIndex: number, previousData: PagedResult<T>): FetcherKey | null => {
+export const getKey = (context: string, additionalParams?: string) => <T>(pageIndex: number, previousData: PagedResult<T>): FetcherKey | null => {
 
   if (previousData) {
 
@@ -35,7 +36,7 @@ export const getKey = (context: string) => <T>(pageIndex: number, previousData: 
 
   const limit = Defaults.limit;
 
-  return { offset: pageIndex * limit, limit, context };
+  return { offset: pageIndex * limit, limit, context, additionalParams };
 }
 
 export const flatResult = <T extends { id: string }>(groupedData: PagedResult<T>[]): T[] => {

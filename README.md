@@ -51,3 +51,23 @@ TemplateMessages(id, name, content, params(name))
 Triggers(id, type(yearly, monthly, daily), month, day, contactId, templateMessageId, paramsValue(name, value))
 
 Notifications(id, scheduledAt, sendedAt, templateMessageId, content)
+
+## To DO
+
+- [ ] - Alterar Modelo de mensagem
+- [ ] - Adicionar pesquisa nos modelos de mensagem (Pesquisa por nome e conteudo)
+- [ ] - Adicionar pesquisa nas notificações (Pesquisa por nome cliente)
+- [ ] - Adicionar filtros nas notificações (Enviadas/Agendadas/Todas, Por grupo, Por modelo mensagem, Por Data Envio range)
+- [x] - Adicionar pesquisa nos contatos (Pesquisa por nome, telefone, email)
+- [ ] - Adicionar filtros nos contatos (Por grupo, Por Data cadastro range)
+- [ ] - Adicionar visualização de contatos por grupo
+- [ ] - Cadastrar contato
+- [ ] - Alterar contato
+- [ ] - Excluir contato
+- [ ] - Criar tarefa cron para geração das notificações
+- [ ] - Criar tarefa cron para envio das notificações
+- [ ] - Registrar conta*
+- [ ] - Redefinir senha conta*
+- [ ] - Logar na aplicação*
+
+>  \* Usar login do google?
