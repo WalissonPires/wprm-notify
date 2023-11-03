@@ -29,16 +29,14 @@ export class UrlFormatter {
       if (value === undefined)
         return qs;
 
-      const valueType = typeof value;
-      if (valueType !== 'string' && valueType !== 'number' && valueType !== 'boolean')
-        throw new Error('Query params only allow string or number values');
+      if (Array.isArray(value)) {
 
-      const pair = encodeURIComponent(key) + '=' + value;
-
-      if (qs.length > 0)
-        qs += '&';
-
-      qs += pair;
+        for(let index = 0; index < value.length; index++) {
+          qs = this.appendPairToQuery(qs, `${key}[${index}]`, value[index]);
+        }
+      }
+      else
+        qs = this.appendPairToQuery(qs, key, value);
 
       return qs;
     }, '');
@@ -47,6 +45,22 @@ export class UrlFormatter {
       return url;
 
     return url + '?' + queryString;
+  }
+
+  private static appendPairToQuery(qs: string, key: string, value: any) {
+
+    const valueType = typeof value;
+    if (valueType !== 'string' && valueType !== 'number' && valueType !== 'boolean')
+      throw new Error('Query params only allow string or number values');
+
+    const pair = encodeURIComponent(key) + '=' + value;
+
+    if (qs.length > 0)
+      qs += '&';
+
+    qs += pair;
+
+    return qs;
   }
 }
 
