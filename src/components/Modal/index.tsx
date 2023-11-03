@@ -5,8 +5,8 @@ import { Button } from "../Form";
 export function Modal({ children }: PropsWithChildren) {
 
   return (
-  <div className="fixed top-0 left-0 h-full w-full flex items-center justify-center z-20">
-    <div className="bg-white rounded flex flex-col shadow min-w-[400px]">
+  <div className="fixed top-0 left-0 pt-14 h-full w-full flex items-start justify-center z-20 bg-black/10">
+    <div className="bg-white rounded flex flex-col shadow w-full m-4 sm:min-w-[400px] sm:w-fit">
       {children}
     </div>
   </div>);
