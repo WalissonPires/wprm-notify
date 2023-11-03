@@ -1,8 +1,8 @@
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { Contact } from "@/domains/contacts/entities";
 import { AppError } from "@/common/error";
 import ContactCard from "../ContactCard";
 import { Button } from "../Form";
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 export default function ContactsView({ contacts, isLoading, error, hasMore, triggerLoadMore }: ContactsViewProps) {
 

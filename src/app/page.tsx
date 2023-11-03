@@ -6,6 +6,7 @@ import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMe
 import { AppLayoutActions } from '@/components/AppLayout/Actions';
 import { SearchAction } from '@/components/AppLayout/Actions/SearchAction';
 import ContactsContainer from '@/components/ContactsContainer';
+import { ContactsFilterAction } from '@/components/ContactsView/ContactsFilter';
 
 export default function Home() {
 
@@ -15,6 +16,7 @@ export default function Home() {
         <AppLayoutMenuWithTitle title="Contatos" />
         <AppLayoutActions>
           <SearchAction placeholder='Nome, telefone ou email' />
+          <ContactsFilterAction />
         </AppLayoutActions>
       </AppLayoutHeader>
       <AppLayoutBody>

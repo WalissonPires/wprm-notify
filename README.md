@@ -59,7 +59,7 @@ Notifications(id, scheduledAt, sendedAt, templateMessageId, content)
 - [ ] - Adicionar pesquisa nas notificações (Pesquisa por nome cliente)
 - [ ] - Adicionar filtros nas notificações (Enviadas/Agendadas/Todas, Por grupo, Por modelo mensagem, Por Data Envio range)
 - [x] - Adicionar pesquisa nos contatos (Pesquisa por nome, telefone, email)
-- [ ] - Adicionar filtros nos contatos (Por grupo, Por Data cadastro range)
+- [x] - Adicionar filtros nos contatos (Por grupo)
 - [ ] - Adicionar visualização de contatos por grupo
 - [ ] - Cadastrar contato
 - [ ] - Alterar contato

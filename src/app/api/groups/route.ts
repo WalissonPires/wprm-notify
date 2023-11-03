@@ -1,11 +1,9 @@
-import z from "zod";
 import { NextRequest, NextResponse } from "next/server";
 import { PagedInputExtract } from "@/common/http/pagination/paged-input-parser";
-import { URLSearchParamsParser } from "@/common/http/url/url-params-parser";
-import { GetContacts } from "@/domains/contacts/use-cases/get-contacts";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { UserLogged } from "@/common/auth/user";
+import { GetGroups } from "@/domains/groups/use-cases/get-groups";
 
 
 export async function GET(request: NextRequest) {
@@ -13,22 +11,14 @@ export async function GET(request: NextRequest) {
   try {
     const { offset, limit } = new PagedInputExtract().getFromSearchParams(request.nextUrl.searchParams);
 
-    const qs = URLSearchParamsParser.toObject(request.nextUrl.searchParams);
-    const params = inputSchema.parse({
-      query: qs.query?.at(0) ?? undefined,
-      groupsId: qs.groupsId ?? undefined,
-    });
-
-    const useCase = new GetContacts({
+    const useCase = new GetGroups({
       prismaClient: PrismaClientFactory.create(),
       userLogged: UserLogged.fromRequest(request)
     });
 
     const result = await useCase.execute({
       offset,
-      limit,
-      query: params.query,
-      groupsId: params.groupsId
+      limit
     });
 
     return NextResponse.json(result);
@@ -37,9 +27,3 @@ export async function GET(request: NextRequest) {
     return ApiErrorHandler.handler(error);
   }
 }
-
-
-const inputSchema = z.object({
-  query: z.string().max(100).optional(),
-  groupsId: z.array(z.string().max(26)).optional()
-});

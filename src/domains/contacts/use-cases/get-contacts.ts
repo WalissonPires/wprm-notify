@@ -38,6 +38,19 @@ export class GetContacts implements UseCase<GetContactsInput, PagedResult<Contac
       }];
     }
 
+    if (input.groupsId?.length! > 0) {
+
+      filter.AND = {
+        groups: {
+          some: {
+            groupId: {
+              in: input.groupsId
+            }
+          }
+        }
+      }
+    }
+
     const count = await this._db.contact.count({
       where: filter
     });
@@ -84,4 +97,5 @@ export class GetContacts implements UseCase<GetContactsInput, PagedResult<Contac
 
 export interface GetContactsInput extends PagedInput {
   query?: string;
+  groupsId?: string[];
 }

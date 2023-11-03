@@ -38,4 +38,5 @@ export class ContactsApi {
 
 export interface GetAllArgs extends PagedInput {
   query?: string;
+  groupsId?: string[];
 }
