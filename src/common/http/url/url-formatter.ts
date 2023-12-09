@@ -47,6 +47,25 @@ export class UrlFormatter {
     return url + '?' + queryString;
   }
 
+  public static join(...paths: string[]) {
+
+    if (paths.length === 0)
+      return '';
+
+    let url = paths[0].endsWith('/') ? paths[0].substring(0, paths[0].length - 1) : paths[0];
+
+    for(let i = 1; i < paths.length; i++) {
+
+      const segment = paths[i];
+
+      if (!segment.startsWith('/'))
+        url += '/';
+
+      url += segment;
+    }
+
+    return url;
+  }
   private static appendPairToQuery(qs: string, key: string, value: any) {
 
     const valueType = typeof value;
