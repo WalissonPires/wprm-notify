@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { PropsWithChildren } from "react";
-import { BoltIcon, CogIcon, EnvelopeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, EnvelopeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { AppRoutes } from "@/common/routes";
+import { MoreItem } from "./MoreItem";
 
 export function AppNavMenu({ children }: PropsWithChildren) {
 
@@ -41,8 +42,8 @@ export function AppNavMenuDefault({ active }: AppNavMenuDefaultProps) {
       <AppNavMenuItem active={active === AppNavMenuItens.messageTemplates}>
         <Link href={AppRoutes.messageTemplates()} className="flex flex-col items-center"><EnvelopeIcon className="h-5 w-5" /> Mensagens</Link>
       </AppNavMenuItem>
-      <AppNavMenuItem active={active === AppNavMenuItens.settings}>
-        <Link href={AppRoutes.settings()} className="flex flex-col items-center"><CogIcon className="h-5 w-5" /> Opções</Link>
+      <AppNavMenuItem>
+        <MoreItem />
       </AppNavMenuItem>
     </AppNavMenu>
   );
