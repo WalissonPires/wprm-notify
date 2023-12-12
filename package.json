@@ -47,6 +47,8 @@
   "devDependencies": {
     "@types/luxon": "^3.3.7",
     "dotenv-cli": "^7.3.0",
+    "prettier": "^3.1.1",
+    "prettier-plugin-tailwindcss": "^0.5.9",
     "prisma": "^5.7.0"
   }
 }
