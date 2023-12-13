@@ -2,7 +2,8 @@
 
 import { useSnapshot } from "valtio";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CheckIcon, FunnelIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, FunnelIcon as FunnelIconOutline } from "@heroicons/react/24/outline";
+import { FunnelIcon as FunnelIconSolid } from "@heroicons/react/24/solid";
 import { AppLayoutAction } from "@/components/AppLayout/Actions";
 import { Modal, ModalHeader, ModalBody } from "../../Modal";
 import { Button, FormColumn, FormRow, Select } from "../../Form";
@@ -74,7 +75,8 @@ export function ContactsFilterAction() {
 
   return (
     <AppLayoutAction onClick={handleClick} title={hasFilters ? 'Filtros ativos' : 'Nenhum filtro ativo'}>
-      <FunnelIcon className={`h-5 w-5 ` + (hasFilters ? 'text-lime-300' : '')} />
+      {!hasFilters && <FunnelIconOutline className="h-5 w-5 " />}
+      {hasFilters && <FunnelIconSolid className="h-5 w-5 " />}
     </AppLayoutAction>
   )
 }
