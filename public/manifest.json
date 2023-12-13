@@ -5,7 +5,7 @@
     "scope": "/",
     "start_url": "/",
     "name": "Wprm notify",
-    "short_name": "wpnotify",
+    "short_name": "wp-notify",
     "description": "App de envio de notificações",
     "screenshots": [
         {
