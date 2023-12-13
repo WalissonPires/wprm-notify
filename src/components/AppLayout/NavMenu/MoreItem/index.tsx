@@ -16,7 +16,7 @@ export function MoreItem() {
 
   return (
   <>
-    <Button onClick={handleShow} variant="textOnly" className="flex flex-col items-center"><EllipsisHorizontalIcon className="h-5 w-5" /> Mais</Button>
+    <a onClick={handleShow} href="#" className="flex flex-col items-center"><EllipsisHorizontalIcon className="h-5 w-5" /> Mais</a>
     { visible &&
     <Modal position={ModalPosition.bottomCenter}>
       <ModalHeader onRequestClose={handleHide}>Mais opções</ModalHeader>
