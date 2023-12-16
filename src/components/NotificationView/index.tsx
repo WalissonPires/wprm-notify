@@ -3,7 +3,7 @@
 import { Controller } from "react-hook-form";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TriggerType } from "@/domains/notification-triggers/entities";
-import { FormRow, FormColumn, Input, Select, ButtonsGroup, ButtonItem, Button, DaysOfMonthSelect, MonthsSelect } from "../Form";
+import { FormRow, FormColumn, Input, Select, ButtonsGroup, ButtonItem, Button, DaysOfMonthSelect, MonthsSelect, ColSize } from "../Form";
 import { useNotificationView } from "./hooks";
 
 
@@ -30,7 +30,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
         </div>
         <form onSubmit={handleSubmit}>
           <FormRow>
-            <FormColumn portion={1} amount={1}>
+            <FormColumn size={ColSize.full}>
               <label>Modelo de mensagem</label>
               <Select {...register('templateMessageId')}>
                 <option value="">{isLoadingMessageTemplates ? 'Carregando...' : 'Selecionar...'}</option>
@@ -40,7 +40,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
             </FormColumn>
           </FormRow>
           <FormRow>
-            <FormColumn portion={3} amount={4}>
+            <FormColumn size={ColSize.s3s4}>
               <Controller
                 name={'triggerType'}
                 control={control}
@@ -52,7 +52,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
                 </ButtonsGroup>
                 )} />
             </FormColumn>
-            <FormColumn portion={1} amount={4}>
+            <FormColumn size={ColSize.s1s4}>
               {values.triggerType !== TriggerType.Daily &&
               <div className="inline-flex flex-row h-full items-center">
                 {(values.triggerType === TriggerType.Monthy || values.triggerType === TriggerType.Yearly) &&
@@ -70,7 +70,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
             </FormColumn>
           </FormRow>
           <FormRow>
-            <FormColumn portion={1} amount={1}>
+            <FormColumn size={ColSize.full}>
               {errors.day && <small className="block text-red-400">Dia: {errors.day.message}</small>}
               {errors.month && <small className="block text-red-400">Mês: {errors.month.message}</small>}
             </FormColumn>

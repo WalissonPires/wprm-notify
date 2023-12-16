@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import { Button, FieldError, FormColumn, FormRow, Input, TextArea } from "../Form";
+import { Button, ColSize, FieldError, FormColumn, FormRow, Input, TextArea } from "../Form";
 import { useMessageTemplate } from "./hooks";
 
 
@@ -26,14 +26,14 @@ export function MessageTemplateView() {
         </div>
         <form onSubmit={handleSubmit}>
           <FormRow>
-            <FormColumn portion={1} amount={1}>
+            <FormColumn size={ColSize.full}>
               <label>Nome</label>
               <Input {...register('name')} />
               <FieldError error={errors.name} />
             </FormColumn>
           </FormRow>
           <FormRow>
-            <FormColumn portion={1} amount={1}>
+            <FormColumn size={ColSize.full}>
               <label>Mensagem</label>
               <TextArea {...register('content')} />
               <FieldError error={errors.content} />

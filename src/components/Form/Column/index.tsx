@@ -1,19 +1,23 @@
 import { PropsWithChildren } from "react";
 
 
-export function FormColumn({ children, portion, amount }: FormColumnProps) {
-
-  const widthClass = portion === 1 && amount === 1 ? 'w-full' : `w-${portion}/${amount}`;
+export function FormColumn({ children, size }: FormColumnProps) {
 
   return (
-    <div className={`${widthClass} px-3 mb-6 md:mb-0`}>{children}</div>
+    <div className={`${size} px-3 mb-6 md:mb-0`}>{children}</div>
   );
 }
 
+export enum ColSize {
+  full = 'w-full',
+  s1s2 = 'w-1/2',
+  s2s2 = 'w-2/2',
+  s1s4 = 'w-1/4',
+  s2s4 = 'w-2/4',
+  s3s4 = 'w-4/4',
+  s4s4 = 'w-4/4',
+};
+
 export interface FormColumnProps extends PropsWithChildren {
-  /***
-   * Quantity portion, starting at 1
-  */
-  portion: number;
-  amount: number;
+  size?: ColSize;
 }

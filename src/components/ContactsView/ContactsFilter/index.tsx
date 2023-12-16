@@ -6,7 +6,7 @@ import { CheckIcon, FunnelIcon as FunnelIconOutline } from "@heroicons/react/24/
 import { FunnelIcon as FunnelIconSolid } from "@heroicons/react/24/solid";
 import { AppLayoutAction } from "@/components/AppLayout/Actions";
 import { Modal, ModalHeader, ModalBody } from "../../Modal";
-import { Button, FormColumn, FormRow, Select } from "../../Form";
+import { Button, ColSize, FormColumn, FormRow, Select } from "../../Form";
 import { useGroups } from "../../Groups/hooks";
 import { contactsFilterState } from "./state";
 
@@ -43,7 +43,7 @@ export function ContactsFilter() {
       <ModalBody>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormRow>
-            <FormColumn portion={1} amount={1}>
+            <FormColumn size={ColSize.full}>
               <label>Grupos</label>
               <Select {...register('groups')} multiple>
                 {isLoadingGroups && <option value="">Carregando...</option>}
@@ -52,7 +52,7 @@ export function ContactsFilter() {
             </FormColumn>
           </FormRow>
           <FormRow>
-            <FormColumn portion={1} amount={1}>
+            <FormColumn size={ColSize.full}>
               <div className="text-center">
                 <Button type="submit"><CheckIcon className="h-5 w-5 inline-block" /> Aplicar</Button>
               </div>
