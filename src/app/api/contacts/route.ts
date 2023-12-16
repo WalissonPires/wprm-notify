@@ -6,6 +6,9 @@ import { GetContacts } from "@/domains/contacts/use-cases/get-contacts";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { UserLogged } from "@/common/auth/user";
+import { createContactInputSchema } from "@/domains/contacts/use-cases/create-contact-types";
+import { CreateContact } from "@/domains/contacts/use-cases/create-contact";
+import { GetContactById } from "@/domains/contacts/use-cases/get-contacts-by-id";
 
 
 export async function GET(request: NextRequest) {
@@ -37,6 +40,32 @@ export async function GET(request: NextRequest) {
     return ApiErrorHandler.handler(error);
   }
 }
+
+
+export const POST = async (request: NextRequest) => {
+
+  try {
+    const input = createContactInputSchema.parse(await request.json());
+
+    const useCase = new CreateContact({
+      userLogged: UserLogged.fromRequest(request),
+      prismaClient: PrismaClientFactory.create()
+    });
+
+    const getById = new GetContactById({
+      userLogged: UserLogged.fromRequest(request),
+      prismaClient: PrismaClientFactory.create()
+    });
+
+    const { id: contactId } = await useCase.execute(input);
+    const result = await getById.execute({ contactId });
+
+    return NextResponse.json(result);
+  }
+  catch(error) {
+    return ApiErrorHandler.handler(error);
+  }
+};
 
 
 const inputSchema = z.object({

@@ -1,5 +1,6 @@
 
 
 export const messages = {
-  required: 'Campo requerido'
+  required: 'Campo requerido',
+  invalid: 'Valor inválido'
 };

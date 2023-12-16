@@ -18,7 +18,9 @@ export class GetContacts implements UseCase<GetContactsInput, PagedResult<Contac
 
   public async execute(input: GetContactsInput): Promise<PagedResult<Contact>> {
 
-    const filter: Prisma.ContactWhereInput = {};
+    const filter: Prisma.ContactWhereInput = {
+      accountId: this._user.accountId
+    };
 
     if (input.query?.length! > 0) {
 

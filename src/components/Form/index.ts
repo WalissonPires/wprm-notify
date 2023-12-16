@@ -3,6 +3,7 @@ export * from "./ButtonsGroup";
 export * from "./Column";
 export * from "./DropdownMenu";
 export * from "./Input";
+export * from "./InputMask";
 export * from "./TextArea";
 export * from "./Row";
 export * from "./Select";
