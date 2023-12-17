@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { MouseEvent, PropsWithChildren } from "react";
 
 
 export function DropdownMenu({ defaultAction, toggle, visible, children }: DropdownMenuProps) {
@@ -38,14 +38,14 @@ export function DropdownMenuToggleDefaultAction({ children }: PropsWithChildren)
 export function DropdownMenuToggle({ children, onClick }: DropdownMenuToggleProps) {
 
   return (
-    <button onClick={() => onClick()} type="button" className="inline-flex items-center justify-center h-full px-2 text-gray-600 border-l border-gray-100 hover:text-gray-700 rounded-r-md hover:bg-gray-50">
+    <button onClick={onClick} type="button" className="inline-flex items-center justify-center h-full px-2 text-gray-600 border-l border-gray-100 hover:text-gray-700 rounded-r-md hover:bg-gray-50">
       {children}
     </button>
   );
 }
 
 export interface DropdownMenuToggleProps extends PropsWithChildren {
-  onClick: () => void;
+  onClick: (event: MouseEvent) => void;
 }
 
 
@@ -59,5 +59,5 @@ export function DropdownMenuItem({ children, onClick }: DropdownMenuItemProps) {
 }
 
 export interface DropdownMenuItemProps extends PropsWithChildren {
-  onClick?: () => void;
+  onClick?: (event: MouseEvent) => void;
 }

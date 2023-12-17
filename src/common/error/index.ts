@@ -27,7 +27,7 @@ export class AppError extends Error {
       return msg;
     }, '');
 
-    return this.message + '\n\n' + details;
+    return this.message + ':\n\n' + details;
   }
 
   public static parse(error: any) {

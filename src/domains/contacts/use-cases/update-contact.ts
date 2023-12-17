@@ -1,12 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { UseCase } from "@/common/use-cases";
 import { UserLogged } from "@/common/auth/user";
-import { IdGenerator } from "@/common/identity/generate";
-import { ContactCreated, CreateContactInput } from "./create-contact-types";
+import { UseCase } from "@/common/use-cases";
+import { UpdateContactInput } from "./update-contact-types";
 import { ContactValidation } from "./contact-validation";
 
-
-export class CreateContact implements UseCase<CreateContactInput, ContactCreated> {
+export class UpdateContact implements UseCase<UpdateContactInput, void> {
 
   private _user: UserLogged;
   private _db: PrismaClient;
@@ -19,38 +17,34 @@ export class CreateContact implements UseCase<CreateContactInput, ContactCreated
     this._contactValidation = contactValidation;
   }
 
+  public async execute(input: UpdateContactInput): Promise<void> {
 
-  public async execute(input: CreateContactInput): Promise<ContactCreated> {
-
-    const contactId = new IdGenerator().new();
     const contact = input.contact;
 
     (await this._contactValidation
+      .setContactExisting(contact)
       .existsPhone(contact.phone)
       .existsEmail(contact.email)
       .validate())
       .throwIfInvalid();
 
-
-    await this._db.contact.create({
+    await this._db.contact.update({
+      where: {
+        id: contact.id,
+        accountId: this._user.accountId
+      },
       data: {
-        accountId: this._user.accountId,
-        id: contactId,
         name: contact.name,
-        phone: contact.phone,
         email: contact.email,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        phone: contact.phone,
         groups: {
+          deleteMany: {},
           create: contact.groupsId?.map(groupId => ({
             groupId: groupId
           }))
         }
       }
     });
-
-    return {
-      id: contactId
-    }
   }
+
 }

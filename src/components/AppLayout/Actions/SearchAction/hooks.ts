@@ -8,8 +8,6 @@ export function useSeachAction({ onChange }: UseSeachActionArgs) {
     const { enabled, value } = useSnapshot(searchActionState);
     const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
-    console.log({ enabled, value });
-
     if (timeoutIdRef.current)
       clearTimeout(timeoutIdRef.current);
 
@@ -17,11 +15,8 @@ export function useSeachAction({ onChange }: UseSeachActionArgs) {
     const lastEnabled = lastEnabledRef.current;
     lastEnabledRef.current = enabled;
 
-    if (lastEnabled != enabled) {
-
-      console.log('Icon clicked. nop');
+    if (lastEnabled != enabled)
       return;
-    }
 
     timeoutIdRef.current = setTimeout(() => {
 

@@ -40,7 +40,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
             </FormColumn>
           </FormRow>
           <FormRow>
-            <FormColumn size={ColSize.s3s4}>
+            <FormColumn size={ColSize.span2}>
               <Controller
                 name={'triggerType'}
                 control={control}
@@ -52,7 +52,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
                 </ButtonsGroup>
                 )} />
             </FormColumn>
-            <FormColumn size={ColSize.s1s4}>
+            <FormColumn size={ColSize.span1}>
               {values.triggerType !== TriggerType.Daily &&
               <div className="inline-flex flex-row h-full items-center">
                 {(values.triggerType === TriggerType.Monthy || values.triggerType === TriggerType.Yearly) &&

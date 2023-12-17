@@ -4,6 +4,7 @@ import { UrlFormatter } from "@/common/http/url/url-formatter";
 import { HttpClient } from "@/common/http/client";
 import { Contact } from "./entities";
 import { CreateContactInput } from "./use-cases/create-contact-types";
+import { UpdateContactInput } from "./use-cases/update-contact-types";
 
 export class ContactsApi {
 
@@ -39,6 +40,19 @@ export class ContactsApi {
   public async create(args: CreateContactInput): Promise<Contact> {
 
     const result = await this._client.post<Contact>('', args);
+
+    if (!result)
+      throw new Error('Server did not return results');
+
+    return result;
+  }
+
+  public async update(args: UpdateContactInput): Promise<Contact> {
+
+    const { id } = args.contact;
+
+    const url = UrlFormatter.format('{id}', { id: id });
+    const result = await this._client.put<Contact>(url, args);
 
     if (!result)
       throw new Error('Server did not return results');

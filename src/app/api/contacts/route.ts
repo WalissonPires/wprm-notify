@@ -9,6 +9,7 @@ import { UserLogged } from "@/common/auth/user";
 import { createContactInputSchema } from "@/domains/contacts/use-cases/create-contact-types";
 import { CreateContact } from "@/domains/contacts/use-cases/create-contact";
 import { GetContactById } from "@/domains/contacts/use-cases/get-contacts-by-id";
+import { ContactValidation } from "@/domains/contacts/use-cases/contact-validation";
 
 
 export async function GET(request: NextRequest) {
@@ -47,14 +48,21 @@ export const POST = async (request: NextRequest) => {
   try {
     const input = createContactInputSchema.parse(await request.json());
 
+    const user = UserLogged.fromRequest(request);
+    const prismaClient = PrismaClientFactory.create();
+
     const useCase = new CreateContact({
-      userLogged: UserLogged.fromRequest(request),
-      prismaClient: PrismaClientFactory.create()
+      userLogged: user,
+      prismaClient: prismaClient,
+      contactValidation: new ContactValidation({
+        userLogged: user,
+        prismaClient: prismaClient
+      })
     });
 
     const getById = new GetContactById({
-      userLogged: UserLogged.fromRequest(request),
-      prismaClient: PrismaClientFactory.create()
+      userLogged: user,
+      prismaClient: prismaClient
     });
 
     const { id: contactId } = await useCase.execute(input);

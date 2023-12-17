@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo } from "react";
+import { MouseEvent, useMemo } from "react";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { TimeAgo } from "@/common/datetime/time-ago";
+import { Masks } from "@/common/validation/masks";
 import { AppRoutes } from "@/common/routes";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle, maskValue } from "../Form";
 import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 
 export default function ContactCard({ contact }: ContactItemProps) {
@@ -17,6 +18,20 @@ export default function ContactCard({ contact }: ContactItemProps) {
   const triggerAgo = useMemo(() => nextNotification?.triggerAt ? new TimeAgo().format(new Date(nextNotification.triggerAt)) : null, [nextNotification?.triggerAt]);
   const triggerAt = useMemo(() => nextNotification?.triggerAt ? new Date(nextNotification.triggerAt).toLocaleDateString() : null, [nextNotification?.triggerAt]);
 
+  const handleToggleDropdown = (event: MouseEvent) => {
+
+    event.stopPropagation();
+    event.preventDefault();
+    setVisible(!visible);
+  };
+
+  const handleDropdownItemClick = (event: MouseEvent) => {
+
+    event.stopPropagation();
+    event.preventDefault();
+    setVisible(false);
+  };
+
   return (
     <div className="flex flex-row justify-between px-4 py-6 hover:bg-slate-50">
       <div className="flex-1">
@@ -25,7 +40,7 @@ export default function ContactCard({ contact }: ContactItemProps) {
           {phone &&
             <span className="inline-flex flex-row items-center text-sm text-slate-500 mr-4">
               <PhoneIcon className="h-5 w-5 inline-block text-blue-600 mr-2" />
-              <span>{phone}</span>
+              <span>{maskValue(phone, { mask: Masks.phone })}</span>
             </span>}
           {email &&
             <span className="inline-flex flex-row items-center text-sm text-slate-500 mr-4">
@@ -47,11 +62,11 @@ export default function ContactCard({ contact }: ContactItemProps) {
       <div className="flex items-center justify-center ml-3">
         <DropdownMenu
           visible={visible}
-          toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
-          <DropdownMenuItem onClick={() => setVisible(false)}>
+          toggle={<DropdownMenuToggle onClick={handleToggleDropdown}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
+          <DropdownMenuItem onClick={handleDropdownItemClick}>
             <Link href={AppRoutes.newContactNotification(contact.id)}><BoltIcon className="h-5 w-5 inline-block" /> Criar notificação</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setVisible(false)}>
+          <DropdownMenuItem onClick={handleDropdownItemClick}>
               <Link href={AppRoutes.contactNotificationTriggers(contact.id)}><EyeIcon className="h-5 w-5 inline-block" /> Ver notificações</Link>
           </DropdownMenuItem>
         </DropdownMenu>
