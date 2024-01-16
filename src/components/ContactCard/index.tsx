@@ -3,14 +3,14 @@
 import { MouseEvent, useMemo } from "react";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
-import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { TimeAgo } from "@/common/datetime/time-ago";
 import { Masks } from "@/common/validation/masks";
 import { AppRoutes } from "@/common/routes";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle, maskValue } from "../Form";
 import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 
-export default function ContactCard({ contact }: ContactItemProps) {
+export default function ContactCard({ contact, onDeleteContact }: ContactItemProps) {
 
   const { name, phone, email, nextNotification, groups } = contact;
   const { visible, setVisible } = useDrodownMenu(ContactCard.name);
@@ -30,6 +30,12 @@ export default function ContactCard({ contact }: ContactItemProps) {
     event.stopPropagation();
     event.preventDefault();
     setVisible(false);
+  };
+
+  const handleDeleteContact = (event: MouseEvent) => {
+
+    handleDropdownItemClick(event);
+    onDeleteContact();
   };
 
   return (
@@ -69,6 +75,9 @@ export default function ContactCard({ contact }: ContactItemProps) {
           <DropdownMenuItem onClick={handleDropdownItemClick}>
               <Link href={AppRoutes.contactNotificationTriggers(contact.id)}><EyeIcon className="h-5 w-5 inline-block" /> Ver notificações</Link>
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDeleteContact}>
+              <span><TrashIcon className="h-5 w-5 inline-block" /> Excluir</span>
+          </DropdownMenuItem>
         </DropdownMenu>
       </div>
     </div>
@@ -101,6 +110,7 @@ ContactCard.Skeleton = function ContactCardSkeleton() {
 
 export interface ContactItemProps {
   contact: Contact;
+  onDeleteContact: () => void | Promise<void>;
 }
 
 export interface Contact {

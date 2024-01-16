@@ -48,7 +48,7 @@ ContactGroups(contactId, groupId)
 
 TemplateMessages(id, name, content, params(name))
 
-Triggers(id, type(yearly, monthly, daily), month, day, contactId, templateMessageId, paramsValue(name, value))
+Triggers(id, type(yearly, semi-annual, quarterly, biomonthly, monthly, daily), month, day, startAt(Vencimento. Usem: Bimestral, Trimestral, Semestral), contactId, templateMessageId, paramsValue(name, value))
 
 Notifications(id, scheduledAt, sendedAt, templateMessageId, content)
 

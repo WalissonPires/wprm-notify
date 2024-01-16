@@ -59,6 +59,12 @@ export class ContactsApi {
 
     return result;
   }
+
+  public async delete(id: string): Promise<void> {
+
+    const url = UrlFormatter.format('{id}', { id: id });
+    await this._client.delete<void>(url);
+  }
 }
 
 export interface GetAllArgs extends PagedInput {
