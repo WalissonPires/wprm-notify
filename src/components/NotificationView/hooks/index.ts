@@ -8,6 +8,7 @@ import { useForm, SubmitHandler,useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NotificationTriggersApi } from "@/domains/notification-triggers/client-api";
 import { TriggerType } from "@/domains/notification-triggers/entities";
+import { DefaultParamsUtils } from "@/domains/message-templates/default-params";
 import { messages } from "@/common/validation/messages";
 import { AppError } from "@/common/error";
 import { AppToast } from "@/common/ui/toast";
@@ -73,9 +74,12 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
 
     if (!messageTemplatedSelected) return;
 
+    const defaultParamsUtils = new DefaultParamsUtils();
+    const defaultParams = Object.values(defaultParamsUtils.getAllParamsDefaultLanguage());
+
     messageTemplateParamsField.replace(messageTemplatedSelected?.params.map(param => ({
       name: param.name,
-      value: ''
+      value: defaultParams.includes(param.name) ? DefaultParamValue : ''
     })) ?? []);
 
   }, [ messageTemplatedSelected ]);
@@ -114,6 +118,8 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
     messageTemplatedSelected
   };
 }
+
+export const DefaultParamValue = '[Preenchido pelo sistema]';
 
 
 const baseValidationSchema = z.object({

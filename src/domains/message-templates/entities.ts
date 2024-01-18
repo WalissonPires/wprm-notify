@@ -47,14 +47,14 @@ interface MessageTemplateProps {
   id: string;
   name: string;
   content: string;
-  params: MessageTempplateParam[];
+  params: MessageTemplateParam[];
 }
 
-interface MessageTempplateParam {
+export interface MessageTemplateParam {
   name: string;
 }
 
-interface MessageTempplateParamWithValue {
+export interface MessageTempplateParamWithValue {
   name: string;
   value: string;
 }
@@ -64,5 +64,5 @@ export interface MessageTemplate1 {
   id: string;
   name: string;
   content: string;
-  params: MessageTempplateParam[];
+  params: MessageTemplateParam[];
 }

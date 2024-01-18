@@ -1,6 +1,10 @@
 'use client'
 
-import { CheckIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import { DOMAttributes, PropsWithChildren, useMemo } from "react";
+import { CheckIcon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentIcon } from "@heroicons/react/24/solid";
+import { DefaultParamsUtils } from "@/domains/message-templates/default-params";
+import { AppToast } from "@/common/ui/toast";
 import { Button, ColSize, FieldError, FormColumn, FormRow, Input, TextArea } from "../Form";
 import { useMessageTemplate } from "./hooks";
 
@@ -17,6 +21,14 @@ export function MessageTemplateView() {
     handleSubmit,
     //handleAddParam
   } = useMessageTemplate();
+
+  const defaultParams = useMemo(() => Object.values(new DefaultParamsUtils().getAllParamsDefaultLanguage()), []);
+
+  const handleDefaultParamClicked = (param: string) => {
+
+    navigator.clipboard.writeText('{{' + param + '}}');
+    AppToast.info('Parâmetro copiado');
+  };
 
   return (
     <div className="container mx-auto max-w-3xl">
@@ -44,20 +56,14 @@ export function MessageTemplateView() {
             As partes de sua mensagem que não são fixas podem ser definidas usando <b>parâmetros</b>. Um <b>parâmetro</b> é um texto no formato <b>{'{{texto}}'}</b> que será substituido mais tarde.
             Como exemplo: <b>Feliz aniversário {'{{nome}}'}. Muitas felicidades!</b>
           </p>
-          {paramsNames.map(name => <span key={name} className="bg-slate-400 text-white py-2 px-3 rounded mr-3">{name}</span>)}
+          <p className="bg-green-100 p-3 mb-5">
+            Esses são algums parâmetros padrões que você pode utilizar e o sistema irá preencher para você:
+            <div className="flex text-xs">
+                {defaultParams.map(param => <TagParam key={param} onClick={() => handleDefaultParamClicked(param)}>{`{{${param}}}`} <ClipboardDocumentIcon className="h-4 w-4 inline-block" /></TagParam>)}
+              </div>
+          </p>
+          {paramsNames.map(name => <TagParam key={name}>{name}</TagParam>)}
           {paramsNames.length === 0 && <p className="text-slate-400 text-center">Nenhum parâmetro encontrado na mensagem</p>}
-          {/* <h4 className="mb-4">Parâmetros da mensagem</h4>
-          <ul className="divide-y">
-            <li className="mb-3">
-              <Button onClick={handleAddParam} variant="transparent" className="w-full"><PlusCircleIcon className="inline-block h-5 w-5" /> Adicionar parâmetro</Button>
-            </li>
-            {paramsField.fields.map((field, index) =>
-            <li key={field.id} className="p-4 border bg-slate-100 mb-2">
-              <label>{field.name}</label>
-              <Input {...register(`params.${index}.name` as const)} placeholder="Nome do parâmetro" />
-              <FieldError error={errors.params?.at?.(index)?.name} />
-            </li>)}
-          </ul> */}
           <div className="text-center mt-3">
             <Button type="submit" disabled={isSaving}><CheckIcon className="h-5 w-5 inline-block" /> {isSaving ? 'Salvando...' : 'Salvar'}</Button>
           </div>
@@ -65,4 +71,9 @@ export function MessageTemplateView() {
       </div>
     </div>
   );
+}
+
+function TagParam({ children, onClick }: PropsWithChildren & Pick<DOMAttributes<HTMLElement>, 'onClick'>) {
+
+  return <p onClick={onClick} className="bg-slate-400 text-white py-2 px-3 rounded mr-3">{children}</p>;
 }

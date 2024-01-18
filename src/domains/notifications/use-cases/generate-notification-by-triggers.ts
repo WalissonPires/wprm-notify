@@ -4,11 +4,12 @@ import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
 import { TriggerMapper } from "../../notification-triggers/mapper";
 import { MessageTemplateMapper } from "../../message-templates/mapper";
+import { DefaultParamsReplace } from "../../message-templates/default-params-replace";
 
 
 export class GenerateNotificationsByTriggers implements UseCase<void, void> {
 
-  public async execute(input: void): Promise<void> {
+  public async execute(_: void): Promise<void> {
 
     const db = new PrismaClient();
 
@@ -18,6 +19,7 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
     const triggerMapper = new TriggerMapper();
     const messageTemplateMapper = new MessageTemplateMapper();
     const idGen = new IdGenerator();
+    const defaultParamsReplace = new DefaultParamsReplace();
 
     while (true) {
 
@@ -27,7 +29,8 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
         include: {
           contact: {
             select: {
-              accountId: true
+              accountId: true,
+              name: true
             }
           },
           templateMessage: true
@@ -58,7 +61,14 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
           throw new AppError('Message template for trigger not found');
 
         const messageTemplate = messageTemplateMapper.map(triggerDb.templateMessage);
-        const messageContent = messageTemplate.format(trigger.paramsValue);
+
+        const defaultParamsWithValues = defaultParamsReplace.replace({
+          params: trigger.paramsValue,
+          contact: triggerDb.contact ?? null
+        });
+        const restParamsWithValues = trigger.paramsValue.filter(tParam => !defaultParamsWithValues.some(dParam => dParam.name === tParam.name));
+        const paramsWithValues = defaultParamsWithValues.concat(restParamsWithValues);
+        const messageContent = messageTemplate.format(paramsWithValues);
 
         await db.notification.create({
           data: {

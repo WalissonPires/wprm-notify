@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TriggerType } from "@/domains/notification-triggers/entities";
 import { FormRow, FormColumn, Input, Select, ButtonsGroup, ButtonItem, Button, DaysOfMonthSelect, MonthsSelect, ColSize } from "../Form";
-import { useNotificationView } from "./hooks";
+import { useNotificationView, DefaultParamValue } from "./hooks";
 
 
 export function NotificationView({ contactId }: NotificationViewProps) {
@@ -82,7 +82,7 @@ export function NotificationView({ contactId }: NotificationViewProps) {
               {messageTemplateParamsField.fields.map((field, index) =>
               <li key={field.id} className="p-4 border bg-slate-100 mb-2">
                 <label>{field.name}</label>
-                <Input {...register(`messageTemplateParams.${index}.value` as const)} placeholder={field.name} />
+                <Input {...register(`messageTemplateParams.${index}.value` as const)} placeholder={field.name} disabled={field.value === DefaultParamValue} />
                 { errors.messageTemplateParams?.at?.(index)?.value && <small className="text-red-400">{errors.messageTemplateParams.at(index)?.value?.message}</small> }
               </li>)}
             </ul>
