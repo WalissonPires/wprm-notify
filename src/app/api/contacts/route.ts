@@ -5,11 +5,11 @@ import { URLSearchParamsParser } from "@/common/http/url/url-params-parser";
 import { GetContacts } from "@/domains/contacts/use-cases/get-contacts";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
-import { UserLogged } from "@/common/auth/user";
 import { createContactInputSchema } from "@/domains/contacts/use-cases/create-contact-types";
 import { CreateContact } from "@/domains/contacts/use-cases/create-contact";
 import { GetContactById } from "@/domains/contacts/use-cases/get-contacts-by-id";
 import { ContactValidation } from "@/domains/contacts/use-cases/contact-validation";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 
 
 export async function GET(request: NextRequest) {
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     const useCase = new GetContacts({
       prismaClient: PrismaClientFactory.create(),
-      userLogged: UserLogged.fromRequest(request)
+      userLogged: await new UserSessionManager().getUserOrThrow()
     });
 
     const result = await useCase.execute({
@@ -48,7 +48,7 @@ export const POST = async (request: NextRequest) => {
   try {
     const input = createContactInputSchema.parse(await request.json());
 
-    const user = UserLogged.fromRequest(request);
+    const user = await new UserSessionManager().getUserOrThrow();
     const prismaClient = PrismaClientFactory.create();
 
     const useCase = new CreateContact({

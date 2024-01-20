@@ -17,6 +17,10 @@ Crie um arquivo `.env-development.local` na raiz do projeto:
 ```sh
 DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 DIRECT_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+COOKIE_PRIVATE_KEY="my-cookie-private-key"
+
+NEXT_PUBLIC_SEND_MESSAGE_API_URL="http://localhost:3000/"
+NEXT_PUBLIC_SEND_MESSAGE_API_TOKEN="Bearer ACCESS_TOKEN"
 ```
 
 Aplique as migrações:

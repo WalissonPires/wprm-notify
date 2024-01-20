@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GetContactById } from "@/domains/contacts/use-cases/get-contacts-by-id";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
-import { UserLogged } from "@/common/auth/user";
 import { UpdateContact } from "@/domains/contacts/use-cases/update-contact";
 import { ContactValidation } from "@/domains/contacts/use-cases/contact-validation";
 import { DeleteContact } from "@/domains/contacts/use-cases/delete-contact";
 import { updateContactInputSchema } from "@/domains/contacts/use-cases/update-contact-types";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 
 
 export const GET = async (request: NextRequest, { params }: ContactIdParams) => {
@@ -14,7 +14,7 @@ export const GET = async (request: NextRequest, { params }: ContactIdParams) => 
   try {
     const useCase = new GetContactById({
       prismaClient: PrismaClientFactory.create(),
-      userLogged: UserLogged.fromRequest(request)
+      userLogged: await new UserSessionManager().getUserOrThrow()
     });
 
     const result = await useCase.execute({
@@ -36,7 +36,7 @@ export const PUT = async (request: NextRequest, { params }: ContactIdParams) => 
   try {
     const input = updateContactInputSchema.parse(await request.json());
 
-    const user = UserLogged.fromRequest(request);
+    const user = await new UserSessionManager().getUserOrThrow();
     const prismaClient = PrismaClientFactory.create();
 
     const useCase = new UpdateContact({
@@ -74,7 +74,7 @@ export const DELETE = async (request: NextRequest, { params }: ContactIdParams) 
   try {
     const useCase = new DeleteContact({
       prismaClient: PrismaClientFactory.create(),
-      userLogged: UserLogged.fromRequest(request)
+      userLogged: await new UserSessionManager().getUserOrThrow()
     });
 
     await useCase.execute({

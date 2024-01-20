@@ -1,4 +1,5 @@
 import { AppError } from "@/common/error";
+import { HttpClientError } from "./error";
 
 export class HttpClient {
 
@@ -94,7 +95,7 @@ export class HttpClient {
 
     const statusClass = Math.trunc(response.status / 100);
     if (statusClass !== 2) {
-      throw new Error('Server returned status code ' + response.status);
+      throw new HttpClientError('Server returned status code ' + response.status, response.status);
     }
 
     return result;

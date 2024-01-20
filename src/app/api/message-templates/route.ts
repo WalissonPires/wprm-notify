@@ -4,8 +4,8 @@ import { GetMessageTemplates } from "@/domains/message-templates/use-cases/get-m
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { CreateMessageTemplate } from "@/domains/message-templates/use-cases/create-message-template";
 import { createMessateTemplateInputSchema } from "@/domains/message-templates/use-cases/create-message-template-types";
-import { UserLogged } from "@/common/auth/user";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 
 export async function GET(request: NextRequest) {
 
@@ -31,7 +31,7 @@ export const POST = async (request: NextRequest) => {
     const input = createMessateTemplateInputSchema.parse(await request.json());
 
     const useCase = new CreateMessageTemplate({
-      userLogged: UserLogged.fromRequest(request),
+      userLogged: await new UserSessionManager().getUserOrThrow(),
       prismaClient: PrismaClientFactory.create()
     });
 

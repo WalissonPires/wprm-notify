@@ -19,4 +19,13 @@ export class AppConfig {
 
     return token;
   }
+
+  public CookiePrivateKey() {
+
+    const privateKey = process.env.COOKIE_PRIVATE_KEY;
+    if (!privateKey)
+      throw new AppError('COOKIE_PRIVATE_KEY is empty');
+
+    return privateKey;
+  }
 }

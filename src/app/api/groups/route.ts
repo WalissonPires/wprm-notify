@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { PagedInputExtract } from "@/common/http/pagination/paged-input-parser";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
-import { UserLogged } from "@/common/auth/user";
 import { GetGroups } from "@/domains/groups/use-cases/get-groups";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 
 
 export async function GET(request: NextRequest) {
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     const useCase = new GetGroups({
       prismaClient: PrismaClientFactory.create(),
-      userLogged: UserLogged.fromRequest(request)
+      userLogged: await new UserSessionManager().getUserOrThrow()
     });
 
     const result = await useCase.execute({
