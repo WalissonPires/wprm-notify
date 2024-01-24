@@ -37,14 +37,10 @@ export class AuthApi {
     await this._client.delete<void>('');
   }
 
-  public async getCurrentUser(): Promise<UserLogged> {
+  public async getCurrentUser(): Promise<UserLogged | null> {
 
     const result = await this._client.get<UserLogged>('');
-
-    if (!result)
-      throw new Error('Server did not return results');
-
-    return result;
+    return result ?? null;
   }
 }
 

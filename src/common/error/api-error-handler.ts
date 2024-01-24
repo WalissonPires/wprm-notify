@@ -1,11 +1,17 @@
 import { ZodError } from "zod";
 import { NextResponse } from "next/server";
+import { NotAuthenticateError } from "./not-authenticate-error";
 import { AppError } from ".";
-
 
 export class ApiErrorHandler {
 
   public static handler(error: any) {
+
+    if (NotAuthenticateError.is(error)) {
+
+      return NextResponse.json(null, { status: 401 });
+    }
+
 
     if (AppError.is(error)) {
 

@@ -2,7 +2,7 @@ import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { AppConfig } from "@/common/configuration";
 import { UserLogged } from "@/common/auth/user";
-import { AppError } from "@/common/error";
+import { NotAuthenticateError } from "@/common/error/not-authenticate-error";
 
 
 export class UserSessionManager {
@@ -20,7 +20,7 @@ export class UserSessionManager {
 
     const user = await this.getUser();
     if (!user)
-      throw new AppError('User not authenticate');
+      throw new NotAuthenticateError();
 
     return user;
   }

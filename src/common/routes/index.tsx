@@ -12,4 +12,5 @@ export abstract class AppRoutes {
   public static messageTemplates() { return '/message-templates'; }
   public static newMessageTemplates() { return '/message-templates/new'; }
   public static settings() { return '/settings'; }
+  public static login() { return '/login'; }
 }

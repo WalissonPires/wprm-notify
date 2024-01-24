@@ -2,6 +2,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { AppLayout } from '@/components/AppLayout';
 import { AppLayoutBody } from '@/components/AppLayout/Body';
 import { AppLayoutHeader } from '@/components/AppLayout/Header';
+import { AppLayoutPreLoading } from '@/components/AppLayout/PreLoading';
 import { AppLayoutTabItem } from '@/components/AppLayout/TabItem';
 import { AppLayoutTabs } from '@/components/AppLayout/Tabs';
 import { AppLayoutBackWithContactTitle } from '@/components/AppLayout/BackWithTitle/WithContact';
@@ -25,7 +26,9 @@ export default function ContactNotifications({ params }: PageProps) {
         <AppLayoutTabItem label="Envidas" title="Notificações enviadas" href={AppRoutes.contactNotifications(params.contactId)} replace active />
       </AppLayoutTabs>
       <AppLayoutBody>
-        <ContactNotificationsView contactId={params.contactId} />
+        <AppLayoutPreLoading>
+          <ContactNotificationsView contactId={params.contactId} />
+        </AppLayoutPreLoading>
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.contacts} />
     </AppLayout>

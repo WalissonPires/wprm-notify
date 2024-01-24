@@ -4,6 +4,7 @@ import { AppLayoutBody } from '@/components/AppLayout/Body';
 import { AppLayoutHeader } from '@/components/AppLayout/Header';
 import { AppLayoutTabItem } from '@/components/AppLayout/TabItem';
 import { AppLayoutTabs } from '@/components/AppLayout/Tabs';
+import { AppLayoutPreLoading } from '@/components/AppLayout/PreLoading';
 import { AppLayoutBackWithContactTitle } from '@/components/AppLayout/BackWithTitle/WithContact';
 import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Actions';
 import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
@@ -26,8 +27,10 @@ export default function ContactNotifications({ params }: PageProps) {
         <AppLayoutTabItem label="Envidas" title="Notificações enviadas" href={AppRoutes.contactNotifications(params.contactId)} replace />
       </AppLayoutTabs>
       <AppLayoutBody>
-        <AppLoading />
-        <ContactNotificationTriggersView contactId={params.contactId} />
+        <AppLayoutPreLoading>
+          <AppLoading />
+          <ContactNotificationTriggersView contactId={params.contactId} />
+        </AppLayoutPreLoading>
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.contacts} />
     </AppLayout>

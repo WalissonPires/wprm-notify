@@ -1,5 +1,6 @@
 import { AppLayout } from '@/components/AppLayout';
 import { AppLayoutBody } from '@/components/AppLayout/Body';
+import { AppLayoutPreLoading } from '@/components/AppLayout/PreLoading';
 import { AppLayoutHeader } from '@/components/AppLayout/Header';
 import { AppLayoutMenuWithTitle } from '@/components/AppLayout/MenuWithTitle';
 import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
@@ -13,7 +14,9 @@ export default function Notifications() {
         <AppLayoutMenuWithTitle title="Notificações" />
       </AppLayoutHeader>
       <AppLayoutBody>
-        <ContactNotificationsView />
+        <AppLayoutPreLoading>
+          <ContactNotificationsView />
+        </AppLayoutPreLoading>
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.notifications} />
     </AppLayout>

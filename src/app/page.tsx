@@ -9,6 +9,7 @@ import { SearchAction } from '@/components/AppLayout/Actions/SearchAction';
 import ContactsContainer from '@/components/ContactsContainer';
 import { ContactsFilterAction } from '@/components/ContactsView/ContactsFilter';
 import { AppRoutes } from '../common/routes';
+import { AppLayoutPreLoading } from '@/components/AppLayout/PreLoading';
 
 export default function Home() {
 
@@ -23,7 +24,9 @@ export default function Home() {
         </AppLayoutActions>
       </AppLayoutHeader>
       <AppLayoutBody>
-        <ContactsContainer />
+        <AppLayoutPreLoading>
+          <ContactsContainer />
+        </AppLayoutPreLoading>
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.contacts} />
     </AppLayout>
