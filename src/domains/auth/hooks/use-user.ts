@@ -1,67 +1,45 @@
 'use client'
 
-import { proxy, useSnapshot } from "valtio";
+import useSWR from "swr";
 import { useEffect } from "react"
 import { useRouter } from "next/navigation";
-import { UserLogged } from "@/common/auth/user";
 import { HttpClientError } from "@/common/http/client/error";
+import { UserLogged } from "@/common/auth/user";
 import { AppRoutes } from "@/common/routes";
-import { AppToast } from "@/common/ui/toast";
-import { AppError } from "@/common/error";
 import { AuthApi } from "../client-api";
 
-const userState = proxy<UserState>({
-  user: null,
-  checked: false
-});
-
-interface UserState {
-  user: UserLogged | null;
-  checked: boolean;
-}
-
-
-export function useUser() {
+export function useUser(args?: UseUserArgs) {
 
   const router = useRouter();
-  const { user, checked } = useSnapshot(userState);
+  const { data: user, error, mutate } = useSWR('user-logged', () => new AuthApi().getCurrentUser());
+
+  const redirect = args?.redirect !== false;
 
   useEffect(() => {
 
-    if (checked) return;
+    if (!redirect)
+      return;
 
-    userState.checked = true;
+    if (!user) {
+      router.push(AppRoutes.login());
+      return;
+    }
 
-    (async () => {
+    if (error && HttpClientError.is(error) && error.statusCode === 401) {
 
-      try {
-        const user = await new AuthApi().getCurrentUser();
+      router.push(AppRoutes.login());
+      return;
+    }
 
-        if (!user) {
-          router.push(AppRoutes.login());
-          return;
-        }
 
-        userState.user = user;
-      }
-      catch(error) {
-
-        if (error && HttpClientError.is(error) && error.statusCode === 401) {
-
-          router.push(AppRoutes.login());
-          return;
-        }
-
-        userState.user = null;
-        AppToast.error(AppError.parse(error).message);
-      }
-
-    })();
-
-  }, []);
-
+  }, [ user, error, redirect ]);
 
   return {
-    user
+    user: user ?? null,
+    setUser: (user: UserLogged | null) => mutate(user)
   };
+}
+
+export interface UseUserArgs {
+  redirect?: boolean;
 }
