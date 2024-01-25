@@ -1,34 +1,67 @@
 'use client'
 
-import useSWR from "swr";
+import { proxy, useSnapshot } from "valtio";
 import { useEffect } from "react"
 import { useRouter } from "next/navigation";
+import { UserLogged } from "@/common/auth/user";
 import { HttpClientError } from "@/common/http/client/error";
 import { AppRoutes } from "@/common/routes";
+import { AppToast } from "@/common/ui/toast";
+import { AppError } from "@/common/error";
 import { AuthApi } from "../client-api";
+
+const userState = proxy<UserState>({
+  user: null,
+  checked: false
+});
+
+interface UserState {
+  user: UserLogged | null;
+  checked: boolean;
+}
+
 
 export function useUser() {
 
   const router = useRouter();
-  const { data: user, error } = useSWR('user-logged', () => new AuthApi().getCurrentUser());
+  const { user, checked } = useSnapshot(userState);
 
   useEffect(() => {
 
-    if (!user) {
-      router.push(AppRoutes.login());
-      return;
-    }
+    if (checked) return;
 
-    if (error && HttpClientError.is(error) && error.statusCode === 401) {
+    userState.checked = true;
 
-      router.push(AppRoutes.login());
-      return;
-    }
+    (async () => {
 
+      try {
+        const user = await new AuthApi().getCurrentUser();
 
-  }, [ user, error ]);
+        if (!user) {
+          router.push(AppRoutes.login());
+          return;
+        }
+
+        userState.user = user;
+      }
+      catch(error) {
+
+        if (error && HttpClientError.is(error) && error.statusCode === 401) {
+
+          router.push(AppRoutes.login());
+          return;
+        }
+
+        userState.user = null;
+        AppToast.error(AppError.parse(error).message);
+      }
+
+    })();
+
+  }, []);
+
 
   return {
-    user: user ?? null
+    user
   };
 }
