@@ -33,6 +33,8 @@ export async function DELETE() {
 
   const useCase = new Logout();
   await useCase.execute();
+
+  return new Response(null, { status: 204 });
 }
 
 
