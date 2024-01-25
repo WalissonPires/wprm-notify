@@ -13,6 +13,7 @@ import { Button } from "@/components/Form/Button";
 import { AppLayout } from "@/components/AppLayout";
 import { messages } from "@/common/validation/messages";
 import { AuthApi } from "@/domains/auth/client-api";
+import { useUser } from "@/domains/auth/hooks/use-user";
 import { AppToast } from "@/common/ui/toast";
 import { AppRoutes } from "@/common/routes";
 import { FieldError } from "@/components/Form/FieldError";
@@ -24,6 +25,7 @@ export default function Login() {
 
   const router = useRouter();
   const [ isSaving, setIsSaving ] = useState(false);
+  const { setUser } = useUser({ redirect: false });
 
   const { register, handleSubmit, formState: { errors } } = useForm<Model>({
     resolver: zodResolver(validationSchema)
@@ -36,10 +38,12 @@ export default function Login() {
       const api = new AuthApi();
       setIsSaving(true);
 
-      await api.login({
+      const user = await api.login({
         email: data.email,
         password: data.password
       });
+
+      setUser(user);
 
       AppToast.success('Logado com sucesso. Redirecionado...');
 
