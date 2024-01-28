@@ -28,13 +28,13 @@ jobs:
         run: ls -al
 
       - name: Copy public folder
-        run: cp ./public ./.next/standalone/
+        run: cp -r ./public ./.next/standalone/
 
       - name: Copy static folder
-        run: cp ./.next/static ./.next/standalone/.next/
+        run: cp -r ./.next/static ./.next/standalone/.next/
 
       - name: Copy prisma folder
-        run: cp ./prisma ./.next/standalone/
+        run: cp -r ./prisma ./.next/standalone/
 
       - name: Zip App
         run: zip -r app.zip ./.next/standalone
