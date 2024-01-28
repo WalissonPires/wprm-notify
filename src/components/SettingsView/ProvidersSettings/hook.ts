@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { ProviderType } from "@/common/services/messaging/models";
-import { ProvidersApi } from "@/common/services/messaging";
 import { AppToast } from "@/common/ui/toast";
 import { AppError } from "@/common/error";
 import { ProvidersState, ProviderStateStatus, ProviderState, mapStatus } from "./types";
+import { MessageProvidersApi } from "@/domains/message-providers/client-api";
 
 export function useProvidersSettings() {
 
@@ -27,8 +27,8 @@ export function useProvidersSettings() {
     const execute = async () => {
 
       try {
-        const api = new ProvidersApi();
-        const providersStatus = await api.getStatus({});
+        const api = new MessageProvidersApi();
+        const providersStatus = await api.getProvidersStatus();
 
         const whatsappProvider = providersStatus?.find(x => x.type === ProviderType.Whatsapp);
 
@@ -72,8 +72,8 @@ export function useProvidersSettings() {
     const intervalId = setInterval(async () => {
 
       try {
-        const api = new ProvidersApi();
-        const providersStatus = await api.getStatus({});
+        const api = new MessageProvidersApi();
+        const providersStatus = await api.getProvidersStatus();
 
         if (!providersStatus)
           return;

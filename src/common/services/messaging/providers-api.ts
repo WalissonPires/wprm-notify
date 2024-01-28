@@ -8,13 +8,13 @@ export class ProvidersApi {
 
   private _client: HttpClient;
 
-  constructor() {
+  constructor(ops: { accessToken: string }) {
 
     const config = new AppConfig();
     this._client = new HttpClient({
       baseUrl: UrlFormatter.join(config.SendMessageApiUrl(), 'providers'),
       defaultHeaders: {
-        'Authorization': [ config.SendMessageApiToken() ]
+        'Authorization': [ 'Bearer ' + ops.accessToken ]
       }
     });
   }

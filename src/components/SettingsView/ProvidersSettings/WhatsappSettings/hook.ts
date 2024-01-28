@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { AppError } from "@/common/error";
+import { AppToast } from "@/common/ui/toast";
 import { delay } from "@/common/primitives/promise/delay";
 import { tryExecute, isExecuteError } from "@/common/primitives/promise/try-promise";
-import { ProvidersApi } from "@/common/services/messaging";
-import { ProviderType } from "@/common/services/messaging/models";
-import { AppToast } from "@/common/ui/toast";
+import { MessageProvidersApi } from "@/domains/message-providers/client-api";
 import { ProviderState, mapStatus } from "../types";
 
 
@@ -17,22 +16,16 @@ export function useWhatsappSettings(args: { provider: ProviderState, onProviderC
     setIsLoading(true);
 
     try {
-      const api = new ProvidersApi();
+      const api = new MessageProvidersApi();
 
-      const provider = await api.create({
-        provider: {
-          name: 'Wprm-Notify Whatsapp',
-          type: ProviderType.Whatsapp,
-          config: {}
-        }
-      });
+      const provider = await api.createWhatsappProvider();
 
       if (!provider) {
         AppToast.error('No response from server');
         return;
       }
 
-      const initResult = await tryExecute(api.initialize({ id: provider.id }));
+      const initResult = await tryExecute(api.initProvider({ id: provider.id }));
 
       if (isExecuteError(initResult)) {
 
@@ -46,7 +39,7 @@ export function useWhatsappSettings(args: { provider: ProviderState, onProviderC
 
       await delay(2000);
 
-      const providersStatus = await api.getStatus({ id: provider.id });
+      const providersStatus = await api.getProvidersStatus({ id: provider.id });
       const providerStatus = providersStatus?.at(0);
 
       if (providerStatus) {
@@ -73,13 +66,13 @@ export function useWhatsappSettings(args: { provider: ProviderState, onProviderC
     setIsLoading(true);
 
     try {
-      const api = new ProvidersApi();
+      const api = new MessageProvidersApi();
 
-      api.initialize({ id: args.provider.id });
+      api.initProvider({ id: args.provider.id });
 
       await delay(2000);
 
-      const providersStatus = await api.getStatus({ id: args.provider.id });
+      const providersStatus = await api.getProvidersStatus({ id: args.provider.id });
       const providerStatus = providersStatus?.at(0);
 
       if (providerStatus) {

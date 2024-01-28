@@ -5,13 +5,13 @@ export class MessagingApi {
 
   private _client: HttpClient;
 
-  constructor() {
+  constructor(ops: { accessToken: string }) {
 
     const config = new AppConfig();
     this._client = new HttpClient({
       baseUrl: config.SendMessageApiUrl(),
       defaultHeaders: {
-        'Authorization': [ config.SendMessageApiToken() ]
+        'Authorization': [ 'Bearer ' + ops.accessToken ]
       }
     });
   }

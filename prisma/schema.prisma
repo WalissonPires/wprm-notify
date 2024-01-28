@@ -12,18 +12,19 @@ datasource db {
 }
 
 model Account {
-  id         String    @id @db.Char(26)
-  name       String    @db.VarChar(40)
-  email      String    @db.VarChar(60)
-  password   String    @db.Char(64)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime
-  lastAccess DateTime?
+  id                String    @id @db.Char(26)
+  name              String    @db.VarChar(40)
+  email             String    @db.VarChar(60)
+  password          String    @db.Char(64)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+  lastAccess        DateTime?
+  messagingApiToken String?   @db.VarChar(200)
 
-  groups   Group[]
-  contacts Contact[]
+  groups           Group[]
+  contacts         Contact[]
   templatesMessage TemplateMessage[]
-  notifications Notification[]
+  notifications    Notification[]
 }
 
 model Group {
@@ -46,11 +47,11 @@ model Contact {
   createdAt DateTime @default(now())
   updatedAt DateTime
 
-  accountId String            @db.Char(26)
-  account   Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  groups    ContactGroup[]
-  metadata  ContactMetadata[]
-  triggers  NotificationTrigger[]
+  accountId     String                @db.Char(26)
+  account       Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  groups        ContactGroup[]
+  metadata      ContactMetadata[]
+  triggers      NotificationTrigger[]
   notifications Notification[]
 }
 
@@ -77,29 +78,28 @@ model ContactMetadata {
 }
 
 model TemplateMessage {
-  id String @db.Char(26) @id
+  id        String @id @db.Char(26)
   accountId String @db.Char(26)
-  name String @db.VarChar(100)
-  content String @db.VarChar(2000)
-  params String @db.VarChar(5000)
+  name      String @db.VarChar(100)
+  content   String @db.VarChar(2000)
+  params    String @db.VarChar(5000)
 
-  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account  Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
   triggers NotificationTrigger[]
 }
 
-
 model NotificationTrigger {
-  id String @db.Char(26) @id
-  contactId String @db.Char(26)
-  type TriggerType
-  day Int?
-  month Int?
-  templateMessageId String? @db.Char(26)
-  paramsValue String @db.VarChar(5000)
+  id                String      @id @db.Char(26)
+  contactId         String      @db.Char(26)
+  type              TriggerType
+  day               Int?
+  month             Int?
+  templateMessageId String?     @db.Char(26)
+  paramsValue       String      @db.VarChar(5000)
 
-  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contact         Contact          @relation(fields: [contactId], references: [id], onDelete: Cascade)
   templateMessage TemplateMessage? @relation(fields: [templateMessageId], references: [id], onDelete: Cascade)
-  notifications Notification[]
+  notifications   Notification[]
 }
 
 enum TriggerType {
@@ -109,17 +109,17 @@ enum TriggerType {
 }
 
 model Notification {
-  id String @db.Char(26) @id
-  accountId String @db.Char(26)
-  triggerId String? @db.Char(26)
-  contactId String? @db.Char(26)
+  id          String    @id @db.Char(26)
+  accountId   String    @db.Char(26)
+  triggerId   String?   @db.Char(26)
+  contactId   String?   @db.Char(26)
   scheduledAt DateTime
-  sendedAt DateTime?
-  createdAt DateTime?
-  content String @db.VarChar(2000)
-  notes String? @db.VarChar(100)
+  sendedAt    DateTime?
+  createdAt   DateTime?
+  content     String    @db.VarChar(2000)
+  notes       String?   @db.VarChar(100)
 
-  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account Account              @relation(fields: [accountId], references: [id], onDelete: Cascade)
   trigger NotificationTrigger? @relation(fields: [triggerId], references: [id], onDelete: SetNull)
-  contact Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contact Contact?             @relation(fields: [contactId], references: [id], onDelete: Cascade)
 }
