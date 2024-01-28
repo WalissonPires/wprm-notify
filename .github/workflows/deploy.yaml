@@ -10,13 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test
-        env:
-            test_host: ${{ secrets.HOST }}
-            test_key: ${{ secrets.KEY }}
-        run: |
-          echo $test_host
-          echo $test_key
 
       - name: Checkout
         uses: actions/checkout@v4
