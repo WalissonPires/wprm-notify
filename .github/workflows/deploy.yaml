@@ -25,9 +25,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Show files
-        run: ls -al
-
       - name: Copy missing folders
         run: |
           cp -r ./public ./.next/standalone/
@@ -35,7 +32,13 @@ jobs:
           cp -r ./prisma ./.next/standalone/
 
       - name: Zip App
-        run: zip -r app.zip ./.next/standalone
+        run: zip -r ./app.zip ./.next/standalone
+
+      - name: Show repo files
+        run: ls -al .
+
+      - name: Show output files
+        run: ls -al ./.next/standalone
 
       - name: Upload zip App to server
         uses: appleboy/scp-action@v0.1.7
@@ -45,7 +48,7 @@ jobs:
           key: ${{ secrets.KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           port: ${{ secrets.PORT }}
-          source: "./.next/standalone/app.zip"
+          source: "./app.zip"
           target: ${{ secrets.APP_PATH }}
 
       - name: Run commands in server
