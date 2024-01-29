@@ -32,7 +32,7 @@ jobs:
           cp -r ./prisma ./.next/standalone/
 
       - name: Zip App
-        run: zip -r ./app.zip ./.next/standalone
+        run: (cd ./.next/standalone; zip -r ./app.zip .)
 
 #      - name: Show repo files
 #        run: ls -al .
