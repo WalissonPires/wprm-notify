@@ -34,11 +34,11 @@ jobs:
       - name: Zip App
         run: zip -r ./app.zip ./.next/standalone
 
-      - name: Show repo files
-        run: ls -al .
+#      - name: Show repo files
+#        run: ls -al .
 
-      - name: Show output files
-        run: ls -al ./.next/standalone
+#      - name: Show output files
+#        run: ls -al ./.next/standalone
 
       - name: Upload zip App to server
         uses: appleboy/scp-action@v0.1.7
@@ -67,5 +67,5 @@ jobs:
             cd $APP_PATH
             unzip -o app.zip
             npm ci --include prod
-            npx prisma db push
+            npx prisma db push --skip-generate
             pm2 restart notify-app
