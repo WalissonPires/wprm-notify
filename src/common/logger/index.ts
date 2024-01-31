@@ -1,3 +1,4 @@
+import path from 'path';
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 import { AppConfig } from '../configuration';
@@ -13,7 +14,7 @@ export class LoggerFactory {
       const config = new AppConfig();
 
       const fileTransport = new winston.transports.DailyRotateFile({
-        filename: './logs/%DATE%.log',
+        filename:  path.join(config.logPath(), '%DATE%.log'),
         datePattern: 'YYYY-MM-DD-HH',
         zippedArchive: true,
         maxSize: '20m',
@@ -23,7 +24,7 @@ export class LoggerFactory {
       const messageFormat = winston.format.printf(({ level, message, scope, timestamp }) => `${timestamp} [${scope}] ${level}: ${message}`);
 
       LoggerFactory._logger = winston.createLogger({
-        level: config.loggerLevel(),
+        level: config.logLevel(),
         format: winston.format.combine(
           winston.format.timestamp(),
           messageFormat

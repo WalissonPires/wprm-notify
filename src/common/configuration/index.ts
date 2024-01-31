@@ -2,10 +2,16 @@ import { AppError } from "../error";
 
 export class AppConfig {
 
-  public loggerLevel() {
+  public logLevel() {
 
-    const level = process.env.LOGGER_LEVEL;
+    const level = process.env.LOG_LEVEL;
     return level ?? 'warn';
+  }
+
+  public logPath() {
+
+    const path = process.env.LOG_PATH;
+    return path ?? './logs';
   }
 
   public SendMessageApiUrl() {

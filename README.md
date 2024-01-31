@@ -15,6 +15,9 @@ npm install -G dotenv-cli
 Crie um arquivo `.env-development.local` na raiz do projeto:
 
 ```sh
+NODE_ENV="development"
+LOG_LEVEL="debug"
+LOG_PATH="./logs"
 DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 DIRECT_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 COOKIE_PRIVATE_KEY="my-cookie-private-key"
