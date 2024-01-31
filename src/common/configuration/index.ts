@@ -2,6 +2,12 @@ import { AppError } from "../error";
 
 export class AppConfig {
 
+  public loggerLevel() {
+
+    const level = process.env.LOGGER_LEVEL;
+    return level ?? 'warn';
+  }
+
   public SendMessageApiUrl() {
 
     const url = process.env.SEND_MESSAGE_API_URL;

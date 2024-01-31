@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { IdGenerator } from "@/common/identity/generate";
 import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
+import { LoggerFactory } from "@/common/logger";
 import { TriggerMapper } from "../../notification-triggers/mapper";
 import { MessageTemplateMapper } from "../../message-templates/mapper";
 import { DefaultParamsReplace } from "../../message-templates/default-params-replace";
@@ -12,6 +13,9 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
   public async execute(_: void): Promise<void> {
 
     const db = new PrismaClient();
+    const logger = new LoggerFactory().createLogger({ scope: GenerateNotificationsByTriggers.name });
+
+    logger.debug('Start task generate notifications by triggers');
 
     const limit = 100;
     let offset = 0;
@@ -37,9 +41,13 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
         }
       });
 
+      logger.debug(`Get triggers ${offset}/${limit}. Found: ${triggers.length}`);
+
       offset += limit;
 
       for(const triggerDb of triggers) {
+
+        logger.debug(`Check trigger ${triggerDb.id}`);
 
         const trigger = triggerMapper.map(triggerDb);
 
@@ -55,7 +63,10 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
           }
         });
 
-        if (notificationExists) continue;
+        if (notificationExists) {
+          logger.debug(`Notification exists for trigger ${triggerDb.id}`);
+          continue;
+        }
 
         if (!triggerDb.templateMessage)
           throw new AppError('Message template for trigger not found');
@@ -70,6 +81,8 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
         const paramsWithValues = defaultParamsWithValues.concat(restParamsWithValues);
         const messageContent = messageTemplate.format(paramsWithValues);
 
+        logger.debug(`Creating notification for trigger ${triggerDb.id}`);
+
         await db.notification.create({
           data: {
             id: idGen.new(),
@@ -83,10 +96,15 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
             notes: `Agendamento ${trigger.toString()} usando modelo de mensagem "${triggerDb.templateMessage.name}".`
           }
         });
+
+        logger.debug(`Notification created for trigger ${triggerDb.id} scheduled at ${nextTriggerDate.toISOString()}`);
       }
+
 
       if (triggers.length === 0 || triggers.length < limit)
         break;
     }
+
+    logger.debug('End task generate notifications by triggers');
   }
 }

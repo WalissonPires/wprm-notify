@@ -1,9 +1,12 @@
 import { ZodError } from "zod";
 import { NextResponse } from "next/server";
 import { NotAuthenticateError } from "./not-authenticate-error";
+import { ILogger, LoggerFactory } from "../logger";
 import { AppError } from ".";
 
 export class ApiErrorHandler {
+
+  private static _logger: ILogger;
 
   public static handler(error: any) {
 
@@ -35,7 +38,13 @@ export class ApiErrorHandler {
       return NextResponse.json(data, { status: 422 });
     }
 
-    console.log(error); // [ToDo] replace by logger
+    if (!this._logger) {
+      this._logger = new LoggerFactory().createLogger({
+        scope: ApiErrorHandler.name
+      });
+    }
+
+    this._logger.error(AppError.parse(error).message);
 
     const data: ResponseError = {
        message: 'Ocorreu um erro desconhecido',

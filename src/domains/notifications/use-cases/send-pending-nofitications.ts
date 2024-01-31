@@ -1,13 +1,18 @@
 import { PrismaClient, Notification as NotificationDb, Contact as ContactDb, Account as AccountDb } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
 import { MessagingApi } from "@/common/services/messaging";
+import { LoggerFactory } from "@/common/logger";
+import { AppError } from "@/common/error";
 
 export class SendPendingNotifications implements UseCase<void, void> {
 
   public async execute(_: void): Promise<void> {
 
     const db = new PrismaClient();
+    const logger = new LoggerFactory().createLogger({ scope: SendPendingNotifications.name });
     const currentDate = new Date();
+
+    logger.debug('Start task send notifications');
 
     const notifications = await db.notification.findMany({
       where: {
@@ -31,7 +36,12 @@ export class SendPendingNotifications implements UseCase<void, void> {
       }
     });
 
-    if (notifications.length === 0) return;
+    if (notifications.length === 0) {
+      logger.debug('Zero notifications to send');
+      return;
+    }
+
+    logger.debug(`${notifications.length} notifications to send`);
 
     const notificationsByAccount: Record<string, NotificationAccountGroup> = notifications.reduce((accounts, notify) => {
 
@@ -56,7 +66,7 @@ export class SendPendingNotifications implements UseCase<void, void> {
 
       if (!accountGroup.accessToken) {
 
-        console.warn('Messaging not configured in account: ' + accountId);
+        logger.warn('Messaging not configured in account: ' + accountId);
         continue;
       }
 
@@ -68,16 +78,26 @@ export class SendPendingNotifications implements UseCase<void, void> {
 
         try {
 
-          if (!notify.contact) continue;
+          if (!notify.contact) {
+            logger.debug(`Notification ${notify.id} without contact. Skipped.`);
+            continue;
+          }
 
           const { phone, email } = notify.contact;
 
-          if (!phone) continue;
+          if (!phone) {
+            logger.debug(`Notification ${notify.id} without phone. Skipped.`);
+            continue;
+          }
+
+          logger.debug(`Sending notification ${notify.id}`);
 
           await messagingApi.sendMessage({
             to: '55' + phone,
             content: notify.content
           });
+
+          logger.debug(`Notification ${notify.id} sended`);
 
           await db.notification.update({
             where: {
@@ -90,10 +110,12 @@ export class SendPendingNotifications implements UseCase<void, void> {
 
         }
         catch(error) {
-          console.error(error);
+          logger.error(AppError.parse(error).message);
         }
       }
     }
+
+    logger.debug('End task send notifications');
   }
 
 }
