@@ -4,12 +4,14 @@ export class AppError extends Error {
 
   public details: Record<string, string[]>;
 
-  constructor(message: string, details?: Record<string, string[]>, cause?: any) {
+  constructor(message: string, options?: ErrorOptions & {
+    details?: Record<string, string[]>;
+  }) {
     super(message, {
-      cause
+      cause: options?.cause
     });
 
-    this.details = details ?? {};
+    this.details = options?.details ?? {};
   }
 
   public getExtendedMessage() {
@@ -48,7 +50,7 @@ export class AppError extends Error {
   public static fromZodError(error: ZodError) {
 
     if (!(error instanceof ZodError))
-      throw new AppError('Is not zod error', {}, error);
+      throw new AppError('Is not zod error', { cause: error });
 
     const validation = error.errors.reduce((obj, error) => {
 

@@ -86,7 +86,7 @@ export class ContactValidation {
   public throwIfInvalid() {
 
     if (Object.keys(this._details).length > 0)
-      throw new AppError(AppError.invalidFieldsMessage, this._details);
+      throw new AppError(AppError.invalidFieldsMessage, { details: this._details });
   }
 }
 
