@@ -1,18 +1,19 @@
-import { PrismaClient } from "@prisma/client";
+import { Contact as ContactDb, NotificationTrigger as NotificationTriggerDb, TemplateMessage as TemplateMessageDb } from "@prisma/client";
 import { IdGenerator } from "@/common/identity/generate";
 import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
 import { LoggerFactory } from "@/common/logger";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { TriggerMapper } from "../../notification-triggers/mapper";
 import { MessageTemplateMapper } from "../../message-templates/mapper";
 import { DefaultParamsReplace } from "../../message-templates/default-params-replace";
 
 
-export class GenerateNotificationsByTriggers implements UseCase<void, void> {
+export class GenerateNotificationsByTriggers implements UseCase<GenerateNotificationsByTriggersInput, void> {
 
-  public async execute(_: void): Promise<void> {
+  public async execute(args: GenerateNotificationsByTriggersInput): Promise<void> {
 
-    const db = new PrismaClient();
+    const db = PrismaClientFactory.create();
     const logger = new LoggerFactory().createLogger({ scope: GenerateNotificationsByTriggers.name });
 
     logger.debug('Start task generate notifications by triggers');
@@ -27,19 +28,45 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
 
     while (true) {
 
-      const triggers = await db.notificationTrigger.findMany({
-        skip: offset,
-        take: limit,
-        include: {
-          contact: {
-            select: {
-              accountId: true,
-              name: true
-            }
+      let triggers: TriggerDbSelected[] = [];
+
+      if (args.triggerId) {
+
+        logger.debug(`Executing only for trigger ${args.triggerId}`);
+
+        triggers = await db.notificationTrigger.findMany({
+          where: {
+            id: args.triggerId
           },
-          templateMessage: true
-        }
-      });
+          include: {
+            contact: {
+              select: {
+                accountId: true,
+                name: true
+              }
+            },
+            templateMessage: true
+          }
+        });
+      }
+      else {
+
+        logger.debug('Executing for all accounts');
+
+        triggers = await db.notificationTrigger.findMany({
+          skip: offset,
+          take: limit,
+          include: {
+            contact: {
+              select: {
+                accountId: true,
+                name: true
+              }
+            },
+            templateMessage: true
+          }
+        });
+      }
 
       logger.debug(`Get triggers ${offset}/${limit}. Found: ${triggers.length}`);
 
@@ -107,4 +134,13 @@ export class GenerateNotificationsByTriggers implements UseCase<void, void> {
 
     logger.debug('End task generate notifications by triggers');
   }
+}
+
+export interface GenerateNotificationsByTriggersInput {
+  triggerId?: string;
+}
+
+type TriggerDbSelected = NotificationTriggerDb & {
+  contact: Pick<ContactDb, 'accountId' | 'name'>;
+  templateMessage: TemplateMessageDb | null;
 }

@@ -5,6 +5,11 @@ export class Trigger {
 
   private _fields: TriggerProps;
 
+  get id() {
+
+    return this._fields.id;
+  }
+
   get paramsValue() {
 
     return this._fields.paramsValue;

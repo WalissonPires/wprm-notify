@@ -4,6 +4,7 @@ import { PagedInputExtract } from "@/common/http/pagination/paged-input-parser";
 import { RegisterNotificationTrigger } from "@/domains/notification-triggers/use-cases/register-notification-trigger";
 import { RegisterNotificationTriggerInput } from "@/domains/notification-triggers/use-cases/register-notification-trigger-types";
 import { GetNotificationTriggers } from "@/domains/notification-triggers/use-cases/get-notification-triggers";
+import { GenerateNotificationsByTriggers } from "@/domains/notifications/use-cases/generate-notification-by-triggers";
 
 export async function POST(request: NextRequest) {
 
@@ -11,9 +12,14 @@ export async function POST(request: NextRequest) {
     const input: RegisterNotificationTriggerInput = await request.json();
 
     const useCase = new RegisterNotificationTrigger();
-    const result = await useCase.execute(input);
+    const trigger = await useCase.execute(input);
 
-    return NextResponse.json(result);
+    const generateNotificaion = new GenerateNotificationsByTriggers();
+    await generateNotificaion.execute({
+      triggerId: trigger.id
+    });
+
+    return NextResponse.json(trigger);
   }
   catch(error) {
     return ApiErrorHandler.handler(error);

@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const useCase = new GenerateNotificationsByTriggers();
-    await useCase.execute();
+    await useCase.execute({});
 
     return new Response(null, {
       status: 204
