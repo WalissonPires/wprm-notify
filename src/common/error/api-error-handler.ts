@@ -44,7 +44,7 @@ export class ApiErrorHandler {
       });
     }
 
-    this._logger.error(AppError.parse(error).message);
+    this._logger.error(AppError.parse(error).toLog());
 
     const data: ResponseError = {
        message: 'Ocorreu um erro desconhecido',

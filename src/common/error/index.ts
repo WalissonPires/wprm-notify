@@ -32,6 +32,12 @@ export class AppError extends Error {
     return this.message + ':\n\n' + details;
   }
 
+  public toLog() {
+
+    const messasge = this.getExtendedMessage();
+    return `${messasge}\n${this.stack}`;
+  }
+
   public static parse(error: any) {
 
     if (error instanceof AppError)
