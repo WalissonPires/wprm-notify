@@ -1,14 +1,15 @@
-import { PrismaClient, Notification as NotificationDb, Contact as ContactDb, Account as AccountDb } from "@prisma/client";
+import { Notification as NotificationDb, Contact as ContactDb, Account as AccountDb } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
 import { MessagingApi } from "@/common/services/messaging";
 import { LoggerFactory } from "@/common/logger";
 import { AppError } from "@/common/error";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 
 export class SendPendingNotifications implements UseCase<void, void> {
 
   public async execute(_: void): Promise<void> {
 
-    const db = new PrismaClient();
+    const db = PrismaClientFactory.create();
     const logger = new LoggerFactory().createLogger({ scope: SendPendingNotifications.name });
     const currentDate = new Date();
 

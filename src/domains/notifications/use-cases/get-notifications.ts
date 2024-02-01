@@ -1,6 +1,7 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { PagedInput, PagedResult } from "@/common/http/pagination";
+import { Prisma } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
+import { PagedInput, PagedResult } from "@/common/http/pagination";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { NotificationMapper } from "../mapper";
 import { Notification1 } from "./entities";
 
@@ -9,7 +10,7 @@ export class GetNotifications implements UseCase<GetNotificationsInput, PagedRes
 
   public async execute(input: GetNotificationsInput): Promise<PagedResult<Notification1>> {
 
-    const db = new PrismaClient();
+    const db = PrismaClientFactory.create();
 
     const filter: Prisma.NotificationWhereInput = {};
 

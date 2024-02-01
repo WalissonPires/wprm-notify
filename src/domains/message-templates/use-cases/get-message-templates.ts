@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { PagedInput, PagedResult } from "@/common/http/pagination";
 import { UseCase } from "@/common/use-cases";
+import { PagedInput, PagedResult } from "@/common/http/pagination";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { MessageTemplate1 } from "../entities";
 import { MessageTemplateMapper } from "../mapper";
 
@@ -9,7 +9,7 @@ export class GetMessageTemplates implements UseCase<GetMessageTemplatesInput, Pa
 
   public async execute(input: GetMessageTemplatesInput): Promise<PagedResult<MessageTemplate1>> {
 
-    const db = new PrismaClient();
+    const db = PrismaClientFactory.create();
 
     const count = await db.templateMessage.count();
 

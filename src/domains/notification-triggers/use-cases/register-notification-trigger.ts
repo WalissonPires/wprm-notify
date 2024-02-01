@@ -1,12 +1,12 @@
 import z from "zod";
-import { PrismaClient } from "@prisma/client";
+import { AppError } from "@/common/error";
 import { UseCase } from "@/common/use-cases";
 import { IdGenerator } from "@/common/identity/generate";
+import { messages } from "@/common/validation/messages";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { Trigger, TriggerType } from "../entities";
 import { TriggerMapper } from "../mapper";
 import { RegisterNotificationTriggerInput } from "./register-notification-trigger-types";
-import { messages } from "@/common/validation/messages";
-import { AppError } from "@/common/error";
 
 export class RegisterNotificationTrigger implements UseCase<RegisterNotificationTriggerInput, Trigger> {
 
@@ -14,7 +14,7 @@ export class RegisterNotificationTrigger implements UseCase<RegisterNotification
 
     this.validate(input);
 
-    const db = new PrismaClient();
+    const db = PrismaClientFactory.create();
     const idGen = new IdGenerator();
     const triggerMapper = new TriggerMapper();
 

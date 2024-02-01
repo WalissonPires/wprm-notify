@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { PagedInput, PagedResult } from "@/common/http/pagination";
 import { UseCase } from "@/common/use-cases";
+import { PagedInput, PagedResult } from "@/common/http/pagination";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { Trigger1 } from "../entities";
 import { TriggerMapper } from "../mapper";
 
@@ -9,7 +9,7 @@ export class GetNotificationTriggers implements UseCase<GetNotificationTriggersI
 
   public async execute(input: GetNotificationTriggersInput): Promise<PagedResult<Trigger1>> {
 
-    const db = new PrismaClient();
+    const db = PrismaClientFactory.create();
 
     const count = await db.notificationTrigger.count({
       where: {
