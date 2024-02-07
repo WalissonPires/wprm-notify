@@ -2,7 +2,7 @@
 
 import { Controller } from "react-hook-form";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Masks } from "@/common/validation/masks";
+import { Masks, MasksUtils } from "@/common/validation/masks";
 import { Button, FieldError, FormColumn, FormRow, Input, Select, InputMask, ColSize } from "../Form";
 import { useContactView } from "./hooks";
 
@@ -50,7 +50,7 @@ export function ContactView(props: ContactViewProps) {
             <FormColumn size={ColSize.span2}>
               <label>Telefone</label>
               <Controller
-                render={({ field}) => <InputMask mask={Masks.phone} value={field.value} onChange={field.onChange} />}
+                render={({ field}) => <InputMask mask={MasksUtils.getPhoneMaskFromMasked(field.value ?? '')} value={field.value} onChange={field.onChange} />}
                 control={control}
                 name="phone"
               />

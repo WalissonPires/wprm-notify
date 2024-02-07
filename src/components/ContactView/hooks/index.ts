@@ -7,7 +7,7 @@ import { messages } from "@/common/validation/messages";
 import { ContactsApi } from "@/domains/contacts/client-api";
 import { AppToast } from "@/common/ui/toast";
 import { AppError } from "@/common/error";
-import { Masks } from "@/common/validation/masks";
+import { Masks, MasksUtils } from "@/common/validation/masks";
 import { useGroups } from "../../Groups/hooks";
 import { maskValue, unmaskValue } from "../../Form";
 
@@ -87,7 +87,7 @@ export function useContactView(args: UseContactViewArgs) {
       const contact = await new ContactsApi().getById(contactId);
 
       setValue('name', contact.name);
-      setValue('phone', contact.phone ? maskValue(contact.phone, { mask: Masks.phone }) : '');
+      setValue('phone', contact.phone ? maskValue(contact.phone, { mask: MasksUtils.getPhoneMaskFromPlan(contact.phone) }) : '');
       setValue('email', contact.email ?? '');
       setValue('groupsId', contact.groups?.map(x => x.id));
     }
@@ -109,7 +109,7 @@ export function useContactView(args: UseContactViewArgs) {
 
 const validationSchema = z.object({
   name: z.string().max(40).min(1, { message: messages.required }),
-  phone: z.string().max(16, { message: messages.invalid }).min(16, { message: messages.invalid }).transform(phone => unmaskValue(phone, { mask: Masks.phone })).or(z.literal('').transform(_ => undefined)),
+  phone: z.string().max(15, { message: messages.invalid }).min(14, { message: messages.invalid }).transform(phone => unmaskValue(phone, { mask: MasksUtils.getPhoneMaskFromMasked(phone) })).or(z.literal('').transform(_ => undefined)),
   email: z.string().email().max(60).optional().or(z.literal('').transform(_ => undefined)),
   groupsId: z.array(z.string().min(1, { message: messages.required })).min(1)
 });

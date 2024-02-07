@@ -5,7 +5,7 @@ import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { TimeAgo } from "@/common/datetime/time-ago";
-import { Masks } from "@/common/validation/masks";
+import { Masks, MasksUtils } from "@/common/validation/masks";
 import { AppRoutes } from "@/common/routes";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle, maskValue } from "../Form";
 import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
@@ -46,7 +46,7 @@ export default function ContactCard({ contact, onDeleteContact }: ContactItemPro
           {phone &&
             <span className="inline-flex flex-row items-center text-sm text-slate-500 mr-4">
               <PhoneIcon className="h-5 w-5 inline-block text-blue-600 mr-2" />
-              <span>{maskValue(phone, { mask: Masks.phone })}</span>
+              <span>{maskValue(phone, { mask: MasksUtils.getPhoneMaskFromPlan(phone) })}</span>
             </span>}
           {email &&
             <span className="inline-flex flex-row items-center text-sm text-slate-500 mr-4">

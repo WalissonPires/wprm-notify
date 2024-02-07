@@ -16,7 +16,7 @@ export type ContactCreated = Pick<Contact, 'id'>;
 export const createContactInputSchema = z.object({
   contact: z.object({
     name: z.string().max(40).min(1, { message: messages.required }),
-    phone: z.string().max(11).min(11).optional(),
+    phone: z.string().max(11).min(10).optional(),
     email: z.string().email().max(60).optional(),
     groupsId: z.array(z.string()).min(1)
   })
