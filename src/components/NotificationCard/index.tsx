@@ -13,9 +13,9 @@ export default function NotificationCard({ notification, showContact }: Notifica
 
   return (
     <div className="flex flex-col px-4 py-6 hover:bg-slate-50">
-      <div className="flex flex-row justify-between items-center">
-        <small className="block text-slate-500 mb-3">{sendedAtFormatted}</small>
-        {showContact && <small className="text-current p-2">{contact?.name ?? ''}</small>}
+      <div className="flex flex-row justify-between items-center mb-3">
+        {showContact && <small className="text-current">{contact?.name ?? ''}</small>}
+        <small className="block text-slate-500">{sendedAtFormatted}</small>
       </div>
       <span className="block text-lg font-semibold text-slate-700">{content}</span>
     </div>

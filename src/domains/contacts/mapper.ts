@@ -21,7 +21,7 @@ export class ContactMapper {
       })) ?? [],
       nextNotification: nextNotification ? {
         id: nextNotification.id,
-        description: nextNotification.notes || nextNotification.content,
+        description: nextNotification.content,
         triggerAt: nextNotification.scheduledAt.toISOString()
       } : null
     };
