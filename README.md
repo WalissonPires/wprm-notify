@@ -68,13 +68,9 @@ Notifications(id, scheduledAt, sendedAt, templateMessageId, content)
 - [x] - Adicionar pesquisa nos contatos (Pesquisa por nome, telefone, email)
 - [x] - Adicionar filtros nos contatos (Por grupo)
 - [ ] - Adicionar visualização de contatos por grupo
-- [ ] - Cadastrar contato
-- [ ] - Alterar contato
-- [ ] - Excluir contato
-- [ ] - Criar tarefa cron para geração das notificações
-- [ ] - Criar tarefa cron para envio das notificações
-- [ ] - Registrar conta*
-- [ ] - Redefinir senha conta*
-- [ ] - Logar na aplicação*
-
->  \* Usar login do google?
+- [x] - Cadastrar contato
+- [x] - Alterar contato
+- [x] - Excluir contato
+- [x] - Criar tarefa cron para geração das notificações
+- [x] - Criar tarefa cron para envio das notificações
+- [x] - Logar na aplicação
