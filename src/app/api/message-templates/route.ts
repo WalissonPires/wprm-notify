@@ -12,7 +12,10 @@ export async function GET(request: NextRequest) {
   try {
     const { offset, limit } = new PagedInputExtract().getFromSearchParams(request.nextUrl.searchParams);
 
-    const useCase = new GetMessageTemplates();
+    const useCase = new GetMessageTemplates({
+      userLogged: await new UserSessionManager().getUserOrThrow(),
+      prismaClient: PrismaClientFactory.create()
+    });
     const result = await useCase.execute({
       offset,
       limit

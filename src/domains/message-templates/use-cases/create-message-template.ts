@@ -30,11 +30,12 @@ export class CreateMessageTemplate implements UseCase<CreateMessateTemplateInput
     messageTemplate.fillParamsFromContent();
 
     const messageTemplateExists = await this._db.templateMessage.findFirst({
+      where: {
+        accountId: this._user.accountId,
+        name: input.messageTemplate.name
+      },
       select: {
         id: true
-      },
-      where: {
-        name: input.messageTemplate.name
       }
     });
 

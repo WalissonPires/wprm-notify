@@ -5,6 +5,8 @@ import { RegisterNotificationTrigger } from "@/domains/notification-triggers/use
 import { RegisterNotificationTriggerInput } from "@/domains/notification-triggers/use-cases/register-notification-trigger-types";
 import { GetNotificationTriggers } from "@/domains/notification-triggers/use-cases/get-notification-triggers";
 import { GenerateNotificationsByTriggers } from "@/domains/notifications/use-cases/generate-notification-by-triggers";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
 
 export async function POST(request: NextRequest) {
 
@@ -32,7 +34,11 @@ export async function GET(request: NextRequest) {
     const { offset, limit } = new PagedInputExtract().getFromSearchParams(request.nextUrl.searchParams);
     const contactId = request.nextUrl.searchParams.get('contactId');
 
-    const useCase = new GetNotificationTriggers();
+    const useCase = new GetNotificationTriggers({
+      userLogged: await new UserSessionManager().getUserOrThrow(),
+      prismaClient: PrismaClientFactory.create()
+    });
+
     const result = await useCase.execute({
       contactId: contactId ?? undefined,
       offset,

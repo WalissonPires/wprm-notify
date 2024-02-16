@@ -1,15 +1,28 @@
+import { PrismaClient } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
-import { PrismaClientFactory } from "@/common/database/prisma-factory";
+import { UserLogged } from "@/common/auth/user";
 
 
 export class DeleteNotificationTrigger implements UseCase<DeleteNotificationTriggerInput, void> {
 
+  private _user: UserLogged;
+  private _db: PrismaClient;
+
+  constructor({ userLogged, prismaClient }: { userLogged: UserLogged, prismaClient: PrismaClient }) {
+
+    this._user = userLogged;
+    this._db = prismaClient;
+  }
+
   public async execute(input: DeleteNotificationTriggerInput): Promise<void> {
 
-    const db = PrismaClientFactory.create();
-
-    await db.notificationTrigger.deleteMany({
-      where: { id: input.id }
+    await this._db.notificationTrigger.deleteMany({
+      where: {
+        id: input.id,
+        contact: {
+          accountId: this._user.accountId
+        }
+      }
     });
   }
 

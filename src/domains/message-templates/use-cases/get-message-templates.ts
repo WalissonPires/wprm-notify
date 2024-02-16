@@ -1,19 +1,34 @@
+import { PrismaClient } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
+import { UserLogged } from "@/common/auth/user";
 import { PagedInput, PagedResult } from "@/common/http/pagination";
-import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { MessageTemplate1 } from "../entities";
 import { MessageTemplateMapper } from "../mapper";
 
 
 export class GetMessageTemplates implements UseCase<GetMessageTemplatesInput, PagedResult<MessageTemplate1>> {
 
+  private _db: PrismaClient;
+  private _user: UserLogged;
+
+  constructor({ prismaClient, userLogged }: { prismaClient: PrismaClient, userLogged: UserLogged }) {
+
+    this._db = prismaClient;
+    this._user = userLogged;
+  }
+
   public async execute(input: GetMessageTemplatesInput): Promise<PagedResult<MessageTemplate1>> {
 
-    const db = PrismaClientFactory.create();
+    const count = await this._db.templateMessage.count({
+      where: {
+        accountId: this._user.accountId
+      }
+    });
 
-    const count = await db.templateMessage.count();
-
-    const messageTemplates = await db.templateMessage.findMany({
+    const messageTemplates = await this._db.templateMessage.findMany({
+      where: {
+        accountId: this._user.accountId
+      },
       skip: input.offset,
       take: input.limit,
       orderBy: {

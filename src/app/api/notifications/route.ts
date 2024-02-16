@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { PagedInputExtract } from "@/common/http/pagination/paged-input-parser";
 import { GetNotifications } from "@/domains/notifications/use-cases/get-notifications";
+import { PrismaClientFactory } from "@/common/database/prisma-factory";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 
 export async function GET(request: NextRequest) {
 
@@ -14,7 +16,11 @@ export async function GET(request: NextRequest) {
       isSended: request.nextUrl.searchParams.get('isSended') ?? undefined
     });
 
-    const useCase = new GetNotifications();
+    const useCase = new GetNotifications({
+      userLogged: await new UserSessionManager().getUserOrThrow(),
+      prismaClient: PrismaClientFactory.create()
+    });
+
     const result = await useCase.execute({
       contactId: params.contactId,
       isSended: params.isSended,

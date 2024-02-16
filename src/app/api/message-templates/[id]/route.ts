@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DeleteMessageTemplate } from "@/domains/message-templates/use-cases/delete-message-template";
+import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
 
 
@@ -10,6 +11,7 @@ export const DELETE = async (request: NextRequest, { params }: { params: DeleteP
   };
 
   const useCase = new DeleteMessageTemplate({
+    userLogged: await new UserSessionManager().getUserOrThrow(),
     prismaClient: PrismaClientFactory.create()
   });
 

@@ -1,18 +1,27 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
+import { UserLogged } from "@/common/auth/user";
 import { PagedInput, PagedResult } from "@/common/http/pagination";
-import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { NotificationMapper } from "../mapper";
 import { Notification1 } from "./entities";
 
 
 export class GetNotifications implements UseCase<GetNotificationsInput, PagedResult<Notification1>> {
 
+  private _db: PrismaClient;
+  private _user: UserLogged;
+
+  constructor({ prismaClient, userLogged }: { prismaClient: PrismaClient, userLogged: UserLogged }) {
+
+    this._db = prismaClient;
+    this._user = userLogged;
+  }
+
   public async execute(input: GetNotificationsInput): Promise<PagedResult<Notification1>> {
 
-    const db = PrismaClientFactory.create();
-
-    const filter: Prisma.NotificationWhereInput = {};
+    const filter: Prisma.NotificationWhereInput = {
+      accountId: this._user.accountId
+    };
 
     if (input.isSended === true) {
 
@@ -28,11 +37,11 @@ export class GetNotifications implements UseCase<GetNotificationsInput, PagedRes
       filter.trigger = { contactId: { equals: input.contactId } };
     }
 
-    const count = await db.notification.count({
+    const count = await this._db.notification.count({
       where: filter
     });
 
-    const notifications = await db.notification.findMany({
+    const notifications = await this._db.notification.findMany({
       where: filter,
       skip: input.offset,
       take: input.limit,
