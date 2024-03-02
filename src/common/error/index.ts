@@ -66,7 +66,9 @@ export class AppError extends Error {
 
     }, {} as Record<string, string[]>);
 
-    return new AppError(AppError.invalidFieldsMessage, validation);
+    return new AppError(AppError.invalidFieldsMessage, {
+      details: validation
+    });
   }
 
   public static is(error: any): error is AppError {

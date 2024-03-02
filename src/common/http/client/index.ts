@@ -89,7 +89,10 @@ export class HttpClient {
     if (response.status === 422 && typeof result?.message === 'string') {
 
       const details = typeof result?.details === 'object' ? result.details : null;
-      const error = new AppError(result.message, details ?? {});
+      const error = new AppError(result.message, {
+        details: details
+      });
+
       throw error;
     }
 
