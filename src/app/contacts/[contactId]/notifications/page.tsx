@@ -22,8 +22,8 @@ export default function ContactNotifications({ params }: PageProps) {
         </AppLayoutActions>
       </AppLayoutHeader>
       <AppLayoutTabs>
-        <AppLayoutTabItem label="Agendadas" title="Notificações agendadas" href={AppRoutes.contactNotificationTriggers(params.contactId)} replace />
-        <AppLayoutTabItem label="Envidas" title="Notificações enviadas" href={AppRoutes.contactNotifications(params.contactId)} replace active />
+      <AppLayoutTabItem label="Mensagens agendadas" title="Mensagens agendadas para envio" href={AppRoutes.contactNotificationTriggers(params.contactId)} replace />
+        <AppLayoutTabItem label="Notificações" title="Notificações pendentes e enviadas" href={AppRoutes.contactNotifications(params.contactId)} replace active />
       </AppLayoutTabs>
       <AppLayoutBody>
         <AppLayoutPreLoading>

@@ -5,9 +5,9 @@ import { Button } from "../Form";
 import NotificationCard from "../NotificationCard";
 import { useNotifications } from "./hooks";
 
-export default function ContactNotificationsView({ contactId }: ContactNotificationsViewProps) {
+export default function ContactNotificationsView({ contactId, isSended }: ContactNotificationsViewProps) {
 
-  const { data, isLoading, error, hasMore, loadNextPage } = useNotifications({ contactId });
+  const { data, isLoading, error, hasMore, loadNextPage } = useNotifications({ contactId, isSended });
 
   const isEmpty = data.length == 0 && !isLoading && !error;
   const isFirstLoading = isLoading && data.length === 0;
@@ -35,4 +35,5 @@ export default function ContactNotificationsView({ contactId }: ContactNotificat
 
 interface ContactNotificationsViewProps {
     contactId?: string;
+    isSended?: boolean;
 }
