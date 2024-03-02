@@ -19,7 +19,7 @@ export function AppLayoutAction({ children, href, onClick, ...props }: AppLayout
       throw new Error('OnClick cannot be used with href');
 
     return (
-      <Link href={href} className="border-0 rounded-sm p-1 bg-transparent hover:bg-[#ffffff22] focus:bg-[#ffffff22]" {...props}>
+      <Link href={href} className="border-0 rounded-sm p-1 mx-2 bg-transparent hover:bg-[#ffffff22] focus:bg-[#ffffff22]" {...props}>
         {children}
       </Link>
     );

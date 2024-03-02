@@ -12,6 +12,11 @@ export class AppToast {
     AppToast.toast(message);
   }
 
+  public static warning(message: string) {
+
+    AppToast.toast(message);
+  }
+
   public static error(message: string) {
 
     AppToast.toast(message);

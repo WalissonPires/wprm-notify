@@ -1,4 +1,4 @@
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowUpOnSquareIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { AppLayout } from '@/components/AppLayout';
 import { AppLayoutBody } from '@/components/AppLayout/Body';
 import { AppLayoutHeader } from '@/components/AppLayout/Header';
@@ -19,6 +19,7 @@ export default function Home() {
         <AppLayoutMenuWithTitle title="Contatos" />
         <AppLayoutActions>
           <SearchAction placeholder='Nome, telefone ou email' />
+          <AppLayoutAction title="Importar contatos" href={AppRoutes.importContacts()}><ArrowUpOnSquareIcon className="h-5 w-5"></ArrowUpOnSquareIcon></AppLayoutAction>
           <ContactsFilterAction />
           <AppLayoutAction title="Criar contato" href={AppRoutes.newContact()}><PlusIcon className="h-5 w-5"></PlusIcon></AppLayoutAction>
         </AppLayoutActions>

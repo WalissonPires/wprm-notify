@@ -3,6 +3,7 @@
 export abstract class AppRoutes {
 
   public static newContact() { return '/contacts/new'; }
+  public static importContacts() { return '/contacts/import'; }
   public static viewContact(contactId: string) { return '/contacts/' + contactId; }
   public static newContactNotification(contactId: string) { return `/contacts/${contactId}/notification-triggers/new`; }
   public static contactNotificationTriggers(contactId: string) { return `/contacts/${contactId}/notification-triggers`; }

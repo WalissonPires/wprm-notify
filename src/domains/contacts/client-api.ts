@@ -5,6 +5,7 @@ import { HttpClient } from "@/common/http/client";
 import { Contact } from "./entities";
 import { CreateContactInput } from "./use-cases/create-contact-types";
 import { UpdateContactInput } from "./use-cases/update-contact-types";
+import { ImportContactsInput, ImportContactsResult } from "./use-cases/import-contacts-types";
 
 export class ContactsApi {
 
@@ -65,6 +66,17 @@ export class ContactsApi {
     const url = UrlFormatter.format('{id}', { id: id });
     await this._client.delete<void>(url);
   }
+
+  public async import(args: ImportContactsInput): Promise<ImportContactsResult> {
+
+    const result = await this._client.post<ImportContactsResult>('import', args);
+
+    if (!result)
+      throw new Error('Server did not return results');
+
+    return result;
+  }
+
 }
 
 export interface GetAllArgs extends PagedInput {
