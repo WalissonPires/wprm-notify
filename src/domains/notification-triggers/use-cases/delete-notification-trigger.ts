@@ -16,13 +16,25 @@ export class DeleteNotificationTrigger implements UseCase<DeleteNotificationTrig
 
   public async execute(input: DeleteNotificationTriggerInput): Promise<void> {
 
-    await this._db.notificationTrigger.deleteMany({
-      where: {
-        id: input.id,
-        contact: {
-          accountId: this._user.accountId
+    await this._db.$transaction(async transaction => {
+
+      await transaction.notification.deleteMany({
+        where: {
+          accountId: this._user.accountId,
+          triggerId: input.id,
+          sendedAt: null,
         }
-      }
+      });
+
+      await transaction.notificationTrigger.deleteMany({
+        where: {
+          id: input.id,
+          contact: {
+            accountId: this._user.accountId
+          }
+        }
+      });
+
     });
   }
 
