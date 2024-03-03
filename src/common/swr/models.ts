@@ -19,6 +19,7 @@ export interface DataResult<T> {
   error: AppError | null;
   hasMore: boolean;
   loadNextPage: () => void;
+  refresh: () => void;
   removeItem: (select: (item: T) => boolean) => void;
 }
 

@@ -18,6 +18,7 @@ export class SendPendingNotifications implements UseCase<void, void> {
     const notifications = await db.notification.findMany({
       where: {
         sendedAt: null,
+        canceledAt: null,
         scheduledAt: {
           lte: currentDate
         }

@@ -116,6 +116,7 @@ model Notification {
   scheduledAt DateTime
   sendedAt    DateTime?
   createdAt   DateTime?
+  canceledAt  DateTime?
   content     String    @db.VarChar(2000)
   notes       String?   @db.VarChar(100)
 

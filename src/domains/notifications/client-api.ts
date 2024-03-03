@@ -23,6 +23,12 @@ export class NotificationsApi {
 
     return result;
   }
+
+  public async cancel(id: string): Promise<void> {
+
+    const url = UrlFormatter.format('{id}', { id });
+    await this._client.delete<void>(url);
+  }
 }
 
 export interface GetAllArgs extends PagedInput {

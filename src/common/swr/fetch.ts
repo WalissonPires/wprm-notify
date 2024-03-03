@@ -46,6 +46,7 @@ export const useFetchData = <TData extends { id: string }>({ getKey, fetcher }: 
     error: error ? AppError.parse(error) : null,
     hasMore,
     loadNextPage: () => setSize(size + 1),
+    refresh: () => mutate(),
     removeItem: (select: (item: TData) => boolean) => {
 
       let removedCount = 0;

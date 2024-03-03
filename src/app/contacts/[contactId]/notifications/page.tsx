@@ -10,6 +10,7 @@ import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Action
 import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
 import ContactNotificationsView from '@/components/ContactNotificationsView';
 import { AppRoutes } from '@/common/routes';
+import { AppLoading } from '@/components/AppLayout/Loading';
 
 export default function ContactNotifications({ params }: PageProps) {
 
@@ -27,6 +28,7 @@ export default function ContactNotifications({ params }: PageProps) {
       </AppLayoutTabs>
       <AppLayoutBody>
         <AppLayoutPreLoading>
+          <AppLoading />
           <ContactNotificationsView contactId={params.contactId} />
         </AppLayoutPreLoading>
       </AppLayoutBody>

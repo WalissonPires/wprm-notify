@@ -9,6 +9,7 @@ export class NotificationMapper {
     const notification: Notification1 = {
       id: notificationDb.id,
       sendedAt: notificationDb.sendedAt?.toISOString() ?? null,
+      canceledAt: notificationDb.canceledAt?.toISOString() ?? null,
       scheduledAt: notificationDb.scheduledAt.toISOString(),
       content: notificationDb.content,
       contact: notificationDb.trigger?.contact ? {
