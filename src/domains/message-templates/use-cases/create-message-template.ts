@@ -24,6 +24,7 @@ export class CreateMessageTemplate implements UseCase<CreateMessateTemplateInput
       id: new IdGenerator().new(),
       name: input.messageTemplate.name,
       content: input.messageTemplate.content,
+      notifyDaysBefore: input.messageTemplate.notifyDaysBefore ?? null,
       params: []
     });
 
@@ -48,6 +49,7 @@ export class CreateMessageTemplate implements UseCase<CreateMessateTemplateInput
         accountId: this._user.accountId,
         name: messageTemplate.name,
         content: messageTemplate.content,
+        notifyDaysBefore: messageTemplate.notifyDaysBefore,
         params: JSON.stringify(messageTemplate.params)
       }
     });

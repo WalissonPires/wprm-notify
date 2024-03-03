@@ -38,10 +38,17 @@ export function MessageTemplateView() {
         </div>
         <form onSubmit={handleSubmit}>
           <FormRow>
-            <FormColumn size={ColSize.full}>
+            <FormColumn size={ColSize.span2}>
               <label>Nome</label>
               <Input {...register('name')} />
               <FieldError error={errors.name} />
+            </FormColumn>
+          </FormRow>
+          <FormRow>
+            <FormColumn size={ColSize.span2}>
+              <label>Notificar dias antes</label>
+              <Input {...register('notifyDaysBefore')} />
+              <FieldError error={errors.notifyDaysBefore} />
             </FormColumn>
           </FormRow>
           <FormRow>

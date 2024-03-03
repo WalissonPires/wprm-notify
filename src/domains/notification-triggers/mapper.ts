@@ -5,13 +5,14 @@ import { Trigger, Trigger1, TriggerType } from "./entities";
 
 export class TriggerMapper {
 
-  public map(triggerDb: NotificationTriggerDb): Trigger {
+  public map(triggerDb: NotificationTriggerDb1): Trigger {
 
     const trigger = new Trigger({
       id: triggerDb.id,
       day: triggerDb.day,
       month: triggerDb.month,
       type: this.mapTriggerType(triggerDb.type),
+      notifyDaysBefore: triggerDb.templateMessage?.notifyDaysBefore ?? null,
       paramsValue: triggerDb.paramsValue ? JSON.parse(triggerDb.paramsValue) : {}
     });
 
@@ -69,5 +70,5 @@ export class TriggerMapper {
 }
 
 type NotificationTriggerDb1 = NotificationTriggerDb & {
-  templateMessage: Pick<TemplateMessageDb, 'id' | 'name'> | null;
+  templateMessage: Pick<TemplateMessageDb, 'id' | 'name' | 'notifyDaysBefore'> | null;
 }

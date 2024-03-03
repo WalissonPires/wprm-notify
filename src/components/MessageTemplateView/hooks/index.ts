@@ -27,7 +27,8 @@ export function useMessageTemplate() {
       await api.create({
         messageTemplate: {
           name: data.name,
-          content: data.content
+          content: data.content,
+          notifyDaysBefore: data.notifyDaysBefore ? data.notifyDaysBefore : undefined
         }
       });
 
@@ -69,7 +70,8 @@ export function useMessageTemplate() {
 
 const validationSchema = z.object({
   name: z.string().max(100).min(1, { message: messages.required }),
-  content: z.string().max(2000).min(3)
+  content: z.string().max(2000).min(3),
+  notifyDaysBefore: z.coerce.number().optional()
 });
 
 type Model = z.infer<typeof validationSchema>;

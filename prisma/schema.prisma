@@ -78,11 +78,12 @@ model ContactMetadata {
 }
 
 model TemplateMessage {
-  id        String @id @db.Char(26)
-  accountId String @db.Char(26)
-  name      String @db.VarChar(100)
-  content   String @db.VarChar(2000)
-  params    String @db.VarChar(5000)
+  id               String @id @db.Char(26)
+  accountId        String @db.Char(26)
+  name             String @db.VarChar(100)
+  content          String @db.VarChar(2000)
+  params           String @db.VarChar(5000)
+  notifyDaysBefore Int?
 
   account  Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
   triggers NotificationTrigger[]

@@ -8,6 +8,7 @@ export class MessageTemplate {
   get name() { return this._fields.name; }
   get content() { return this._fields.content; }
   get params() { return this._fields.params; }
+  get notifyDaysBefore() { return this._fields.notifyDaysBefore; }
 
   constructor(props: MessageTemplateProps) {
 
@@ -47,6 +48,7 @@ interface MessageTemplateProps {
   id: string;
   name: string;
   content: string;
+  notifyDaysBefore: number | null;
   params: MessageTemplateParam[];
 }
 

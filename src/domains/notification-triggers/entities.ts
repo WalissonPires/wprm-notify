@@ -79,6 +79,9 @@ export class Trigger {
       if (nextTriggerDate < currentDate)
         nextTriggerDate = nextTriggerDate.plus({ month: 1 });
 
+        if (this._fields.notifyDaysBefore)
+          nextTriggerDate = nextTriggerDate.minus({ days: this._fields.notifyDaysBefore });
+
       return nextTriggerDate.startOf('day').toJSDate();
     }
 
@@ -98,6 +101,9 @@ export class Trigger {
 
       if (nextTriggerDate < currentDate)
         nextTriggerDate = nextTriggerDate.plus({ year: 1 });
+
+      if (this._fields.notifyDaysBefore)
+        nextTriggerDate = nextTriggerDate.minus({ days: this._fields.notifyDaysBefore });
 
       return nextTriggerDate.startOf('day').toJSDate();
     }
@@ -124,6 +130,7 @@ export interface TriggerProps {
   type: TriggerType;
   day: number | null;
   month: number | null;
+  notifyDaysBefore: number | null;
   paramsValue: TriggerParamValue[];
 }
 
