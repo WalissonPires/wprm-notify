@@ -35,7 +35,7 @@ export class RegisterNotificationTrigger implements UseCase<RegisterNotification
       throw new AppError('Notificação já registrada');
     }
 
-    const triggerDb = await db.notificationTrigger.create({
+    const { id: triggerId } = await db.notificationTrigger.create({
       data: {
         id: idGen.new(),
         templateMessageId: input.templateMessageId,
@@ -47,7 +47,16 @@ export class RegisterNotificationTrigger implements UseCase<RegisterNotification
       }
     });
 
-    return triggerMapper.map(triggerDb);
+    const triggerDb = await db.notificationTrigger.findFirst({
+      where: {
+        id: triggerId
+      },
+      include: {
+        templateMessage: true
+      }
+    });
+
+    return triggerMapper.map(triggerDb!);
   }
 
   private validate(input: RegisterNotificationTriggerInput) {

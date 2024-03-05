@@ -41,7 +41,8 @@ export class GetNotificationTriggers implements UseCase<GetNotificationTriggersI
         templateMessage: {
           select: {
             id: true,
-            name: true
+            name: true,
+            notifyDaysBefore: true
           }
         }
       },
