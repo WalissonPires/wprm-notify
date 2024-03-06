@@ -23,6 +23,7 @@ export class MessageTemplateMapper {
       id: templateDb.id,
       name: templateDb.name,
       content: templateDb.content,
+      notifyDaysBefore: templateDb.notifyDaysBefore,
       params: templateDb.params ? JSON.parse(templateDb.params) : []
     };
 

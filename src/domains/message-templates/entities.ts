@@ -66,5 +66,6 @@ export interface MessageTemplate1 {
   id: string;
   name: string;
   content: string;
+  notifyDaysBefore: number | null;
   params: MessageTemplateParam[];
 }

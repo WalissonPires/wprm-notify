@@ -3,7 +3,7 @@ import { PagedInputExtract } from "@/common/http/pagination/paged-input-parser";
 import { GetMessageTemplates } from "@/domains/message-templates/use-cases/get-message-templates";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { CreateMessageTemplate } from "@/domains/message-templates/use-cases/create-message-template";
-import { createMessateTemplateInputSchema } from "@/domains/message-templates/use-cases/create-message-template-types";
+import { createMessageTemplateInputSchema } from "@/domains/message-templates/use-cases/create-message-template-types";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 export const POST = async (request: NextRequest) => {
 
   try {
-    const input = createMessateTemplateInputSchema.parse(await request.json());
+    const input = createMessageTemplateInputSchema.parse(await request.json());
 
     const useCase = new CreateMessageTemplate({
       userLogged: await new UserSessionManager().getUserOrThrow(),

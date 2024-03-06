@@ -10,6 +10,7 @@ export abstract class AppRoutes {
   public static contactNotifications(contactId: string) { return `/contacts/${contactId}/notifications`; }
   public static home() { return '/'; }
   public static notifications() { return '/notifications'; }
+  public static viewMessageTemplate(messageTemplateId: string) { return '/message-templates/' + messageTemplateId; }
   public static messageTemplates() { return '/message-templates'; }
   public static newMessageTemplates() { return '/message-templates/new'; }
   public static settings() { return '/settings'; }

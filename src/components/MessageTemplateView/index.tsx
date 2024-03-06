@@ -8,8 +8,11 @@ import { AppToast } from "@/common/ui/toast";
 import { Button, ColSize, FieldError, FormColumn, FormRow, Input, TextArea } from "../Form";
 import { useMessageTemplate } from "./hooks";
 
+export interface MessageTemplateViewProps {
+  messateTemplateId?: string;
+}
 
-export function MessageTemplateView() {
+export function MessageTemplateView({ messateTemplateId }: MessageTemplateViewProps) {
 
   const {
     //values,
@@ -20,7 +23,7 @@ export function MessageTemplateView() {
     register,
     handleSubmit,
     //handleAddParam
-  } = useMessageTemplate();
+  } = useMessageTemplate({ messateTemplateId });
 
   const defaultParams = useMemo(() => Object.values(new DefaultParamsUtils().getAllParamsDefaultLanguage()), []);
 

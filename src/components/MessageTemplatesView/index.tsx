@@ -1,9 +1,11 @@
 'use client'
 
+import { useRouter } from "next/navigation";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { AppToast } from "@/common/ui/toast";
 import { AppError } from "@/common/error";
 import { MessageTemplatesApi } from "@/domains/message-templates/client-api";
+import { AppRoutes } from "@/common/routes";
 import { Button } from "../Form";
 import MessageTemplateCard from "../MessageTemplateCard";
 import { useMessageTemplates } from "./hooks";
@@ -11,12 +13,14 @@ import { useLoading } from "../AppLayout/Loading/hooks";
 
 export default function MessageTemplatesView() {
 
+  const router = useRouter();
   const { data, isLoading: isLoadingMessageTemplates, error, hasMore, loadNextPage, removeItem } = useMessageTemplates();
   const { setLoading } = useLoading();
 
   const isEmpty = data.length == 0 && !isLoadingMessageTemplates && !error;
   const isFirstLoading = isLoadingMessageTemplates && data.length === 0;
 
+  const getHandleMessageTemplateSelected = (messageTemplateId: string) => () => router.push(AppRoutes.viewMessageTemplate(messageTemplateId));
 
   const handleDeleteMessageTemplate = (messageTemplateId: string) => async () => {
 
@@ -45,7 +49,7 @@ export default function MessageTemplatesView() {
       <div className="bg-white border m-4">
         <ul className="divide-y">
           {data.map(item =>
-            <li key={item.id}>
+            <li key={item.id} onClick={getHandleMessageTemplateSelected(item.id)}>
               <MessageTemplateCard messageTemplate={item} onDeleteClick={handleDeleteMessageTemplate(item.id)} />
             </li>)}
           {isEmpty && <p className="text-center text-slate-400 p-4">Nenhuma mensagem encontrada</p>}
