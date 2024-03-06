@@ -1,8 +1,9 @@
 'use client';
 
 import Link from "next/link";
+import { MouseEvent } from "react";
 import Skeleton from "react-loading-skeleton";
-import { EllipsisVerticalIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form";
 import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 import { MessageTemplate1 } from "@/domains/message-templates/entities";
@@ -11,6 +12,26 @@ export default function MessageTemplateCard({ messageTemplate, onDeleteClick }: 
 
   const { name, content } = messageTemplate;
   const { visible, setVisible } = useDrodownMenu(MessageTemplateCard.name);
+
+  const handleToggleDropdown = (event: MouseEvent) => {
+
+    event.stopPropagation();
+    event.preventDefault();
+    setVisible(!visible);
+  };
+
+  const handleDropdownItemClick = (event: MouseEvent) => {
+
+    event.stopPropagation();
+    event.preventDefault();
+    setVisible(false);
+  };
+
+  const handleDeleteClick = (event: MouseEvent) => {
+
+    handleDropdownItemClick(event);
+    onDeleteClick();
+  }
 
   return (
     <div className="flex flex-row justify-between px-4 py-6 hover:bg-slate-50">
@@ -23,8 +44,8 @@ export default function MessageTemplateCard({ messageTemplate, onDeleteClick }: 
       <div className="flex items-center justify-center ml-3">
         <DropdownMenu
           visible={visible}
-          toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
-          <DropdownMenuItem onClick={onDeleteClick}>
+          toggle={<DropdownMenuToggle onClick={handleToggleDropdown}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
+          <DropdownMenuItem onClick={handleDeleteClick}>
               <Link href="#"><XMarkIcon className="h-5 w-5 inline-block" /> Excluir</Link>
           </DropdownMenuItem>
         </DropdownMenu>
