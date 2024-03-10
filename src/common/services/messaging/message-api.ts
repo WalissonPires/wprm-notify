@@ -15,13 +15,19 @@ export class MessagingApi {
       }
     });
   }
-  public async sendMessage(args: SendMessageArgs) {
+  public async sendMessage(args: SendMessageArgs): Promise<SendMessageStatus[]> {
 
-    await this._client.post<void>('messages', args);
+    return await this._client.post<SendMessageStatus[]>('messages', args) ?? [];
   }
 }
 
 export interface SendMessageArgs {
   to: string;
   content: string;
+}
+
+export interface SendMessageStatus {
+  providerId: number;
+  success: boolean;
+  errorMessage: string | null;
 }
