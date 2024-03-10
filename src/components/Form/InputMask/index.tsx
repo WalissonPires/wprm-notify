@@ -13,8 +13,15 @@ export const InputMask = forwardRef<HTMLInputElement, InputMaskProps>(function I
             preserveMask
         };
 
-        const value = unmaskValue(event.target.value, maskOptions);
+        const value = event.target.value; //unmaskValue(event.target.value, maskOptions);
         onChange(event, value);
+
+        // [Fix] When using with react-hook-form: during form submit value is outdated.
+        setTimeout(() => {
+
+            const value = event.target.value; //unmaskValue(event.target.value, maskOptions);
+            onChange(event, value);
+        }, 0);
     }
 
     return <InputMaskRect inputRef={ref} mask={mask} value={value} onChange={handleChange}
