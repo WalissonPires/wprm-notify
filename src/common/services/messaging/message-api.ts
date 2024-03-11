@@ -24,6 +24,13 @@ export class MessagingApi {
 export interface SendMessageArgs {
   to: string;
   content: string;
+  medias?: Media[];
+}
+
+export interface Media {
+  mimeType: string;
+  fileBase64: string;
+  label?: string;
 }
 
 export interface SendMessageStatus {

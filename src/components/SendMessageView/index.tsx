@@ -1,8 +1,10 @@
 'use client'
 
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Button, FieldError, FormColumn, FormRow, TextArea, Select, InputMask, ColSize } from "../Form";
+import { Controller } from "react-hook-form";
+import { Button, FieldError, FormColumn, FormRow, Select, ColSize } from "../Form";
 import { useSendMessageView } from "./hooks";
+import { MessageEditor } from "../MessageEditor";
 
 export function SendMessageView() {
 
@@ -13,6 +15,7 @@ export function SendMessageView() {
     groups,
     lastResult,
     showResultDetails,
+    control,
     register,
     handleSubmit,
     handleShowResultDetails
@@ -38,8 +41,12 @@ export function SendMessageView() {
           <FormRow>
             <FormColumn size={ColSize.span2}>
               <label>Mensagem</label>
-              <TextArea {...register('messageContent')} rows={5} />
-              <FieldError error={errors.messageContent} />
+              <Controller
+                control={control}
+                name="message"
+                render={({ field: { value, onChange } })=>  <MessageEditor value={value} onChange={onChange} />} />
+              <FieldError error={errors.message?.content} />
+              <FieldError error={errors.message?.medias} />
             </FormColumn>
           </FormRow>
           <div className="text-center mt-3">

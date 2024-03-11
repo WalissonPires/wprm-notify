@@ -20,7 +20,10 @@ export function useSendMessageView() {
     resolver: zodResolver(validationSchema),
     values: {
       groupsId: [],
-      messageContent: ''
+      message: {
+        content: '',
+        medias: []
+      }
     }
   });
 
@@ -35,7 +38,11 @@ export function useSendMessageView() {
       const result = await api.send({
         groupsId: data.groupsId,
         message: {
-          content: data.messageContent
+          content: data.message.content,
+          medias: data.message.medias.map(media => ({
+            mimeType: media.mimeType,
+            fileBase64: media.fileBase64
+          }))
         }
       });
 
@@ -73,7 +80,14 @@ export function useSendMessageView() {
 
 const validationSchema = z.object({
   groupsId: z.array(z.string().min(1, { message: messages.required })).min(1),
-  messageContent: z.string().max(2000).min(1, { message: messages.required })
+  message: z.object({
+    content: z.string().max(2000).min(1, { message: messages.required }),
+    medias: z.array(z.object({
+      mimeType: z.string(),
+      fileBase64: z.string(),
+      filename: z.string()
+    }))
+  })
 });
 
 type Model = z.infer<typeof validationSchema>;

@@ -82,7 +82,8 @@ export class SendMessage implements UseCase<SendMessageInput, SendMessageResult>
       try {
         const sendResult = await messagingApi.sendMessage({
           to: '55' + contact.phone,
-          content: input.message.content
+          content: input.message.content,
+          medias: input.message.medias
         });
 
         let { success, errorMessage } = sendResult[0] ?? {};
