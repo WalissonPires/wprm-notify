@@ -51,7 +51,7 @@ export class Trigger {
 
   nextTriggerDate(): Date {
 
-    const zone = 'utc'; // [ToDo] get user timezone
+    const zone = 'America/Sao_Paulo'; // [ToDo] get user timezone
     const currentDate = DateTime.now().setZone(zone);
 
     if (this._fields.type === TriggerType.Daily) {
