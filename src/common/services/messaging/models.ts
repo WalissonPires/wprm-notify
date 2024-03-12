@@ -1,3 +1,4 @@
+export const requestBodyMaxSize = 1024 * 1024 * 50;
 
 export interface Provider {
   id: number;

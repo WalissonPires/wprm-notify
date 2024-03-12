@@ -4,6 +4,9 @@ import { PaperClipIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline
 import { readFileAsBase64 } from "@/common/primitives/file/file-reader";
 import { AppToast } from "@/common/ui/toast";
 import { TextArea, Button } from "../Form"
+import { bytesToFormattedString, getBase64BytesSize, megaToBytes } from "@/common/primitives/file/file-size";
+import { requestBodyMaxSize } from "@/common/services/messaging/models";
+import { AppError } from "@/common/error";
 
 export function MessageEditor({ value, onChange }: MessageEditorProps) {
 
@@ -11,32 +14,48 @@ export function MessageEditor({ value, onChange }: MessageEditorProps) {
 
   const handleImageSelected = async (event: ChangeEvent<HTMLInputElement>) => {
 
-    const files = Array.from((event.currentTarget as HTMLInputElement)?.files ?? new FileList());
+    try {
+      const files = Array.from((event.currentTarget as HTMLInputElement)?.files ?? new FileList());
 
-    if (!files?.length)
-      return;
+      if (!files?.length)
+        return;
 
-    const medias = [ ...value.medias ];
-    const oneMegabyte = 1024 * 1024 * 20;
+      const maxFilesSize = requestBodyMaxSize - megaToBytes(1);
+      const medias = [ ...value.medias ];
 
-    for(const file of files) {
+      for(const file of files) {
 
-      if (file.size > oneMegabyte) {
-        AppToast.warning('Tamanho máximo permitido: 20 MB');
+        if (file.size > maxFilesSize) {
+
+          AppToast.warning('O arquivo selecionado ultrapassam o limite de ' + bytesToFormattedString(maxFilesSize));
+          return;
+        }
+
+        const base64 = await readFileAsBase64(file);
+
+        medias.push({
+          mimeType: file.type,
+          filename: file.name,
+          fileBase64: base64,
+          fileSize: getBase64BytesSize(base64)
+        });
+      }
+
+      const filesSize = medias.reduce((bytesTotal, media) => bytesTotal + media.fileSize, 0);
+      if (filesSize > maxFilesSize) {
+
+        AppToast.warning('O tamanho de todos os arquivos juntos ultrapassam o limite de ' + bytesToFormattedString(maxFilesSize));
         return;
       }
 
-      medias.push({
-        mimeType: file.type,
-        filename: file.name,
-        fileBase64: await readFileAsBase64(file)
+      onChange?.({
+        ...value,
+        medias
       });
     }
-
-    onChange?.({
-      ...value,
-      medias
-    });
+    catch(error) {
+      AppToast.error(AppError.parse(error).message);
+    }
   };
 
   const handleRemoveMedia = (media: Media) => () => {
@@ -65,7 +84,7 @@ export function MessageEditor({ value, onChange }: MessageEditorProps) {
     </div>
     <ul className="flex flex-row flex-wrap mt-3">
     {value.medias.map((media, index) =>
-      <li key={index} className="w-full max-w-[50%]">
+      <li key={index} className="w-full sm:max-w-[50%]">
         <MediaItem media={media} onRequestRemove={handleRemoveMedia(media)} />
       </li>)}
     </ul>
@@ -87,6 +106,7 @@ interface Media {
   mimeType: string;
   filename: string;
   fileBase64: string;
+  fileSize: number;
 }
 
 
