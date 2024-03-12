@@ -32,7 +32,7 @@ export const sendMessageInputSchema = z.object({
     content: z.string().min(1, messages.required).max(2000),
     medias: z.array(z.object({
       mimeType: z.string().max(40),
-      fileBase64: z.string().max(5_000_000),
+      fileBase64: z.string(),
       label: z.string().max(100).optional()
     })).optional()
   })
