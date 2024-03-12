@@ -17,12 +17,12 @@ export function MessageEditor({ value, onChange }: MessageEditorProps) {
       return;
 
     const medias = [ ...value.medias ];
-    const oneMegabyte = 1024 * 1024 * 2;
+    const oneMegabyte = 1024 * 1024 * 20;
 
     for(const file of files) {
 
       if (file.size > oneMegabyte) {
-        AppToast.warning('Tamanho máximo permitido: 2 MB');
+        AppToast.warning('Tamanho máximo permitido: 20 MB');
         return;
       }
 
