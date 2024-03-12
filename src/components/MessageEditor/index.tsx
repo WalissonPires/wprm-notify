@@ -122,6 +122,10 @@ function MediaItem({ media, onRequestRemove }: MediaItemProps) {
   {
     icon = <audio src={`data:${media.mimeType};base64,${media.fileBase64}`} controls />;
   }
+  else if (media.mimeType.startsWith('video'))
+  {
+    icon = <video src={`data:${media.mimeType};base64,${media.fileBase64}`} controls />;
+  }
 
   return (
     <div className="flex flex-col items-center p-3 relative">
