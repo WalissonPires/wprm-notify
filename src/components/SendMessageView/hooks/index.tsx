@@ -85,7 +85,8 @@ const validationSchema = z.object({
     medias: z.array(z.object({
       mimeType: z.string(),
       fileBase64: z.string(),
-      filename: z.string()
+      filename: z.string(),
+      fileSize: z.number()
     }))
   })
 });

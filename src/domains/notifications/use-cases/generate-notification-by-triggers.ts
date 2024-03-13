@@ -1,4 +1,4 @@
-import { Contact as ContactDb, NotificationTrigger as NotificationTriggerDb, TemplateMessage as TemplateMessageDb } from "@prisma/client";
+import { Contact as ContactDb, NotificationTrigger as NotificationTriggerDb, TemplateMessage as TemplateMessageDb, TemplateMessageParam as TemplateMessageParamDb } from "@prisma/client";
 import { IdGenerator } from "@/common/identity/generate";
 import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
@@ -45,7 +45,11 @@ export class GenerateNotificationsByTriggers implements UseCase<GenerateNotifica
                 name: true
               }
             },
-            templateMessage: true
+            templateMessage: {
+              include: {
+                params: true
+              }
+            }
           }
         });
       }
@@ -63,7 +67,11 @@ export class GenerateNotificationsByTriggers implements UseCase<GenerateNotifica
                 name: true
               }
             },
-            templateMessage: true
+            templateMessage: {
+              include: {
+                params: true
+              }
+            }
           }
         });
       }
@@ -142,5 +150,7 @@ export interface GenerateNotificationsByTriggersInput {
 
 type TriggerDbSelected = NotificationTriggerDb & {
   contact: Pick<ContactDb, 'accountId' | 'name'>;
-  templateMessage: TemplateMessageDb | null;
+  templateMessage: (TemplateMessageDb & {
+    params: TemplateMessageParamDb[];
+  }) | null;
 }

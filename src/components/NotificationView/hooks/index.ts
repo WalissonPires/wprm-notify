@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm, SubmitHandler,useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { NotificationTriggersApi } from "@/domains/notification-triggers/client-api";
+import { MessageTemplateParamType } from "@/domains/message-templates/entities";
 import { TriggerType } from "@/domains/notification-triggers/entities";
 import { DefaultParamsUtils } from "@/domains/message-templates/default-params";
 import { messages } from "@/common/validation/messages";
@@ -78,6 +79,7 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
     const defaultParams = Object.values(defaultParamsUtils.getAllParamsDefaultLanguage());
 
     messageTemplateParamsField.replace(messageTemplatedSelected?.params.map(param => ({
+      type: param.type,
       name: param.name,
       value: defaultParams.includes(param.name) ? DefaultParamValue : ''
     })) ?? []);
@@ -127,7 +129,8 @@ const baseValidationSchema = z.object({
   triggerType: z.nativeEnum(TriggerType),
   messageTemplateParams: z.array(z.object({
     name: z.string().min(1, { message: messages.required }),
-    value: z.string().min(1, { message: messages.required })
+    value: z.string().min(1, { message: messages.required }),
+    type: z.nativeEnum(MessageTemplateParamType)
   })),
   day: z.coerce.number().optional(),
   month: z.coerce.number().optional(),

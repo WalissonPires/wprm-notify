@@ -20,8 +20,10 @@ export class CreateMessageTemplate implements UseCase<CreateMessageTemplateInput
 
   public async execute(input: CreateMessageTemplateInput): Promise<MessageTemplate> {
 
+    const idGen = new IdGenerator();
+
     const messageTemplate = new MessageTemplate({
-      id: new IdGenerator().new(),
+      id: idGen.new(),
       name: input.messageTemplate.name,
       content: input.messageTemplate.content,
       notifyDaysBefore: input.messageTemplate.notifyDaysBefore ?? null,
@@ -50,7 +52,14 @@ export class CreateMessageTemplate implements UseCase<CreateMessageTemplateInput
         name: messageTemplate.name,
         content: messageTemplate.content,
         notifyDaysBefore: messageTemplate.notifyDaysBefore,
-        params: JSON.stringify(messageTemplate.params)
+        params: {
+          create: messageTemplate.params.map(p => ({
+            id: idGen.new(),
+            type: 'Text',
+            name: p.name,
+            value: p.value ?? ''
+          }))
+        }
       }
     });
 

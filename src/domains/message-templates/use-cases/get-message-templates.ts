@@ -33,6 +33,9 @@ export class GetMessageTemplates implements UseCase<GetMessageTemplatesInput, Pa
       take: input.limit,
       orderBy: {
         name: 'asc'
+      },
+      include: {
+        params: true
       }
     });
 

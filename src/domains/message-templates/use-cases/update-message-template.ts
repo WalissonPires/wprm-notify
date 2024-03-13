@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { UserLogged } from "@/common/auth/user";
 import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
+import { IdGenerator } from "@/common/identity/generate";
 import { UpdateMessageTemplateInput } from "./update-message-template-types";
 import { MessageTemplate } from "../entities";
 
@@ -19,6 +20,8 @@ export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput
 
 
   public async execute(input: UpdateMessageTemplateInput): Promise<MessageTemplate> {
+
+    const idGen = new IdGenerator();
 
     const messageTemplate = new MessageTemplate({
       id: input.messageTemplate.id,
@@ -59,7 +62,15 @@ export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput
         name: messageTemplate.name,
         content: messageTemplate.content,
         notifyDaysBefore: messageTemplate.notifyDaysBefore,
-        params: JSON.stringify(messageTemplate.params)
+        params: {
+          deleteMany: { id: { not: '' } },
+          create: messageTemplate.params.map(p => ({
+            id: idGen.new(),
+            name: p.name,
+            type: 'Text',
+            value: p.value
+          }))
+        }
       }
     });
 

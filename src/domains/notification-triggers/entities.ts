@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { AppError } from "@/common/error";
+import { MessageTemplateParamType } from '../message-templates/entities';
 
 export class Trigger {
 
@@ -148,6 +149,7 @@ export const TriggerTypeDisplay = {
 
 export interface TriggerParamValue {
   name: string;
+  type: MessageTemplateParamType;
   value: string;
 }
 

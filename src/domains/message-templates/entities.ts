@@ -39,7 +39,9 @@ export class MessageTemplate {
     names = Array.from(new Set(names));
 
     this._fields.params = names.map(name => ({
-      name: name
+      name: name,
+      type: MessageTemplateParamType.Text,
+      value: null
     }));
   }
 }
@@ -54,6 +56,13 @@ interface MessageTemplateProps {
 
 export interface MessageTemplateParam {
   name: string;
+  type: MessageTemplateParamType;
+  value: string | null;
+}
+
+export enum MessageTemplateParamType {
+  Text = 'Text',
+  File = 'File'
 }
 
 export interface MessageTempplateParamWithValue {
