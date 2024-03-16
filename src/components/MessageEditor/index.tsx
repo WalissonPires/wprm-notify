@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { ChangeEvent, useRef, useState } from "react";
-import { PaperClipIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { DocumentTextIcon, PaperClipIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { readFileAsBase64 } from "@/common/primitives/file/file-reader";
 import { AppToast } from "@/common/ui/toast";
 import { TextArea, Button } from "../Form"
 import { bytesToFormattedString, getBase64BytesSize, megaToBytes } from "@/common/primitives/file/file-size";
 import { requestBodyMaxSize } from "@/common/services/messaging/models";
+import { makeDataUrl } from "@/common/primitives/file/data-url";
+import { HttpClientFactory } from "@/common/http/client/factory";
 import { AppError } from "@/common/error";
 
 export function MessageEditor({ value, onChange }: MessageEditorProps) {
@@ -107,25 +109,51 @@ interface Media {
   filename: string;
   fileBase64: string;
   fileSize: number;
+  fileUrl?: string;
 }
 
 
 function MediaItem({ media, onRequestRemove }: MediaItemProps) {
 
-  let icon: React.ReactNode = <PhotoIcon className="h-10 w-10" />;
+  const [ mimeType, setMimeType ] = useState<string>(media.mimeType ?? '');
 
-  if (media.mimeType.startsWith('image'))
+  let icon: React.ReactNode = media.fileUrl ? <a href={media.fileUrl} target="_blank"><DocumentTextIcon className="h-10 w-10" /></a> : <DocumentTextIcon className="h-10 w-10" />;
+
+  if (mimeType.startsWith('image'))
   {
-    icon = <img src={`data:${media.mimeType};base64,${media.fileBase64}`}  alt={media.filename} className="h-20 w-auto" />;
+    icon = <img src={media.fileUrl ?? makeDataUrl({ mimeType: mimeType, base64: media.fileBase64 })}  alt={media.filename} className="h-20 w-auto" />;
   }
-  else if (media.mimeType.startsWith('audio'))
+  else if (mimeType.startsWith('audio'))
   {
-    icon = <audio src={`data:${media.mimeType};base64,${media.fileBase64}`} controls />;
+    icon = <audio src={media.fileUrl ?? makeDataUrl({ mimeType: mimeType, base64: media.fileBase64 })} controls />;
   }
-  else if (media.mimeType.startsWith('video'))
+  else if (mimeType.startsWith('video'))
   {
-    icon = <video src={`data:${media.mimeType};base64,${media.fileBase64}`} controls />;
+    icon = <video src={media.fileUrl ?? makeDataUrl({ mimeType: mimeType, base64: media.fileBase64 })} controls />;
   }
+
+  useEffect(() => {
+
+    if (!media.fileUrl)
+      return;
+
+      const fileUrl = media.fileUrl;
+
+      (async() => {
+
+        try {
+          const client = HttpClientFactory.create(null);
+          const { headers } = await client.head(fileUrl);
+          const contentType = headers['content-type'];
+          setMimeType(contentType?.at(0) ?? '');
+        }
+        catch(error) {
+          AppToast.error(AppError.parse(error).message);
+        }
+
+      })();
+
+  }, [ media.fileUrl ]);
 
   return (
     <div className="flex flex-col items-center p-3 relative">

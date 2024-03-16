@@ -3,7 +3,7 @@ import { UseCase } from "@/common/use-cases";
 import { IdGenerator } from "@/common/identity/generate";
 import { UserLogged } from "@/common/auth/user";
 import { AppError } from "@/common/error";
-import { MessageTemplate } from "../entities";
+import { MessageTemplate, MessageTemplateParamType } from "../entities";
 import { CreateMessageTemplateInput } from "./create-message-template-types";
 
 
@@ -27,7 +27,7 @@ export class CreateMessageTemplate implements UseCase<CreateMessageTemplateInput
       name: input.messageTemplate.name,
       content: input.messageTemplate.content,
       notifyDaysBefore: input.messageTemplate.notifyDaysBefore ?? null,
-      params: []
+      params: input.messageTemplate.params?.filter(x => x.type !== MessageTemplateParamType.Text) ?? []
     });
 
     messageTemplate.fillParamsFromContent();
@@ -55,7 +55,7 @@ export class CreateMessageTemplate implements UseCase<CreateMessageTemplateInput
         params: {
           create: messageTemplate.params.map(p => ({
             id: idGen.new(),
-            type: 'Text',
+            type: p.type,
             name: p.name,
             value: p.value ?? ''
           }))

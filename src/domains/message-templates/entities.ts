@@ -32,17 +32,17 @@ export class MessageTemplate {
   public fillParamsFromContent(): void {
 
     if (!this._fields.content) {
-      this._fields.params = [];
+      return;
     }
 
     let names = Array.from(this._fields.content.matchAll(/{{([a-zA-Z\d_]+)}}/g)).map(match => match[1]);
     names = Array.from(new Set(names));
 
-    this._fields.params = names.map(name => ({
+    this._fields.params = this._fields.params.concat(names.map(name => ({
       name: name,
       type: MessageTemplateParamType.Text,
       value: null
-    }));
+    })));
   }
 }
 

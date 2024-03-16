@@ -14,7 +14,7 @@ export class MessageTemplateMapper {
       params: templateDb.params?.map(p => ({
         name: p.name,
         type: p.type as MessageTemplateParamType,
-        value: p.value
+        value: p.value ?? null
       })) ?? []
     });
 
@@ -31,7 +31,7 @@ export class MessageTemplateMapper {
       params: templateDb.params?.map(p => ({
         name: p.name,
         type: p.type as MessageTemplateParamType,
-        value: p.value
+        value: p.value ?? null
       })) ?? []
     };
 
@@ -40,5 +40,5 @@ export class MessageTemplateMapper {
 }
 
 type MessageTemplateWithParamsDb = TemplateMessageDb & {
-  params: TemplateMessageParamDb[]
+  params: (Pick<TemplateMessageParamDb, 'type' | 'name'> & Pick<Partial<TemplateMessageParamDb>, 'value'>)[]
 }

@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, TemplateMessageParamType } from "@prisma/client";
 import { UserLogged } from "@/common/auth/user";
 import { UseCase } from "@/common/use-cases";
 import { AppError } from "@/common/error";
 import { IdGenerator } from "@/common/identity/generate";
 import { UpdateMessageTemplateInput } from "./update-message-template-types";
-import { MessageTemplate } from "../entities";
+import { MessageTemplate, MessageTemplateParamType } from "../entities";
 
 
 export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput, MessageTemplate> {
@@ -28,7 +28,7 @@ export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput
       name: input.messageTemplate.name,
       content: input.messageTemplate.content,
       notifyDaysBefore: input.messageTemplate.notifyDaysBefore ?? null,
-      params: []
+      params: input.messageTemplate.params?.filter(x => x.type !== MessageTemplateParamType.Text) ?? []
     });
 
     messageTemplate.fillParamsFromContent();
@@ -51,6 +51,23 @@ export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput
     if (messageTemplateExists)
       throw new AppError('Existe um modelo com esse nome');
 
+    const currentParams = await this._db.templateMessageParam.findMany({
+      where: {
+        templateMessageId: input.messageTemplate.id
+      }
+    });
+
+    for(const paramDb of currentParams) {
+
+      if (paramDb.type !== TemplateMessageParamType.File)
+        continue;
+
+      const inputParam = messageTemplate.params.find(p => p.name == paramDb.name);
+
+      if (inputParam &&  !inputParam.value)
+        inputParam.value = paramDb.value;
+    }
+
     await this._db.templateMessage.update({
       where: {
         id: input.messageTemplate.id,
@@ -67,7 +84,7 @@ export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput
           create: messageTemplate.params.map(p => ({
             id: idGen.new(),
             name: p.name,
-            type: 'Text',
+            type: p.type,
             value: p.value
           }))
         }

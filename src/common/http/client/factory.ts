@@ -1,11 +1,12 @@
 import { HttpClient } from ".";
+import { ApiUrl } from "./api-url";
 
 export class HttpClientFactory {
 
-  public static create(endpoint: string): HttpClient {
+  public static create(endpoint: string | null): HttpClient {
 
     return new HttpClient({
-      baseUrl: window.location.origin + '/api/' + endpoint
+      baseUrl: endpoint === null ? '' : ApiUrl.makeEndpointUrl(endpoint)
     });
   }
 }

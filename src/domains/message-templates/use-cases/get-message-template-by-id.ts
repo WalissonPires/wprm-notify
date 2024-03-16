@@ -24,7 +24,12 @@ export class GetMessageTemplateById implements UseCase<GetMessageTemplateByIdInp
         accountId: this._user.accountId
       },
       include: {
-        params: true
+        params: {
+          select: {
+            name: true,
+            type: true
+          }
+        }
       }
     });
 

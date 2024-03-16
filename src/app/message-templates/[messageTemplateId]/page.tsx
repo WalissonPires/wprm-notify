@@ -6,6 +6,7 @@ import { AppLayoutPreLoading } from "@/components/AppLayout/PreLoading";
 import { AppNavMenuDefault, AppNavMenuItens } from "@/components/AppLayout/NavMenu";
 import { ValidationInit } from "@/components/ValidationInit";
 import { MessageTemplateView } from "@/components/MessageTemplateView";
+import { AppLoading } from "@/components/AppLayout/Loading";
 
 export default function NewMessageTemplate({ params }: PageProps) {
 
@@ -16,6 +17,7 @@ export default function NewMessageTemplate({ params }: PageProps) {
       </AppLayoutHeader>
       <AppLayoutBody>
         <AppLayoutPreLoading>
+          <AppLoading />
           <ValidationInit />
           <MessageTemplateView messateTemplateId={params.messageTemplateId} />
         </AppLayoutPreLoading>

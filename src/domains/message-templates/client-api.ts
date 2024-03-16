@@ -2,11 +2,17 @@ import { PagedInput, PagedResult } from "@/common/http/pagination";
 import { HttpClientFactory } from "@/common/http/client/factory";
 import { UrlFormatter } from "@/common/http/url/url-formatter";
 import { HttpClient } from "@/common/http/client";
+import { ApiUrl } from "@/common/http/client/api-url";
 import { MessageTemplate, MessageTemplate1 } from "./entities";
 import { CreateMessageTemplateInput } from "./use-cases/create-message-template-types";
 import { UpdateMessageTemplateInput } from "./use-cases/update-message-template-types";
 
 export class MessageTemplatesApi {
+
+  public static makeParamUrl(args: { messageTemplateId: string, paramName: string }) {
+
+    return UrlFormatter.format(ApiUrl.getBaseUrl() + '/message-templates/{messageTemplateId}/param/{paramName}', args);
+  }
 
   private _client: HttpClient;
 

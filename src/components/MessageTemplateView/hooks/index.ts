@@ -1,12 +1,16 @@
-import z, { string } from "zod";
+import z from "zod";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { messages } from "@/common/validation/messages";
 import { MessageTemplatesApi } from "@/domains/message-templates/client-api";
+import { MessageTemplateParamType } from "@/domains/message-templates/entities";
+import { makeDataUrl, parseDataUrl } from "@/common/primitives/file/data-url";
+import { getBase64BytesSize } from "@/common/primitives/file/file-size";
 import { AppToast } from "@/common/ui/toast";
 import { AppError } from "@/common/error";
+import { useLoading } from "../../AppLayout/Loading/hooks";
 
 export interface UseMessageTemplateArgs {
   messateTemplateId?: string;
@@ -16,9 +20,18 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
 
   const router = useRouter();
   const [ isSaving, setIsSaving ] = useState(false);
+  const { setLoading } = useLoading();
 
   const { register, handleSubmit, watch, setValue, formState: { errors }, control } = useForm<Model>({
-    resolver: zodResolver(validationSchema)
+    resolver: zodResolver(validationSchema),
+    defaultValues: {
+      name: '',
+      notifyDaysBefore: undefined,
+      message: {
+        content: '',
+        medias: []
+      }
+    }
   });
 
 
@@ -34,8 +47,13 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
           messageTemplate: {
             id: args.messateTemplateId,
             name: data.name,
-            content: data.content,
-            notifyDaysBefore: data.notifyDaysBefore ? data.notifyDaysBefore : undefined
+            content: data.message.content,
+            notifyDaysBefore: data.notifyDaysBefore ? data.notifyDaysBefore : undefined,
+            params: data.message.medias.map(media => ({
+              type: MessageTemplateParamType.File,
+              name: media.filename,
+              value: media.fileBase64 ? makeDataUrl({ mimeType: media.mimeType, base64: media.fileBase64 }) : ''
+            }))
           }
         });
       }
@@ -44,8 +62,13 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
         await api.create({
           messageTemplate: {
             name: data.name,
-            content: data.content,
-            notifyDaysBefore: data.notifyDaysBefore ? data.notifyDaysBefore : undefined
+            content: data.message.content,
+            notifyDaysBefore: data.notifyDaysBefore ? data.notifyDaysBefore : undefined,
+            params: data.message.medias.map(media => ({
+              type: MessageTemplateParamType.File,
+              name: media.filename,
+              value: makeDataUrl({ mimeType: media.mimeType, base64: media.fileBase64 })
+            }))
           }
         });
       }
@@ -65,7 +88,7 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
   };
 
 
-  const content = watch('content');
+  const content = watch('message.content');
   const paramsNames = useMemo(() => {
 
     if (!content) return [];
@@ -83,15 +106,41 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
     if (!args.messateTemplateId)
       return;
 
-    const contactId = args.messateTemplateId;
+    const messageTemplateId = args.messateTemplateId;
 
     const execute = async () => {
 
-      const messageTemplate = await new MessageTemplatesApi().getById(contactId);
+      setLoading(true);
+      try {
+        const messageTemplate = await new MessageTemplatesApi().getById(messageTemplateId);
 
-      setValue('name', messageTemplate.name);
-      setValue('content', messageTemplate.content);
-      setValue('notifyDaysBefore', messageTemplate.notifyDaysBefore ?? undefined);
+        setValue('name', messageTemplate.name);
+        setValue('notifyDaysBefore', messageTemplate.notifyDaysBefore ?? undefined);
+        setValue('message', {
+          content: messageTemplate.content,
+          medias: messageTemplate.params.filter(x => x.type === MessageTemplateParamType.File).map(param => {
+
+            const dataUrl = param.value ? parseDataUrl(param.value) : null;
+
+            const media: MediaModel = {
+              mimeType: dataUrl?.mimeType ?? '',
+              filename: param.name,
+              fileBase64: dataUrl?.base64 ?? '',
+              fileSize: dataUrl ? getBase64BytesSize(dataUrl.base64) : 0,
+              fileUrl: MessageTemplatesApi.makeParamUrl({ messageTemplateId: messageTemplate.id, paramName: param.name })
+            };
+
+            return media;
+
+          }).filter(media => media !== null)
+        });
+      }
+      catch(error) {
+        AppToast.error(AppError.parse(error).message);
+      }
+      finally {
+        setLoading(false);
+      }
     }
 
     execute();
@@ -111,8 +160,18 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
 
 const validationSchema = z.object({
   name: z.string().max(100).min(1, { message: messages.required }),
-  content: z.string().max(2000).min(3),
-  notifyDaysBefore: z.coerce.number().gte(0).optional()
+  notifyDaysBefore: z.coerce.number().gte(0).optional(),
+  message: z.object({
+    content: z.string().max(2000).min(1, { message: messages.required }),
+    medias: z.array(z.object({
+      mimeType: z.string(),
+      fileBase64: z.string(),
+      filename: z.string(),
+      fileSize: z.number(),
+      fileUrl: z.string().optional()
+    }))
+  })
 });
 
 type Model = z.infer<typeof validationSchema>;
+type MediaModel = Model['message']['medias'][0];

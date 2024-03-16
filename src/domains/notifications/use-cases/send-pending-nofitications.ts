@@ -1,9 +1,10 @@
-import { Notification as NotificationDb, Contact as ContactDb, Account as AccountDb } from "@prisma/client";
+import { Notification as NotificationDb, Contact as ContactDb, Account as AccountDb, TemplateMessageParam as TemplateMessageParamDb, TemplateMessageParamType } from "@prisma/client";
 import { UseCase } from "@/common/use-cases";
-import { MessagingApi } from "@/common/services/messaging";
+import { Media, MessagingApi } from "@/common/services/messaging";
 import { LoggerFactory } from "@/common/logger";
 import { AppError } from "@/common/error";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
+import { parseDataUrl } from "@/common/primitives/file/data-url";
 
 export class SendPendingNotifications implements UseCase<void, void> {
 
@@ -33,6 +34,15 @@ export class SendPendingNotifications implements UseCase<void, void> {
           select: {
             phone: true,
             email: true,
+          }
+        },
+        trigger: {
+          include: {
+            templateMessage: {
+              include: {
+                params: true
+              }
+            }
           }
         }
       }
@@ -92,11 +102,27 @@ export class SendPendingNotifications implements UseCase<void, void> {
             continue;
           }
 
+          const medias = (notify.trigger?.templateMessage?.params.filter(x => x.type === TemplateMessageParamType.File && x.value) ?? []).map(p => {
+
+            const dataUrl = parseDataUrl(p.value!);
+            if (!dataUrl)
+              return null!;
+
+            const media: Media = {
+              mimeType: dataUrl.mimeType,
+              fileBase64: dataUrl.base64
+            };
+
+            return media;
+
+          }).filter(p => p !== null);
+
           logger.debug(`Sending notification ${notify.id}`);
 
           await messagingApi.sendMessage({
             to: '55' + phone,
-            content: notify.content
+            content: notify.content,
+            medias: medias
           });
 
           logger.debug(`Notification ${notify.id} sended`);
@@ -128,5 +154,10 @@ interface NotificationAccountGroup {
   notifications: (NotificationDb & {
     account: Pick<AccountDb, 'messagingApiToken'>;
     contact: Pick<ContactDb, 'email' | 'phone'> | null;
+    trigger: {
+      templateMessage: {
+        params: TemplateMessageParamDb[];
+      } | null;
+    } | null;
   })[];
 }

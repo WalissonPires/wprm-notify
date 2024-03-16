@@ -81,7 +81,7 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
     messageTemplateParamsField.replace(messageTemplatedSelected?.params.map(param => ({
       type: param.type,
       name: param.name,
-      value: defaultParams.includes(param.name) ? DefaultParamValue : ''
+      value: defaultParams.includes(param.name) || param.type !== MessageTemplateParamType.Text ? DefaultParamValue : ''
     })) ?? []);
 
   }, [ messageTemplatedSelected ]);

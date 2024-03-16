@@ -35,7 +35,12 @@ export class GetMessageTemplates implements UseCase<GetMessageTemplatesInput, Pa
         name: 'asc'
       },
       include: {
-        params: true
+        params: {
+          select: {
+            type: true,
+            name: true
+          }
+        }
       }
     });
 

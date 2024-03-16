@@ -10,43 +10,63 @@ export class HttpClient {
     this._options = options;
   }
 
-  public get<TResult>(url: string): Promise<TResult | undefined> {
+  public async get<TResult>(url: string): Promise<TResult | undefined> {
 
-    return this.send({
+    const { result } = await this.send<TResult>({
       url: url,
       method: 'GET'
     });
+
+    return result;
   }
 
-  public post<TResult>(url: string, data: any): Promise<TResult | undefined> {
+  public async post<TResult>(url: string, data: any): Promise<TResult | undefined> {
 
-    return this.send({
+    const { result } = await this.send<TResult>({
       url: url,
       method: 'POST',
       data
     });
+
+    return result;
   }
 
-  public put<TResult>(url: string, data: any): Promise<TResult | undefined> {
+  public async put<TResult>(url: string, data: any): Promise<TResult | undefined> {
 
-    return this.send({
+    const { result } = await  this.send<TResult>({
       url: url,
       method: 'PUT',
       data
     });
+
+    return result;
   }
 
-  public delete<TResult>(url: string): Promise<TResult | undefined> {
+  public async delete<TResult>(url: string): Promise<TResult | undefined> {
 
-    return this.send<TResult>({
+    const { result } = await this.send<TResult>({
       url: url,
       method: 'DELETE'
     });
+
+    return result;
   }
 
-  private async send<TResult>(args: SendArgs): Promise<TResult | undefined> {
+  public async head(url: string): Promise<{ headers: HttpClientHeaders }> {
 
-    let slash = this._options.baseUrl.endsWith('/') ? '' : '/';
+    const { headers } = await this.send({
+      url: url,
+      method: 'HEAD'
+    });
+
+    return {
+      headers
+    };
+  }
+
+  private async send<TResult>(args: SendArgs): Promise<SendResult<TResult>> {
+
+    let slash = !this._options.baseUrl || this._options.baseUrl.endsWith('/') ? '' : '/';
     if (args.url.startsWith('?') || args.url === '')
       slash = '';
 
@@ -101,17 +121,32 @@ export class HttpClient {
       throw new HttpClientError('Server returned status code ' + response.status, response.status);
     }
 
-    return result;
+    return {
+      result,
+      status: response.status,
+      headers: Array.from(response.headers.entries()).reduce((headers, h) => {
+        headers[h[0]] = [ h[1] ];
+        return headers;
+      }, {} as HttpClientHeaders)
+    };
   }
 }
 
 export interface HttpClientOptions {
   baseUrl: string;
-  defaultHeaders?: Record<string, string[]>;
+  defaultHeaders?: HttpClientHeaders;
 }
+
+export type HttpClientHeaders = Record<string, string[]>;
 
 interface SendArgs {
   url: string;
   method: string;
   data?: string;
+}
+
+interface SendResult<TResult> {
+  result: TResult | undefined;
+  headers: HttpClientHeaders;
+  status: number;
 }
