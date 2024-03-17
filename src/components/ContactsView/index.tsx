@@ -19,8 +19,8 @@ export default function ContactsView({ contacts, isLoading, error, hasMore, trig
       <div className="bg-white border m-4">
         <ul className="divide-y">
           {contacts.map(contact =>
-            <li key={contact.id} onClick={getHandleContactSelected(contact.id)}>
-              <ContactCard contact={contact} onDeleteContact={() => onDeleteContact(contact)} />
+            <li key={contact.id}>
+              <ContactCard contact={contact} onEditContact={getHandleContactSelected(contact.id)} onDeleteContact={() => onDeleteContact(contact)} />
             </li>)}
           {isEmpty && <p className="text-center text-slate-400 p-4">Nenhum contato encontrado</p>}
           {isFirstLoading && <ContactCard.Skeleton />}

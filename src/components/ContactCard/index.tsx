@@ -3,14 +3,14 @@
 import { MouseEvent, useMemo } from "react";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
-import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon, PhoneIcon, BoltIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { TimeAgo } from "@/common/datetime/time-ago";
 import { Masks, MasksUtils } from "@/common/validation/masks";
 import { AppRoutes } from "@/common/routes";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle, maskValue } from "../Form";
 import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 
-export default function ContactCard({ contact, onDeleteContact }: ContactItemProps) {
+export default function ContactCard({ contact, onEditContact, onDeleteContact }: ContactItemProps) {
 
   const { name, phone, email, nextNotification, groups } = contact;
   const { visible, setVisible } = useDrodownMenu(ContactCard.name);
@@ -30,6 +30,12 @@ export default function ContactCard({ contact, onDeleteContact }: ContactItemPro
     event.stopPropagation();
     event.preventDefault();
     setVisible(false);
+  };
+
+  const handleEditContact = (event: MouseEvent) => {
+
+    handleDropdownItemClick(event);
+    onEditContact();
   };
 
   const handleDeleteContact = (event: MouseEvent) => {
@@ -69,6 +75,9 @@ export default function ContactCard({ contact, onDeleteContact }: ContactItemPro
         <DropdownMenu
           visible={visible}
           toggle={<DropdownMenuToggle onClick={handleToggleDropdown}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
+          <DropdownMenuItem onClick={handleEditContact}>
+            <span><PencilSquareIcon className="h-5 w-5 inline-block" /> Editar</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleDropdownItemClick}>
             <Link href={AppRoutes.newContactNotification(contact.id)}><BoltIcon className="h-5 w-5 inline-block" /> Criar notificação</Link>
           </DropdownMenuItem>
@@ -111,6 +120,7 @@ ContactCard.Skeleton = function ContactCardSkeleton() {
 export interface ContactItemProps {
   contact: Contact;
   onDeleteContact: () => void | Promise<void>;
+  onEditContact: () => void | Promise<void>;
 }
 
 export interface Contact {

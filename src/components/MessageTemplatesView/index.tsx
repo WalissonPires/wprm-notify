@@ -49,8 +49,8 @@ export default function MessageTemplatesView() {
       <div className="bg-white border m-4">
         <ul className="divide-y">
           {data.map(item =>
-            <li key={item.id} onClick={getHandleMessageTemplateSelected(item.id)}>
-              <MessageTemplateCard messageTemplate={item} onDeleteClick={handleDeleteMessageTemplate(item.id)} />
+            <li key={item.id}>
+              <MessageTemplateCard messageTemplate={item} onEditClick={getHandleMessageTemplateSelected(item.id)} onDeleteClick={handleDeleteMessageTemplate(item.id)} />
             </li>)}
           {isEmpty && <p className="text-center text-slate-400 p-4">Nenhuma mensagem encontrada</p>}
           {isFirstLoading && <MessageTemplateCard.Skeleton />}

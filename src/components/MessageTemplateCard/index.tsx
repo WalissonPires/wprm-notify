@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { MouseEvent } from "react";
 import Skeleton from "react-loading-skeleton";
-import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuToggle } from "../Form";
 import { useDrodownMenu } from "../Form/DropdownMenu/hooks";
 import { MessageTemplate1 } from "@/domains/message-templates/entities";
 
-export default function MessageTemplateCard({ messageTemplate, onDeleteClick }: MessageTemplateCardProps) {
+export default function MessageTemplateCard({ messageTemplate, onEditClick, onDeleteClick }: MessageTemplateCardProps) {
 
   const { name, content } = messageTemplate;
   const { visible, setVisible } = useDrodownMenu(MessageTemplateCard.name);
@@ -27,11 +27,17 @@ export default function MessageTemplateCard({ messageTemplate, onDeleteClick }: 
     setVisible(false);
   };
 
+  const handleEditClick = (event: MouseEvent) => {
+
+    handleDropdownItemClick(event);
+    onEditClick();
+  }
+
   const handleDeleteClick = (event: MouseEvent) => {
 
     handleDropdownItemClick(event);
     onDeleteClick();
-  }
+  };
 
   return (
     <div className="flex flex-row justify-between px-4 py-6 hover:bg-slate-50">
@@ -45,8 +51,11 @@ export default function MessageTemplateCard({ messageTemplate, onDeleteClick }: 
         <DropdownMenu
           visible={visible}
           toggle={<DropdownMenuToggle onClick={handleToggleDropdown}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
+          <DropdownMenuItem onClick={handleEditClick}>
+            <Link href="#"><PencilSquareIcon className="h-5 w-5 inline-block" /> Editar</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleDeleteClick}>
-              <Link href="#"><XMarkIcon className="h-5 w-5 inline-block" /> Excluir</Link>
+            <Link href="#"><XMarkIcon className="h-5 w-5 inline-block" /> Excluir</Link>
           </DropdownMenuItem>
         </DropdownMenu>
       </div>
@@ -71,4 +80,5 @@ MessageTemplateCard.Skeleton = function ContactCardSkeleton() {
 export interface MessageTemplateCardProps {
   messageTemplate: MessageTemplate1;
   onDeleteClick: () => void;
+  onEditClick: () => void | Promise<void>;
 }
