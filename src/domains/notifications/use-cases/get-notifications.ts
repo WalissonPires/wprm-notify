@@ -57,9 +57,11 @@ export class GetNotifications implements UseCase<GetNotificationsInput, PagedRes
           }
         }
       },
-      orderBy: {
+      orderBy: [{
         scheduledAt: 'desc'
-      }
+      }, {
+        createdAt: 'asc'
+      }]
     });
 
     const mapper = new NotificationMapper();

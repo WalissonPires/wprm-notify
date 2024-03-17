@@ -20,6 +20,12 @@ export default function NotificationCard({ notification, showContact, onCancelCl
   const allowCancel = !canceledAt && !sendedAt;
   const hasActions = allowCancel;
 
+  const handleCancel = () => {
+
+    setVisible(false);
+    onCancelClick?.();
+  };
+
   return (
     <div className="flex flex-row justify-between px-4 py-6 hover:bg-slate-50">
       <div className="flex flex-col flex-1">
@@ -36,7 +42,7 @@ export default function NotificationCard({ notification, showContact, onCancelCl
         <DropdownMenu
           visible={visible}
           toggle={<DropdownMenuToggle onClick={() => setVisible(!visible)}><EllipsisVerticalIcon className="h-5 w-5"/></DropdownMenuToggle>}>
-          {allowCancel && <DropdownMenuItem onClick={onCancelClick}>
+          {allowCancel && <DropdownMenuItem onClick={handleCancel}>
             <span><XMarkIcon className="h-5 w-5 inline-block" /> Cancelar envio</span>
           </DropdownMenuItem>}
           {!hasActions && <DropdownMenuItem>Nenhum ação</DropdownMenuItem>}
