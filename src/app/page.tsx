@@ -8,8 +8,9 @@ import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Action
 import { SearchAction } from '@/components/AppLayout/Actions/SearchAction';
 import ContactsContainer from '@/components/ContactsContainer';
 import { ContactsFilterAction } from '@/components/ContactsView/ContactsFilter';
-import { AppRoutes } from '../common/routes';
+import { AppRoutes } from '@/common/routes';
 import { AppLayoutPreLoading } from '@/components/AppLayout/PreLoading';
+import { ModalContainer } from '@/components/Modal/Container';
 
 export default function Home() {
 
@@ -30,6 +31,7 @@ export default function Home() {
         </AppLayoutPreLoading>
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.contacts} />
+      <ModalContainer />
     </AppLayout>
   );
 }

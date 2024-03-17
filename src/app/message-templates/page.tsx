@@ -9,6 +9,7 @@ import { AppLayoutAction, AppLayoutActions } from '@/components/AppLayout/Action
 import { AppRoutes } from '@/common/routes';
 import MessageTemplatesView from '@/components/MessageTemplatesView';
 import { AppLoading } from '@/components/AppLayout/Loading';
+import { ModalContainer } from '@/components/Modal/Container';
 
 export default function MessageTemplates() {
 
@@ -27,6 +28,7 @@ export default function MessageTemplates() {
         </AppLayoutPreLoading>
       </AppLayoutBody>
       <AppNavMenuDefault active={AppNavMenuItens.messageTemplates} />
+      <ModalContainer />
     </AppLayout>
   );
 }
