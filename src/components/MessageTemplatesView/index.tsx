@@ -10,6 +10,10 @@ import { Button } from "../Form";
 import MessageTemplateCard from "../MessageTemplateCard";
 import { useMessageTemplates } from "./hooks";
 import { useLoading } from "../AppLayout/Loading/hooks";
+import { ModalUtils } from "../Modal/Container/state";
+import { ConfirmModal } from "../Modal/Confirm";
+
+const modalDeleteConfirmId = 'message-template-delete-confirm';
 
 export default function MessageTemplatesView() {
 
@@ -22,7 +26,23 @@ export default function MessageTemplatesView() {
 
   const getHandleMessageTemplateSelected = (messageTemplateId: string) => () => router.push(AppRoutes.viewMessageTemplate(messageTemplateId));
 
-  const handleDeleteMessageTemplate = (messageTemplateId: string) => async () => {
+  const handleShowDeleteMessageTemplateConfirmModal = (messageTemplateId: string) => async () => {
+
+    ModalUtils.show({
+      id: modalDeleteConfirmId,
+      modal: <ConfirmModal
+        title="Deletar modelo de mensagem"
+        message="Tem certeza que deseja excluir esse modelo de mensagem?"
+        onDone={handleDeleteMessageTemplate(messageTemplateId)} />
+    });
+  };
+
+  const handleDeleteMessageTemplate = (messageTemplateId: string) => async (confirmed: boolean) => {
+
+    ModalUtils.hide(modalDeleteConfirmId);
+
+    if (!confirmed)
+      return;
 
     setLoading(true);
 
@@ -50,7 +70,7 @@ export default function MessageTemplatesView() {
         <ul className="divide-y">
           {data.map(item =>
             <li key={item.id}>
-              <MessageTemplateCard messageTemplate={item} onEditClick={getHandleMessageTemplateSelected(item.id)} onDeleteClick={handleDeleteMessageTemplate(item.id)} />
+              <MessageTemplateCard messageTemplate={item} onEditClick={getHandleMessageTemplateSelected(item.id)} onDeleteClick={handleShowDeleteMessageTemplateConfirmModal(item.id)} />
             </li>)}
           {isEmpty && <p className="text-center text-slate-400 p-4">Nenhuma mensagem encontrada</p>}
           {isFirstLoading && <MessageTemplateCard.Skeleton />}

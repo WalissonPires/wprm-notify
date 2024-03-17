@@ -11,6 +11,10 @@ import { Contact } from "../../domains/contacts/entities";
 import { ContactsApi } from "../../domains/contacts/client-api";
 import { AppToast } from "../../common/ui/toast";
 import { AppError } from "../../common/error";
+import { ModalUtils } from "../Modal/Container/state";
+import { ConfirmModal } from "../Modal/Confirm";
+
+const modalDeleteConfirmId = 'contact-delete-confirm';
 
 export default function ContactsContainer() {
 
@@ -27,7 +31,23 @@ export default function ContactsContainer() {
     groupsId: filters.groups
   });
 
-  const handleDeleteContact = async (contact: Pick<Contact, 'id'>) => {
+  const handleShowDeleteContactConfirmModal = (contact: Pick<Contact, 'id'>) => {
+
+    ModalUtils.show({
+      id: modalDeleteConfirmId,
+      modal: <ConfirmModal
+        title="Deletar usuário"
+        message="Tem certeza que deseja excluir esse usuário?"
+        onDone={handleDeleteContact(contact)} />
+    });
+  };
+
+  const handleDeleteContact = (contact: Pick<Contact, 'id'>) => async (confirmed: boolean) => {
+
+    ModalUtils.hide(modalDeleteConfirmId);
+
+    if (!confirmed)
+      return;
 
     setLoading(true);
     try {
@@ -56,7 +76,7 @@ export default function ContactsContainer() {
         error={error}
         hasMore={hasMore}
         triggerLoadMore={() => loadNextPage()}
-        onDeleteContact={handleDeleteContact} />
+        onDeleteContact={handleShowDeleteContactConfirmModal} />
     </>
   )
 }
