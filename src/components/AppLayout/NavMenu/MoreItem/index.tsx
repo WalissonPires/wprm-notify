@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { CogIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { ArrowUpOnSquareIcon, CogIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { Modal, ModalHeader, ModalPosition } from "@/components/Modal";
 import { AppRoutes } from "@/common/routes";
 import { Button } from "@/components/Form";
@@ -19,6 +19,9 @@ export function MoreItem() {
     <Modal position={ModalPosition.bottomCenter}>
       <ModalHeader onRequestClose={handleHide}>Mais opções</ModalHeader>
       <div>
+        <Button onClick={handleHide} variant="textOnly" className="text-left w-full border-b py-4">
+          <Link href={AppRoutes.importContacts()} className="block"><ArrowUpOnSquareIcon className="h-5 w-5 inline-block" /> Importar contatos</Link>
+        </Button>
         <Button onClick={handleHide} variant="textOnly" className="text-left w-full border-b py-4">
           <Link href={AppRoutes.settings()} className="block"><CogIcon className="h-5 w-5 inline-block" /> Configurações</Link>
         </Button>
