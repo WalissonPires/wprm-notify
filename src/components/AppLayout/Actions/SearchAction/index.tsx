@@ -35,7 +35,12 @@ export function SearchAction({ placeholder }: SearchActionProps) {
 
   return (
     <div className="flex flex-row justify-end w-full">
-      {enabled && <Input value={value} onChange={handleChange} ref={inputRef} placeholder={placeholder ?? 'Pesquisar...'} className="text-white placeholder:text-white/50 flex-1 max-w-sm" />}
+      {enabled &&
+      <div className="absolute -bottom-full m-5 left-1/2 transform -translate-x-1/2 w-[80%]">
+        <div className="p-3 bg-white shadow">
+          <Input value={value} onChange={handleChange} ref={inputRef} placeholder={placeholder ?? 'Pesquisar...'} className="w-full" />
+        </div>
+      </div>}
       {enabled && <AppLayoutAction onClick={hide}><XMarkIcon className="h-5 w-5" /></AppLayoutAction>}
       {!enabled && <AppLayoutAction onClick={show}><MagnifyingGlassIcon className="h-5 w-5" /></AppLayoutAction>}
     </div>
