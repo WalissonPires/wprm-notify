@@ -9,9 +9,11 @@ import { requestBodyMaxSize } from "@/common/services/messaging/models";
 import { makeDataUrl } from "@/common/primitives/file/data-url";
 import { HttpClientFactory } from "@/common/http/client/factory";
 import { AppError } from "@/common/error";
+import { IdGenerator } from "@/common/identity/generate";
 
 export function MessageEditor({ value, onChange }: MessageEditorProps) {
 
+  console.log({ value });
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleImageSelected = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -21,6 +23,8 @@ export function MessageEditor({ value, onChange }: MessageEditorProps) {
 
       if (!files?.length)
         return;
+
+        event.currentTarget.value = '';
 
       const maxFilesSize = requestBodyMaxSize - megaToBytes(1);
       const medias = [ ...value.medias ];
@@ -36,6 +40,7 @@ export function MessageEditor({ value, onChange }: MessageEditorProps) {
         const base64 = await readFileAsBase64(file);
 
         medias.push({
+          id: new IdGenerator().new(),
           mimeType: file.type,
           filename: file.name,
           fileBase64: base64,
@@ -85,8 +90,8 @@ export function MessageEditor({ value, onChange }: MessageEditorProps) {
       <Button variant="transparent" className="mr-3" type="button" title="Adicionar arquivo" onClick={() => inputRef.current?.click()}><PaperClipIcon className="h-5 w-5" /></Button>
     </div>
     <ul className="flex flex-row flex-wrap mt-3">
-    {value.medias.map((media, index) =>
-      <li key={index} className="w-full sm:max-w-[50%]">
+    {value.medias.map(media =>
+      <li key={media.id} className="w-full sm:max-w-[50%]">
         <MediaItem media={media} onRequestRemove={handleRemoveMedia(media)} />
       </li>)}
     </ul>
@@ -105,6 +110,7 @@ interface MessageEditorValue {
 
 
 interface Media {
+  id: string;
   mimeType: string;
   filename: string;
   fileBase64: string;

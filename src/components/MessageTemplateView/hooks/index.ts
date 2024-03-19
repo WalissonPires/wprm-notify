@@ -10,7 +10,8 @@ import { makeDataUrl, parseDataUrl } from "@/common/primitives/file/data-url";
 import { getBase64BytesSize } from "@/common/primitives/file/file-size";
 import { AppToast } from "@/common/ui/toast";
 import { AppError } from "@/common/error";
-import { useLoading } from "../../AppLayout/Loading/hooks";
+import { IdGenerator } from "@/common/identity/generate";
+import { useLoading } from "@/components/AppLayout/Loading/hooks";
 
 export interface UseMessageTemplateArgs {
   messateTemplateId?: string;
@@ -123,6 +124,7 @@ export function useMessageTemplate(args: UseMessageTemplateArgs) {
             const dataUrl = param.value ? parseDataUrl(param.value) : null;
 
             const media: MediaModel = {
+              id: new IdGenerator().new(),
               mimeType: dataUrl?.mimeType ?? '',
               filename: param.name,
               fileBase64: dataUrl?.base64 ?? '',
@@ -164,6 +166,7 @@ const validationSchema = z.object({
   message: z.object({
     content: z.string().max(2000).min(1, { message: messages.required }),
     medias: z.array(z.object({
+      id: z.string(),
       mimeType: z.string(),
       fileBase64: z.string(),
       filename: z.string(),
