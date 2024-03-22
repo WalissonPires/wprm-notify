@@ -38,4 +38,10 @@ export class MessageProvidersApi {
     const url = UrlFormatter.format('{id}/init', { id: args.id });
     await this._client.post<Provider>(url, null);
   }
+
+  public async finalizeProvider(args: { id : number }): Promise<void> {
+
+    const url = UrlFormatter.format('{id}/finalize', { id: args.id });
+    await this._client.post<Provider>(url, null);
+  }
 }

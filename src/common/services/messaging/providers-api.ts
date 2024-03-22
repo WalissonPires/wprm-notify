@@ -47,6 +47,12 @@ export class ProvidersApi {
     const url = UrlFormatter.format('{id}/init', { id: args.id });
     return await this._client.post<Provider[]>(url, undefined);
   }
+
+  public async finalize(args: FinalizeArgs) {
+
+    const url = UrlFormatter.format('{id}/finalize', { id: args.id });
+    return await this._client.post<Provider[]>(url, undefined);
+  }
 }
 
 export interface ProviderCreateArgs {
@@ -64,6 +70,10 @@ export interface GetByIdArgs {
 
 
 export interface InitializeArgs {
+  id: number;
+}
+
+export interface FinalizeArgs {
   id: number;
 }
 

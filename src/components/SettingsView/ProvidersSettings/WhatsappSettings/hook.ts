@@ -94,9 +94,43 @@ export function useWhatsappSettings(args: { provider: ProviderState, onProviderC
     }
   };
 
+  const handleDisconnectFromWhatsapp = async () => {
+
+    setIsLoading(true);
+
+    try {
+      const api = new MessageProvidersApi();
+
+      api.finalizeProvider({ id: args.provider.id });
+
+      await delay(2000);
+
+      const providersStatus = await api.getProvidersStatus({ id: args.provider.id });
+      const providerStatus = providersStatus?.at(0);
+
+      if (providerStatus) {
+
+        args.onProviderCreated({
+          id: providerStatus.id,
+          status: mapStatus(providerStatus.status),
+          errorMessage: providerStatus.message,
+          qrCodeContent: providerStatus.qrCodeContent
+        });
+      }
+    }
+    catch (error) {
+
+      AppToast.error(AppError.parse(error).message);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     isLoading,
     handleConfigureWhatsapp,
-    handleConnectToWhatsapp
+    handleConnectToWhatsapp,
+    handleDisconnectFromWhatsapp
   }
 }

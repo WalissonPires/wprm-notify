@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClientFactory } from "@/common/database/prisma-factory";
 import { ApiErrorHandler } from "@/common/error/api-error-handler";
 import { UserSessionManager } from "@/domains/auth/services/user-session-maganer";
-import { InitProvider } from "@/domains/message-providers/use-cases/init-provider";
+import { FinalizeProvider } from "@/domains/message-providers/use-cases/finalize-provider";
 
 export async function POST(request: NextRequest, { params }: { params: RequestParams }) {
 
   try {
-    const useCase = new InitProvider({
+    const useCase = new FinalizeProvider({
       userLogged: await new UserSessionManager().getUserOrThrow(),
       prismaClient: PrismaClientFactory.create()
     });
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest, { params }: { params: RequestPa
     return ApiErrorHandler.handler(error);
   }
 }
+
 
 interface RequestParams {
   id: string;

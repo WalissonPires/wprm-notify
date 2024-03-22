@@ -9,7 +9,7 @@ import { useWhatsappSettings } from "./hook";
 
 export function WhatsappSettings(props: WhatsappSettingsProps) {
 
-  const { isLoading, handleConfigureWhatsapp, handleConnectToWhatsapp } = useWhatsappSettings({
+  const { isLoading, handleConfigureWhatsapp, handleConnectToWhatsapp, handleDisconnectFromWhatsapp } = useWhatsappSettings({
     provider: props.data,
     onProviderCreated: props.onProviderCreated
   });
@@ -28,7 +28,7 @@ export function WhatsappSettings(props: WhatsappSettingsProps) {
           {status === ProviderStateStatus.Uninitialized && <WAUninitialized isLoading={isLoading} onConnect={handleConnectToWhatsapp} />}
           {status === ProviderStateStatus.Initializing && <WAUInitializing />}
           {status === ProviderStateStatus.WaitQrCodeRead && <WAQrCodeRead qrCodeContent={props.data.qrCodeContent ?? ''} />}
-          {status === ProviderStateStatus.Ready && <WAReady />}
+          {status === ProviderStateStatus.Ready && <WAReady isLoading={isLoading} onDisconnect={handleDisconnectFromWhatsapp} />}
           {status === ProviderStateStatus.Error && <WAError errorMessage={props.data.errorMessage ?? ''} />}
         </div>
       </div>
@@ -80,18 +80,19 @@ function WAQrCodeRead(props: { qrCodeContent: string }) {
     <div>
       <p className="mb-3">Leia o QR CODE usando seu Whatsapp.</p>
       <div className="flex items-center justify-center">
-        <QRCodeSVG value={props.qrCodeContent} />
+        <QRCodeSVG value={props.qrCodeContent} size={null!} style={{width: "80%", height: "100%", maxWidth: '300px' }} />
       </div>
     </div>
   );
 }
 
-function WAReady() {
+function WAReady(props: { isLoading: boolean, onDisconnect: () => void }) {
 
   return (
     <div>
       <div className="h-2 bg-green-400 text-white"></div>
       <p className="mb-3">Você está conectado ao whatsapp.</p>
+      <Button variant="secondary" onClick={props.onDisconnect} disabled={props.isLoading}>{props.isLoading ? 'Desconectando...' : 'Desconectar'}</Button>
     </div>
   );
 }
