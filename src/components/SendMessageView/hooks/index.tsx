@@ -83,6 +83,7 @@ const validationSchema = z.object({
   message: z.object({
     content: z.string().max(2000).min(1, { message: messages.required }),
     medias: z.array(z.object({
+      id: z.string(),
       mimeType: z.string(),
       fileBase64: z.string(),
       filename: z.string(),
