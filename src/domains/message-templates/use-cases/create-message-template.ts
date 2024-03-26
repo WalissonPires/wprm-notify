@@ -35,7 +35,10 @@ export class CreateMessageTemplate implements UseCase<CreateMessageTemplateInput
     const messageTemplateExists = await this._db.templateMessage.findFirst({
       where: {
         accountId: this._user.accountId,
-        name: input.messageTemplate.name
+        name: {
+          equals: input.messageTemplate.name,
+          mode: 'insensitive'
+        }
       },
       select: {
         id: true

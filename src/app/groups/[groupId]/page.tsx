@@ -5,24 +5,24 @@ import { AppLayoutBody } from "@/components/AppLayout/Body";
 import { AppLayoutPreLoading } from "@/components/AppLayout/PreLoading";
 import { AppNavMenuDefault, AppNavMenuItens } from "@/components/AppLayout/NavMenu";
 import { ValidationInit } from "@/components/ValidationInit";
-import { MessageTemplateView } from "@/components/MessageTemplateView";
+import { GroupView } from "@/components/GroupView";
 import { AppLoading } from "@/components/AppLayout/Loading";
 
-export default function EditMessageTemplate({ params }: PageProps) {
+export default function EditGroup({ params }: PageProps) {
 
   return (
     <AppLayout>
       <AppLayoutHeader>
-        <AppLayoutBackWithTitle title="Editar modelo de mensagem" />
+        <AppLayoutBackWithTitle title="Editar grupo" />
       </AppLayoutHeader>
       <AppLayoutBody>
         <AppLayoutPreLoading>
           <AppLoading />
           <ValidationInit />
-          <MessageTemplateView messateTemplateId={params.messageTemplateId} />
+          <GroupView groupId={params.groupId} />
         </AppLayoutPreLoading>
       </AppLayoutBody>
-      <AppNavMenuDefault active={AppNavMenuItens.messageTemplates} />
+      <AppNavMenuDefault active={AppNavMenuItens.more} />
     </AppLayout>
   )
 }
@@ -30,6 +30,6 @@ export default function EditMessageTemplate({ params }: PageProps) {
 
 interface PageProps {
   params: {
-    messageTemplateId: string;
+    groupId: string;
   }
 }

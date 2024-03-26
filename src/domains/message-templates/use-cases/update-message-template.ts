@@ -41,7 +41,10 @@ export class UpdateMessageTemplate implements UseCase<UpdateMessageTemplateInput
           }
         },
         accountId: this._user.accountId,
-        name: input.messageTemplate.name
+        name: {
+          equals: input.messageTemplate.name,
+          mode: 'insensitive'
+        }
       },
       select: {
         id: true

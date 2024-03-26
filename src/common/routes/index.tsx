@@ -16,4 +16,7 @@ export abstract class AppRoutes {
   public static settings() { return '/settings'; }
   public static login() { return '/login'; }
   public static message() { return '/message'; }
+  public static viewGroup(groupId: string) { return '/groups/' + groupId; }
+  public static groups() { return '/groups'; }
+  public static newGroup() { return '/groups/new'; }
 }

@@ -42,7 +42,7 @@ export function AppNavMenuDefault({ active }: AppNavMenuDefaultProps) {
       <AppNavMenuItem active={active === AppNavMenuItens.messageTemplates}>
         <Link href={AppRoutes.messageTemplates()} className="flex flex-col items-center"><EnvelopeIcon className="h-5 w-5" /> Mensagens</Link>
       </AppNavMenuItem>
-      <AppNavMenuItem>
+      <AppNavMenuItem  active={active === AppNavMenuItens.more}>
         <MoreItem />
       </AppNavMenuItem>
     </AppNavMenu>
@@ -57,5 +57,6 @@ export enum AppNavMenuItens {
   contacts = 1,
   notifications = 2,
   messageTemplates = 3,
-  settings = 4
+  settings = 4,
+  more = 5
 }

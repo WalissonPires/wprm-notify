@@ -4,7 +4,7 @@ import { AppLayoutHeader } from '@/components/AppLayout/Header';
 import { AppLayoutMenuWithTitle } from '@/components/AppLayout/MenuWithTitle';
 import { AppNavMenuDefault, AppNavMenuItens } from '@/components/AppLayout/NavMenu';
 import { SettingsView } from '@/components/SettingsView';
-import { AppLayoutPreLoading } from '../../components/AppLayout/PreLoading';
+import { AppLayoutPreLoading } from '@/components/AppLayout/PreLoading';
 
 export default function Settings() {
 
@@ -18,7 +18,7 @@ export default function Settings() {
           <SettingsView />
         </AppLayoutPreLoading>
       </AppLayoutBody>
-      <AppNavMenuDefault active={AppNavMenuItens.settings} />
+      <AppNavMenuDefault active={AppNavMenuItens.more} />
     </AppLayout>
   );
 }

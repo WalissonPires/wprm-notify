@@ -45,4 +45,4 @@ export const POST = async (request: NextRequest) => {
   catch(error) {
     return ApiErrorHandler.handler(error);
   }
-};
+}

@@ -26,10 +26,13 @@ export class GetGroups implements UseCase<GetGroupsInput, PagedResult<Group>> {
     });
 
     const groupsDb = await this._db.group.findMany({
-      skip: input.offset,
-      take: input.limit,
       where: {
         accountId: this._user.accountId
+      },
+      skip: input.offset,
+      take: input.limit,
+      orderBy: {
+        name: 'asc'
       }
     });
 
