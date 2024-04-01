@@ -4,6 +4,7 @@ import { sortAsc } from "@/common/primitives/array/sort-utils";
 import { AppToast } from "@/common/ui/toast";
 import { ContactsApi } from "@/domains/contacts/client-api";
 import { readFileAsText } from "@/common/primitives/file/file-reader";
+import { ImportContactsResult } from "@/domains/contacts/use-cases/import-contacts-types";
 import { useLoading } from "../../AppLayout/Loading/hooks";
 import { useGroups } from "../../Groups/hooks";
 import { parseFileVcf } from "../vcard-parser";
@@ -12,14 +13,14 @@ import { ContactImportModel2 } from "../models";
 export function useContactImportView() {
 
   const [contacts, setContacts] = useState<ContactImportModel2[]>([]);
-  const [ queryTerm, setQueryTerm ] = useState('');
-  const [ allSelected, setAllSelected ] = useState(true);
+  const [queryTerm, setQueryTerm] = useState('');
+  const [allSelected, setAllSelected] = useState(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const groupSelectRef = useRef<HTMLSelectElement | null>(null);
   const { groups, isLoading: isLoadingGroups } = useGroups();
   const { isLoading, setLoading } = useLoading();
 
-  const contactsSelected = useMemo(() => contacts.filter(x => x.checked), [ contacts ]);
+  const contactsSelected = useMemo(() => contacts.filter(x => x.checked), [contacts]);
 
   const handleFileSelected = async (event: ChangeEvent<HTMLInputElement>) => {
 
@@ -44,7 +45,7 @@ export function useContactImportView() {
 
   const handleChangeSelection = (contact: ContactImportModel2) => (event: ChangeEvent) => {
 
-    const contactsUpdated = contacts.map(c  => c.id === contact.id ? { ...contact, checked: !contact.checked, errorMessage: undefined } : c);
+    const contactsUpdated = contacts.map(c => c.id === contact.id ? { ...contact, checked: !contact.checked, errorMessage: undefined } : c);
     setContacts(contactsUpdated);
   };
 
@@ -52,7 +53,7 @@ export function useContactImportView() {
 
     const allSelectedInveted = !allSelected;
     setAllSelected(allSelectedInveted);
-    setContacts(contacts.map(c => ({...c, checked: allSelectedInveted })));
+    setContacts(contacts.map(c => ({ ...c, checked: allSelectedInveted })));
   };
 
   const handleCancelImport = () => {
@@ -91,22 +92,35 @@ export function useContactImportView() {
 
       AppToast.info('Importação iniciada. Aguarde...');
 
-      const result = await api.import({
-        contacts: contactsSelected.map(c => ({
-          name: c.name,
-          phone: c.phone?.[0],
-          email: c.email?.[0],
-          groupsId: [ defaultGroupId ]
-        }))
-      });
+      let offset = 0;
+      const limit = 50;
+      let resultContacts: ImportContactsResult['contacts'] = [];
 
+      while (offset < contactsSelected.length) {
+
+        const end = Math.min(offset + limit, contactsSelected.length);
+        const contacts = contactsSelected.slice(offset, end);
+        console.log({ offset, end, contactsSelected, contacts });
+
+        const result = await api.import({
+          contacts: contacts.map(c => ({
+            name: c.name,
+            phone: c.phone?.[0],
+            email: c.email?.[0],
+            groupsId: [defaultGroupId]
+          }))
+        });
+
+        resultContacts = resultContacts.concat(result.contacts);
+        offset += limit;
+      }
 
       let contactSuccessCount = 0;
-      let contactsUpdated = [ ...contacts ];
+      let contactsUpdated = [...contacts];
 
-      for(let i = 0; i < result.contacts.length; i++) {
+      for (let i = 0; i < resultContacts.length; i++) {
 
-        const contactResult = result.contacts[i];
+        const contactResult = resultContacts[i];
         const contact = contactsSelected.at(i)!;
         const index = contacts.findIndex(c => c.id === contact.id);
 
@@ -128,7 +142,7 @@ export function useContactImportView() {
       else
         AppToast.error('Um ou mais contatos não foram importados. Verifique as validações');
     }
-    catch(error) {
+    catch (error) {
 
       AppToast.error(AppError.parse(error).getExtendedMessage());
     }
@@ -146,8 +160,7 @@ export function useContactImportView() {
 
     const term = event.target.value.toLowerCase();
 
-    const contactsUpdated = contacts.map(contact =>
-    {
+    const contactsUpdated = contacts.map(contact => {
       return {
         ...contact,
         visible: contact.name.toLowerCase().includes(term)
