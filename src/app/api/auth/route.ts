@@ -8,7 +8,10 @@ import { AppError } from '@/common/error';
 
 export async function GET() {
 
-  const useCase = new GetCurrentUser();
+  const useCase = new GetCurrentUser({
+    prismaClient: PrismaClientFactory.create()
+  });
+
   const user = await useCase.execute();
   return Response.json(user);
 }

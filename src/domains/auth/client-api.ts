@@ -3,6 +3,7 @@ import { HttpClient } from "@/common/http/client";
 import { UserLogged } from "@/common/auth/user";
 import { HttpClientError } from "@/common/http/client/error";
 import { AppError } from "@/common/error";
+import { GetCurrentUserResult } from "./use-cases/get-current-user-types";
 
 export class AuthApi {
 
@@ -37,9 +38,9 @@ export class AuthApi {
     await this._client.delete<void>('');
   }
 
-  public async getCurrentUser(): Promise<UserLogged | null> {
+  public async getCurrentUser(): Promise<GetCurrentUserResult | null> {
 
-    const result = await this._client.get<UserLogged>('');
+    const result = await this._client.get<GetCurrentUserResult>('');
     return result ?? null;
   }
 }

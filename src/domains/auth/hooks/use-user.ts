@@ -4,10 +4,10 @@ import useSWR from "swr";
 import { useEffect } from "react"
 import { useRouter } from "next/navigation";
 import { HttpClientError } from "@/common/http/client/error";
-import { UserLogged } from "@/common/auth/user";
 import { AppRoutes } from "@/common/routes";
 import { AppError } from "@/common/error";
 import { AuthApi } from "../client-api";
+import { GetCurrentUserResult } from "../use-cases/get-current-user-types";
 
 export function useUser(args?: UseUserArgs) {
 
@@ -48,7 +48,7 @@ export function useUser(args?: UseUserArgs) {
   return {
     user: user ?? null,
     error: error ? AppError.parse(error) : null,
-    setUser: (user: UserLogged | null) => mutate(user)
+    setUser: (user: GetCurrentUserResult | null) => mutate(user)
   };
 }
 
