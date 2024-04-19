@@ -38,11 +38,12 @@ export default function Login() {
       const api = new AuthApi();
       setIsSaving(true);
 
-      const user = await api.login({
+      await api.login({
         email: data.email,
         password: data.password
       });
 
+      const user = await api.getCurrentUser();
       setUser(user);
 
       AppToast.success('Logado com sucesso. Redirecionado...');
