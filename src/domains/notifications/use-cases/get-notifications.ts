@@ -4,6 +4,7 @@ import { UserLogged } from "@/common/auth/user";
 import { PagedInput, PagedResult } from "@/common/http/pagination";
 import { NotificationMapper } from "../mapper";
 import { Notification1 } from "./entities";
+import { DateTime } from "luxon";
 
 
 export class GetNotifications implements UseCase<GetNotificationsInput, PagedResult<Notification1>> {
@@ -19,8 +20,17 @@ export class GetNotifications implements UseCase<GetNotificationsInput, PagedRes
 
   public async execute(input: GetNotificationsInput): Promise<PagedResult<Notification1>> {
 
+    const lastHour = DateTime.now().minus({ hour: 1 });
+
     const filter: Prisma.NotificationWhereInput = {
-      accountId: this._user.accountId
+      accountId: this._user.accountId,
+      OR: [{
+        canceledAt: null
+      }, {
+        canceledAt: {
+          gte: lastHour.toJSDate()
+        }
+      }]
     };
 
     if (input.isSended === true) {
@@ -58,9 +68,9 @@ export class GetNotifications implements UseCase<GetNotificationsInput, PagedRes
         }
       },
       orderBy: [{
-        scheduledAt: 'desc'
+        sendedAt: 'desc',
       }, {
-        createdAt: 'asc'
+        scheduledAt: 'asc'
       }]
     });
 
