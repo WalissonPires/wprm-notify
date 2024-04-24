@@ -39,3 +39,26 @@ export interface ProviderWithStatus {
   message?: string;
   qrCodeContent?: string;
 }
+
+export interface ChatNode {
+  id: string;
+  label: string;
+  pattern: string;
+  output: ChatNodeOutput[];
+  invalidOutput?: ChatNodeOutput[];
+  childs: ChatNode[];
+  delayChildren?: number; // Delay antes de selecionar o próximo estado. CasoUso: O bot pede para o cliente digitar algo. Só que o cliente enviar em varias mensagens. Para exibir que o bot responda na primeira mensagem esperar algum tempo
+  action?: {
+      type: ChatNodeAction;
+  };
+  delay?: number; // seconds
+}
+
+export interface ChatNodeOutput {
+  type: 'text' | 'media-link';
+  content: string;
+}
+
+export enum ChatNodeAction {
+  GoToPrevious = 1
+}

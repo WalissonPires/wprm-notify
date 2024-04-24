@@ -23,6 +23,9 @@ export function MoreItem() {
       </ModalHeader>
       <div>
         <Button onClick={handleHide} variant="textOnly" className="text-left w-full border-b py-4">
+          <Link href={AppRoutes.chatbotFlow()} className="block"><ChatBubbleOvalLeftEllipsisIcon className="h-5 w-5 inline-block" /> Chatbot</Link>
+        </Button>
+        <Button onClick={handleHide} variant="textOnly" className="text-left w-full border-b py-4">
           <Link href={AppRoutes.groups()} className="block"><UserGroupIcon className="h-5 w-5 inline-block" /> Grupos</Link>
         </Button>
         <Button onClick={handleHide} variant="textOnly" className="text-left w-full border-b py-4">

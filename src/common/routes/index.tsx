@@ -19,4 +19,5 @@ export abstract class AppRoutes {
   public static viewGroup(groupId: string) { return '/groups/' + groupId; }
   public static groups() { return '/groups'; }
   public static newGroup() { return '/groups/new'; }
+  public static chatbotFlow() { return '/chatbot/flow'; }
 }

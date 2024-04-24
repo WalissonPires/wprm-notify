@@ -1,7 +1,7 @@
 import { HttpClient } from "@/common/http/client";
 import { HttpClientFactory } from "@/common/http/client/factory";
 import { UrlFormatter } from "@/common/http/url/url-formatter";
-import { Provider, ProviderWithStatus } from "@/common/services/messaging/models";
+import { ChatNode, Provider, ProviderWithStatus } from "@/common/services/messaging/models";
 
 export class MessageProvidersApi {
 
@@ -44,4 +44,21 @@ export class MessageProvidersApi {
     const url = UrlFormatter.format('{id}/finalize', { id: args.id });
     await this._client.post<Provider>(url, null);
   }
+
+  public async getChatbotFlow(args: { id : number }): Promise<ChatNode | null> {
+
+    const url = UrlFormatter.format('{id}/chatbot-flow', { id: args.id });
+    return await this._client.get<ChatNode>(url) ?? null;
+  }
+
+  public async updateChatbotFlow({ providerId, ...args }: UpdateChatbotFlowInput): Promise<void> {
+
+    const url = UrlFormatter.format('{id}/chatbot-flow', { id: providerId });
+    await this._client.put<ChatNode>(url, args)
+  }
+}
+
+export interface UpdateChatbotFlowInput {
+  providerId: number;
+  chatbotFlow: ChatNode;
 }
