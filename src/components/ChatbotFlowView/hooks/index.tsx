@@ -1,6 +1,6 @@
 import { useState, useMemo, ChangeEvent, MouseEvent, useEffect } from "react";
 import { AppError } from "@/common/error";
-import { ChatNode, ChatNodeOutput, ProviderType } from "@/common/services/messaging/models";
+import { AnyText, ChatNode, ChatNodeOutput, ChatNodePatternType, ProviderType } from "@/common/services/messaging/models";
 import { AppToast } from "@/common/ui/toast";
 import { MessageProvidersApi } from "@/domains/message-providers/client-api";
 import { useLoading } from "../../AppLayout/Loading/hooks";
@@ -74,6 +74,7 @@ export function useChatbotFlow() {
     const newNode: ChatNode = {
       id: new Date().getTime().toString(),
       label: childLabel,
+      patternType: ChatNodePatternType.Contains,
       pattern: '',
       output: [{ type: 'text', content: '' }],
       childs: []
@@ -111,7 +112,31 @@ export function useChatbotFlow() {
 
       node.pattern = event.target.value ?? '';
     }));
-  }
+  };
+
+  const handlePatternTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+
+    if (!currentNode || !rootNode) return;
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      const patternType = parseInt(event.target.value);
+      if (patternType === ChatNodePatternTypeAdditional.AnyText) {
+
+        node.patternType = ChatNodePatternType.Regex;
+        node.pattern = AnyText;
+      }
+      else {
+
+        if (node.patternType === ChatNodePatternType.Regex && node.pattern === AnyText)
+            node.pattern = '';
+
+        node.patternType = patternType;
+      }
+    }));
+  };
 
   const handleOutputContentChange = ({ type, content }: ChatNodeOutput) => (event: ChangeEvent<HTMLPreElement>) => {
 
@@ -178,7 +203,7 @@ export function useChatbotFlow() {
             return;
           }
 
-          const rootNode = await api.getChatbotFlow({ id: whatsappProvider.id }) ?? { id: 'inicial', label: 'Mensagem inicial', childs: [], output: [{ type: 'text', content: 'Olá! Pronto pra começar' }], pattern: '.*' };
+          const rootNode = await api.getChatbotFlow({ id: whatsappProvider.id }) ?? { id: 'inicial', label: 'Mensagem inicial', childs: [], output: [{ type: 'text', content: 'Olá! Pronto pra começar' }], patternType: ChatNodePatternType.Regex, pattern: AnyText };
 
           setRootNode(rootNode);
           setNodesPath([rootNode.id]);
@@ -194,9 +219,12 @@ export function useChatbotFlow() {
 
   }, []);
 
+  // const currentNodePattern = currentNode ? mapPatternToUserBuildinPatterns(currentNode.pattern) : null;
+
   return {
     ready,
     currentNode,
+    // currentNodePattern,
     nodesIndex,
     nodesPath,
     visible,
@@ -207,14 +235,74 @@ export function useChatbotFlow() {
     handleShowAddChild,
     handleRemoveChild,
     handlePatternChange,
+    handlePatternTypeChange,
     handleOutputContentChange,
     handleRemoveOutput,
     handleSave,
   };
 }
 
+export enum ChatNodePatternTypeAdditional {
+  AnyText = 99
+}
 
-const updateArrayItem = <T,>(array: T[], selector: (item: T) => boolean, newItem: (item: T) => T) => {
+export type UserBuildinPatterns = ChatNodePatternType | ChatNodePatternTypeAdditional;
+
+export const UserBuildinPatternsDisplay: Record<UserBuildinPatterns, string> = {
+  [ChatNodePatternTypeAdditional.AnyText]: 'Qualquer texto',
+  [ChatNodePatternType.StartsWith]: 'Começa com',
+  [ChatNodePatternType.EndsWith]: 'Termina com',
+  [ChatNodePatternType.Contains]: 'Contém',
+  [ChatNodePatternType.Exact]: 'Exatamente',
+  [ChatNodePatternType.Regex]: 'Regex',
+};
+
+// export function mapPatternToUserBuildinPatterns(pattern: string) {
+
+//   if (pattern === AnyText) {
+//     return {
+//       patternType: ChatNodePatternTypeAdditional.AnyText,
+//       patternText: ''
+//     };
+//   }
+
+//   if (pattern.startsWith(ChatNodePatterns.exact)) {
+//     return {
+//       patternType: UserBuildinPatterns.Exact,
+//       patternText: pattern.replace(ChatNodePatterns.exact, '')
+//     };
+//   }
+
+//   if (pattern.startsWith(ChatNodePatterns.startsWith)) {
+//     return {
+//       patternType: UserBuildinPatterns.StartsWith,
+//       patternText: pattern.replace(ChatNodePatterns.startsWith, '')
+//     };
+//   }
+
+//   if (pattern.startsWith(ChatNodePatterns.endsWith)) {
+//     return {
+//       patternType: UserBuildinPatterns.EndsWith,
+//       patternText: pattern.replace(ChatNodePatterns.endsWith, '')
+//     };
+//   }
+
+//   if (pattern.startsWith(ChatNodePatterns.contains)) {
+//     return {
+//       patternType: UserBuildinPatterns.Contains,
+//       patternText: pattern.replace(ChatNodePatterns.contains, '')
+//     };
+//   }
+
+//   return {
+//     patternType: UserBuildinPatterns.Regex,
+//     patternText: pattern
+//   };
+// }
+
+
+
+function updateArrayItem<T,>(array: T[], selector: (item: T) => boolean, newItem: (item: T) => T) {
 
   const newArray = [];
   for(let i = 0; i < array.length; i++) {
@@ -226,7 +314,7 @@ const updateArrayItem = <T,>(array: T[], selector: (item: T) => boolean, newItem
   }
 
   return newArray;
-};
+}
 
 function makeChatNodesIndex(root: ChatNode) {
 

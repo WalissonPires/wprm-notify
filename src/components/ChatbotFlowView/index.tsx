@@ -2,8 +2,10 @@
 
 import Skeleton from "react-loading-skeleton";
 import { ArrowRightIcon, ChatBubbleBottomCenterTextIcon, ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, FilmIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Button, DropdownMenu, DropdownMenuItem, Input } from "../Form";
-import { useChatbotFlow } from "./hooks";
+import { Button, DropdownMenu, DropdownMenuItem, Input, Select } from "../Form";
+import { ChatNodePatternTypeAdditional, UserBuildinPatternsDisplay, useChatbotFlow } from "./hooks";
+import { AnyText, ChatNodePatternType } from "../../common/services/messaging/models";
+import { getEnumPairValue } from "../../common/primitives/enum/enum-utils";
 
 
 export function ChatbotFlowView() {
@@ -21,6 +23,7 @@ export function ChatbotFlowView() {
     handleShowAddChild,
     handleRemoveChild,
     handlePatternChange,
+    handlePatternTypeChange,
     handleOutputContentChange,
     handleRemoveOutput,
     handleSave,
@@ -28,6 +31,10 @@ export function ChatbotFlowView() {
 
   if (!ready)
     return <ChatbotFlowView.Skeleton />;
+
+  const isAnyTextPattern = currentNode?.patternType === ChatNodePatternType.Regex && currentNode?.pattern == AnyText;
+  const patternType = isAnyTextPattern ? ChatNodePatternTypeAdditional.AnyText : currentNode?.patternType;
+  const pattern = isAnyTextPattern ? '' : (currentNode?.pattern ?? '');
 
   return (
     <div className="container mx-auto max-w-3xl">
@@ -55,7 +62,18 @@ export function ChatbotFlowView() {
           </div>
           <div>
             <label className="block font-bold">Mensagem do usuário</label>
-            <Input value={currentNode?.pattern ?? ''} onChange={handlePatternChange} placeholder="Regex" className="flex-1 mr-2" />
+            <div className="flex flex-row">
+              {/* <label className="flex flex-row items-center p-2 bg-slate-100">
+                <input type="checkbox" className="mr-2" checked={currentNode?.pattern === AnyText} onChange={handleAnyTextChange} />
+                <span>Qualquer texto</span>
+              </label> */}
+              <div>
+                <Select defaultValue={ChatNodePatternType.Contains} value={patternType} onChange={handlePatternTypeChange}>
+                  {getEnumPairValue(UserBuildinPatternsDisplay).map(({ value, text }) => <option value={value} key={value}>{text}</option>)}
+                </Select>
+              </div>
+              <Input value={pattern} onChange={handlePatternChange} disabled={isAnyTextPattern} placeholder="Mensagem" className="flex-1 mr-2" />
+            </div>
           </div>
 
           <div className="mt-3">
@@ -96,7 +114,7 @@ export function ChatbotFlowView() {
           </div>
           <ul className="list-none">
             {currentNode?.childs.length === 0 && <li className="mt-3"><small className="text-slate-400">Fim da conversa. Clique no botão <b>+</b> para continuar o diálogo.</small></li>}
-            {currentNode?.childs.map(node => { console.log(node); return (
+            {currentNode?.childs.map(node => (
               <li key={node.id} className="border-b py-4 flex flex-row flex-wrap justify-between items-center">
                 <Button onClick={handleNext(node)} variant="textOnly" className="text-left flex-1">
                   <span className="block"><ChatBubbleBottomCenterTextIcon className="h-5 w-5 inline-block" /> {node.label}</span>
@@ -106,7 +124,7 @@ export function ChatbotFlowView() {
                   <Button variant="transparent" onClick={handleRemoveChild(node)}><TrashIcon className="h-5 w-5 inline-block text-red-400" title="Excluír mensagem" /></Button>
                 </div>
               </li>
-            )})}
+            ))}
           </ul>
         </div>
       </div>

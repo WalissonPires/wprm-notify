@@ -43,6 +43,7 @@ export interface ProviderWithStatus {
 export interface ChatNode {
   id: string;
   label: string;
+  patternType: ChatNodePatternType;
   pattern: string;
   output: ChatNodeOutput[];
   invalidOutput?: ChatNodeOutput[];
@@ -62,3 +63,13 @@ export interface ChatNodeOutput {
 export enum ChatNodeAction {
   GoToPrevious = 1
 }
+
+export enum ChatNodePatternType {
+  StartsWith = 1,
+  EndsWith = 2,
+  Contains = 3,
+  Exact = 4,
+  Regex = 5
+};
+
+export const AnyText = '.*';
