@@ -5,7 +5,7 @@ on:
     branches: ["production"]
 env:
   REGISTRY: registry.dev.wprm.com.br
-  IMAGE_NAME: "registry.dev.wprm.com.br/wprm-notify"
+  IMAGE_NAME: "wprm-notify"
 
 jobs:
   amd64:
