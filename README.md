@@ -20,7 +20,7 @@ LOG_LEVEL="debug"
 LOG_PATH="./logs"
 DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 DIRECT_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
-COOKIE_PRIVATE_KEY="my-cookie-private-key"
+COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789"
 
 NEXT_PUBLIC_SEND_MESSAGE_API_URL="http://localhost:3000/"
 NEXT_PUBLIC_SEND_MESSAGE_API_TOKEN="Bearer ACCESS_TOKEN"
@@ -59,9 +59,18 @@ Triggers(id, type(yearly, semi-annual, quarterly, biomonthly, monthly, daily), m
 
 Notifications(id, scheduledAt, sendedAt, templateMessageId, content)
 
+## Docker
+
+Criar umage docker:
+
+```sh
+docker build -t wprm-notify:latest .
+docker run -d -p 3000:3000 -e DATABASE_URL="postgresql://postgres:masterkey@host.docker.internal:5432/wprmnotify?schema=public" -e COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789" -e NEXT_PUBLIC_SEND_MESSAGE_API_URL="http://localhost:5000/" -e SEND_MESSAGE_API_URL="http://localhost:5000/" --add-host host.docker.internal:host-gateway wprm-notify:latest
+```
+
 ## To DO
 
-- [ ] - Alterar Modelo de mensagem
+- [x] - Alterar Modelo de mensagem
 - [ ] - Adicionar pesquisa nos modelos de mensagem (Pesquisa por nome e conteudo)
 - [ ] - Adicionar pesquisa nas notificações (Pesquisa por nome cliente)
 - [ ] - Adicionar filtros nas notificações (Enviadas/Agendadas/Todas, Por grupo, Por modelo mensagem, Por Data Envio range)
