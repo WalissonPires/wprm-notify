@@ -1,6 +1,6 @@
 import { useState, useMemo, ChangeEvent, MouseEvent, useEffect } from "react";
 import { AppError } from "@/common/error";
-import { AnyText, ChatNode, ChatNodeOutput, ChatNodePatternType, ProviderType } from "@/common/services/messaging/models";
+import { AnyText, ChatNode, ChatNodeAction, ChatNodeOutput, ChatNodePatternType, GoToNodeParams, ProviderType } from "@/common/services/messaging/models";
 import { AppToast } from "@/common/ui/toast";
 import { MessageProvidersApi } from "@/domains/message-providers/client-api";
 import { useLoading } from "../../AppLayout/Loading/hooks";
@@ -24,6 +24,7 @@ export function useChatbotFlow() {
   const curretNodeId = nodesPath.at(-1);
   const currentNode = curretNodeId ? nodesIndex[curretNodeId] : null;
 
+  const getNodesList = () => Object.values(nodesIndex);
 
   const handleNext = (node: ChatNode) => () => {
 
@@ -114,6 +115,26 @@ export function useChatbotFlow() {
     }));
   };
 
+  const handleDelayChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+    if (!currentNode || !rootNode) return;
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      if (event.target.value === '') {
+        node.delay = undefined;
+        return;
+      }
+
+      const delay = parseInt(event.target.value);
+
+      if (!isNaN(delay))
+        node.delay = delay;
+    }));
+  };
+
   const handlePatternTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
 
     if (!currentNode || !rootNode) return;
@@ -135,6 +156,55 @@ export function useChatbotFlow() {
 
         node.patternType = patternType;
       }
+    }));
+  };
+
+  const handleActionTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+
+    if (!currentNode || !rootNode) return;
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      if (event.target.value === '') {
+
+        node.action = undefined;
+        return;
+      }
+
+      const actionType = parseInt(event.target.value);
+
+      if (node.action)
+        node.action.type = actionType;
+      else
+        node.action = { type: actionType };
+    }));
+  };
+
+  const handleGoToNodeParamNodeIdChange = (event: ChangeEvent<HTMLSelectElement>) => {
+
+    if (!currentNode || !rootNode) return;
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      if (event.target.value === '') {
+
+        node.action = undefined;
+        return;
+      }
+
+      if (!node.action)
+        throw new Error('Action is empty');
+
+      const params: GoToNodeParams = {
+        ...node.action.params,
+        nodeId: event.target.id
+      };
+
+      node.action.params = params;
     }));
   };
 
@@ -228,6 +298,7 @@ export function useChatbotFlow() {
     nodesIndex,
     nodesPath,
     visible,
+    getNodesList,
     handleToggleDropdown,
     handleNext,
     handlePrevious,
@@ -235,7 +306,10 @@ export function useChatbotFlow() {
     handleShowAddChild,
     handleRemoveChild,
     handlePatternChange,
+    handleDelayChange,
     handlePatternTypeChange,
+    handleActionTypeChange,
+    handleGoToNodeParamNodeIdChange,
     handleOutputContentChange,
     handleRemoveOutput,
     handleSave,
@@ -255,6 +329,11 @@ export const UserBuildinPatternsDisplay: Record<UserBuildinPatterns, string> = {
   [ChatNodePatternType.Contains]: 'Contém',
   [ChatNodePatternType.Exact]: 'Exatamente',
   [ChatNodePatternType.Regex]: 'Regex',
+};
+
+export const ChatNodeActionDisplay: Record<ChatNodeAction, string> = {
+  [ChatNodeAction.GoToNode]: 'Ir para mensagem',
+  [ChatNodeAction.GoToPrevious]: 'Ir para mensagem anterior'
 };
 
 // export function mapPatternToUserBuildinPatterns(pattern: string) {

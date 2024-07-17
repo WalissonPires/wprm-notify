@@ -2,9 +2,9 @@
 
 import Skeleton from "react-loading-skeleton";
 import { ArrowRightIcon, ChatBubbleBottomCenterTextIcon, ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, FilmIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Button, DropdownMenu, DropdownMenuItem, Input, Select } from "../Form";
-import { ChatNodePatternTypeAdditional, UserBuildinPatternsDisplay, useChatbotFlow } from "./hooks";
-import { AnyText, ChatNodePatternType } from "../../common/services/messaging/models";
+import { Button, ColSize, DropdownMenu, DropdownMenuItem, FormColumn, FormRow, Input, Select } from "../Form";
+import { ChatNodeActionDisplay, ChatNodePatternTypeAdditional, UserBuildinPatternsDisplay, useChatbotFlow } from "./hooks";
+import { AnyText, ChatNodeAction, ChatNodePatternType, GoToNodeParams } from "../../common/services/messaging/models";
 import { getEnumPairValue } from "../../common/primitives/enum/enum-utils";
 
 
@@ -16,6 +16,7 @@ export function ChatbotFlowView() {
     nodesIndex,
     nodesPath,
     visible,
+    getNodesList,
     handleToggleDropdown,
     handleNext,
     handlePrevious,
@@ -23,7 +24,10 @@ export function ChatbotFlowView() {
     handleShowAddChild,
     handleRemoveChild,
     handlePatternChange,
+    handleDelayChange,
     handlePatternTypeChange,
+    handleActionTypeChange,
+    handleGoToNodeParamNodeIdChange,
     handleOutputContentChange,
     handleRemoveOutput,
     handleSave,
@@ -60,7 +64,7 @@ export function ChatbotFlowView() {
           <div className="mb-2 text-right">
             <Button onClick={handleSave}>Salvar</Button>
           </div>
-          <div>
+          <div className="mb-6">
             <label className="block font-bold">Mensagem do usuário</label>
             <div className="flex flex-row">
               {/* <label className="flex flex-row items-center p-2 bg-slate-100">
@@ -75,6 +79,31 @@ export function ChatbotFlowView() {
               <Input value={pattern} onChange={handlePatternChange} disabled={isAnyTextPattern} placeholder="Mensagem" className="flex-1 mr-2" />
             </div>
           </div>
+
+          <FormRow>
+            <FormColumn size={ColSize.span2}>
+              <label className="block font-bold">Tempo espera</label>
+              <Input value={currentNode?.delay ?? ''} onChange={handleDelayChange} placeholder="Tempo em segundos" />
+            </FormColumn>
+          </FormRow>
+          <FormRow>
+            <FormColumn size={ColSize.span2}>
+              <label className="block font-bold">Ação</label>
+              <Select defaultValue={''} value={currentNode?.action?.type ?? ''} onChange={handleActionTypeChange}>
+                <option value="">Nenhuma</option>
+                  {getEnumPairValue(ChatNodeActionDisplay).map(({ value, text }) => <option value={value} key={value}>{text}</option>)}
+                </Select>
+            </FormColumn>
+          </FormRow>
+          {currentNode?.action?.type == ChatNodeAction.GoToNode &&
+          <FormRow>
+            <FormColumn size={ColSize.span2}>
+              <label className="block font-bold">Mensagem dest.</label>
+              <Select defaultValue={''} value={(currentNode?.action?.params as GoToNodeParams)?.nodeId} onChange={handleGoToNodeParamNodeIdChange}>
+                {getNodesList().filter(x => x.id !== currentNode?.id).map(node => <option value={node.id} key={node.id}>{node.label}</option>)}
+              </Select>
+            </FormColumn>
+          </FormRow>}
 
           <div className="mt-3">
             <div className="flex flex-row flex-wrap justify-between items-center mb-3">
