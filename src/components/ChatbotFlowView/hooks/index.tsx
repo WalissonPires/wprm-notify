@@ -11,7 +11,7 @@ import { ChatbotFlowView } from "..";
 
 export function useChatbotFlow() {
 
-  const { setLoading } = useLoading();
+  const { setLoading, isLoading } = useLoading();
   const [ ready, setReady ] = useState(false);
 
   const [ providerId, setProviderId ] = useState(0);
@@ -40,6 +40,66 @@ export function useChatbotFlow() {
 
       return nodesUpdateds;
     });
+  };
+
+  const handleMoveDownChild = (child: ChatNode) => () => {
+
+    if (!currentNode || !rootNode) return
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      const lastIndex = node.childs.length - 1;
+      const childIndex = node.childs.findIndex(x => x.id === child.id);
+      if (childIndex == -1 || childIndex == lastIndex) return;
+
+      const newChildIndex = childIndex + 1;
+
+      const childs: ChatNode[] = [];
+      for(let index = 0; index <= lastIndex; index++) {
+
+        if (index == childIndex)
+          continue;
+
+        childs.push(node.childs[index]);
+
+        if (index == newChildIndex)
+          childs.push(node.childs[childIndex]);
+      }
+
+      node.childs = childs;
+    }));
+  };
+
+  const handleMoveUpChild = (child: ChatNode) => () => {
+
+    if (!currentNode || !rootNode) return
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      const lastIndex = node.childs.length - 1;
+      const childIndex = node.childs.findIndex(x => x.id === child.id);
+      if (childIndex == -1 || childIndex == 0) return;
+
+      const newChildIndex = childIndex - 1;
+
+      const childs: ChatNode[] = [];
+      for(let index = 0; index <= lastIndex; index++) {
+
+        if (index == childIndex)
+          continue;
+
+        if (index == newChildIndex)
+          childs.push(node.childs[childIndex]);
+
+        childs.push(node.childs[index]);
+      }
+
+      node.childs = childs;
+    }));
   };
 
   const handleAddResponse = (type: 'text' | 'media-link') => (event: MouseEvent) => {
@@ -100,6 +160,18 @@ export function useChatbotFlow() {
       if (node.id !== currentNode.id) return;
 
       node.childs = node.childs.filter(x => x.id !== nodeSelected.id)
+    }));
+  };
+
+  const handleLabelChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+    if (!currentNode || !rootNode) return;
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      node.label = event.target.value ?? '';
     }));
   };
 
@@ -234,6 +306,11 @@ export function useChatbotFlow() {
     }));
   };
 
+  const handleOpenLink =  ({ content }: ChatNodeOutput) => (event: MouseEvent) => {
+
+    window.open(content, '_blank');
+  };
+
   const handleSave = async () => {
 
     if (!rootNode) return;
@@ -298,13 +375,17 @@ export function useChatbotFlow() {
     nodesIndex,
     nodesPath,
     visible,
+    isSaving: isLoading,
     getNodesList,
     handleToggleDropdown,
     handleNext,
     handlePrevious,
+    handleMoveDownChild,
+    handleMoveUpChild,
     handleAddResponse,
     handleShowAddChild,
     handleRemoveChild,
+    handleLabelChange,
     handlePatternChange,
     handleDelayChange,
     handlePatternTypeChange,
@@ -312,6 +393,7 @@ export function useChatbotFlow() {
     handleGoToNodeParamNodeIdChange,
     handleOutputContentChange,
     handleRemoveOutput,
+    handleOpenLink,
     handleSave,
   };
 }

@@ -1,11 +1,12 @@
 'use client'
 
 import Skeleton from "react-loading-skeleton";
-import { ArrowRightIcon, ChatBubbleBottomCenterTextIcon, ChevronDownIcon, ChevronRightIcon, EnvelopeIcon, FilmIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, ChatBubbleBottomCenterTextIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, EnvelopeIcon, EyeIcon, FilmIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, ColSize, DropdownMenu, DropdownMenuItem, FormColumn, FormRow, Input, Select } from "../Form";
 import { ChatNodeActionDisplay, ChatNodePatternTypeAdditional, UserBuildinPatternsDisplay, useChatbotFlow } from "./hooks";
 import { AnyText, ChatNodeAction, ChatNodePatternType, GoToNodeParams } from "../../common/services/messaging/models";
 import { getEnumPairValue } from "../../common/primitives/enum/enum-utils";
+import { Collapse } from "../Form/Collapse";
 
 
 export function ChatbotFlowView() {
@@ -16,13 +17,17 @@ export function ChatbotFlowView() {
     nodesIndex,
     nodesPath,
     visible,
+    isSaving,
     getNodesList,
     handleToggleDropdown,
     handleNext,
     handlePrevious,
+    handleMoveDownChild,
+    handleMoveUpChild,
     handleAddResponse,
     handleShowAddChild,
     handleRemoveChild,
+    handleLabelChange,
     handlePatternChange,
     handleDelayChange,
     handlePatternTypeChange,
@@ -30,6 +35,7 @@ export function ChatbotFlowView() {
     handleGoToNodeParamNodeIdChange,
     handleOutputContentChange,
     handleRemoveOutput,
+    handleOpenLink,
     handleSave,
   } = useChatbotFlow();
 
@@ -62,7 +68,11 @@ export function ChatbotFlowView() {
         </div>
         <div>
           <div className="mb-2 text-right">
-            <Button onClick={handleSave}>Salvar</Button>
+            <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Salvando ...' : 'Salvar'}</Button>
+          </div>
+          <div className="mb-6">
+            <label className="block font-bold">Título</label>
+            <Input value={currentNode?.label ?? ''} onChange={handleLabelChange} placeholder="Título" className="flex-1 mr-2" />
           </div>
           <div className="mb-6">
             <label className="block font-bold">Mensagem do usuário</label>
@@ -80,30 +90,32 @@ export function ChatbotFlowView() {
             </div>
           </div>
 
-          <FormRow>
-            <FormColumn size={ColSize.span2}>
-              <label className="block font-bold">Tempo espera</label>
-              <Input value={currentNode?.delay ?? ''} onChange={handleDelayChange} placeholder="Tempo em segundos" />
-            </FormColumn>
-          </FormRow>
-          <FormRow>
-            <FormColumn size={ColSize.span2}>
-              <label className="block font-bold">Ação</label>
-              <Select defaultValue={''} value={currentNode?.action?.type ?? ''} onChange={handleActionTypeChange}>
-                <option value="">Nenhuma</option>
-                  {getEnumPairValue(ChatNodeActionDisplay).map(({ value, text }) => <option value={value} key={value}>{text}</option>)}
+          <Collapse title="Mais configurações">
+            <FormRow>
+              <FormColumn size={ColSize.span2}>
+                <label className="block font-bold">Tempo espera</label>
+                <Input value={currentNode?.delay ?? ''} onChange={handleDelayChange} placeholder="Tempo em segundos" />
+              </FormColumn>
+            </FormRow>
+            <FormRow>
+              <FormColumn size={ColSize.span2}>
+                <label className="block font-bold">Ação</label>
+                <Select defaultValue={''} value={currentNode?.action?.type ?? ''} onChange={handleActionTypeChange}>
+                  <option value="">Nenhuma</option>
+                    {getEnumPairValue(ChatNodeActionDisplay).map(({ value, text }) => <option value={value} key={value}>{text}</option>)}
+                  </Select>
+              </FormColumn>
+            </FormRow>
+            {currentNode?.action?.type == ChatNodeAction.GoToNode &&
+            <FormRow>
+              <FormColumn size={ColSize.span2}>
+                <label className="block font-bold">Mensagem dest.</label>
+                <Select defaultValue={''} value={(currentNode?.action?.params as GoToNodeParams)?.nodeId} onChange={handleGoToNodeParamNodeIdChange}>
+                  {getNodesList().filter(x => x.id !== currentNode?.id).map(node => <option value={node.id} key={node.id}>{node.label}</option>)}
                 </Select>
-            </FormColumn>
-          </FormRow>
-          {currentNode?.action?.type == ChatNodeAction.GoToNode &&
-          <FormRow>
-            <FormColumn size={ColSize.span2}>
-              <label className="block font-bold">Mensagem dest.</label>
-              <Select defaultValue={''} value={(currentNode?.action?.params as GoToNodeParams)?.nodeId} onChange={handleGoToNodeParamNodeIdChange}>
-                {getNodesList().filter(x => x.id !== currentNode?.id).map(node => <option value={node.id} key={node.id}>{node.label}</option>)}
-              </Select>
-            </FormColumn>
-          </FormRow>}
+              </FormColumn>
+            </FormRow>}
+          </Collapse>
 
           <div className="mt-3">
             <div className="flex flex-row flex-wrap justify-between items-center mb-3">
@@ -131,7 +143,11 @@ export function ChatbotFlowView() {
                 <div className="flex items-center justify-between p-2 bg-slate-200">
                   {output.type === 'text' && <small>Mensagem de texto</small>}
                   {output.type === 'media-link' && <small>Link multimidia</small>}
-                  <XMarkIcon className="h-5 w-5 text-red-400" onClick={handleRemoveOutput(output)} />
+                  <div className="flex flex-row">
+                    {output.type === 'media-link' &&
+                    <EyeIcon className="h-5 w-5 text-blue-400 mr-2" onClick={handleOpenLink(output)} title="Visualizar mídia" />}
+                    <XMarkIcon className="h-5 w-5 text-red-400" onClick={handleRemoveOutput(output)} title="Remover mensagem" />
+                  </div>
                 </div>
                 <pre onBlur={handleOutputContentChange(output)} contentEditable className={'w-full overflow-hidden whitespace-pre-wrap bg-slate-100 p-2' + (output.type === 'media-link' ? ' text-blue-600' : '')}>{output.content}</pre>
               </div>)}
@@ -148,9 +164,13 @@ export function ChatbotFlowView() {
                 <Button onClick={handleNext(node)} variant="textOnly" className="text-left flex-1">
                   <span className="block"><ChatBubbleBottomCenterTextIcon className="h-5 w-5 inline-block" /> {node.label}</span>
                 </Button>
-                <div className="text-right">
+                <div className="text-right flex flex-row items-center">
                   <Button variant="transparent" onClick={handleNext(node)} ><ArrowRightIcon className="h-5 w-5 inline-block text-blue-500" title="Avançar" /></Button>
                   <Button variant="transparent" onClick={handleRemoveChild(node)}><TrashIcon className="h-5 w-5 inline-block text-red-400" title="Excluír mensagem" /></Button>
+                  <div className="inline-flex flex-col ml-2">
+                    <ChevronUpIcon onClick={handleMoveUpChild(node)} className="h-5 w-5 inline-block text-blue-500 p-1" title="Mover para cima" />
+                    <ChevronDownIcon onClick={handleMoveDownChild(node)} className="h-5 w-5 inline-block text-blue-500 p-1" title="Mover para baixo" />
+                  </div>
                 </div>
               </li>
             ))}
