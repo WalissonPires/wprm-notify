@@ -16,7 +16,7 @@ export async function POST(request: NextRequest, { params }: { params: RequestPa
       providerId: parseInt(params.id)
     });
 
-    return NextResponse.json(null, { status: 204 });
+    return  new NextResponse(null, { status: 204 });
   }
   catch(error) {
     return ApiErrorHandler.handler(error);
