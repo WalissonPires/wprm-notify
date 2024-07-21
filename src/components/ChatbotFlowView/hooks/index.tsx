@@ -18,6 +18,7 @@ export function useChatbotFlow() {
   const [ rootNode, setRootNode ] = useState<ChatNode | null>(null);
   const [ nodesPath, setNodesPath ] = useState<string[]>([]);
   const { visible, handleToggleDropdown, handleDropdownItemClick } = useDrodownMenu(ChatbotFlowView.name);
+  const [ chatbotActive, setChatbotActive ] = useState<boolean | null>(null);
 
   const nodesIndex = useMemo(() => rootNode ? makeChatNodesIndex(rootNode) : {}, [ rootNode ]);
 
@@ -336,6 +337,31 @@ export function useChatbotFlow() {
     }
   };
 
+  const handleSetChatbotStatus = async (event: ChangeEvent<HTMLSelectElement>) => {
+
+    const active = event.currentTarget.value === 'true';
+
+    setChatbotActive(active);
+    setLoading(true);
+
+    try {
+      const api = new MessageProvidersApi();
+
+      await api.updateChatbotStatus({
+        providerId: providerId,
+        active: active
+      });
+    }
+    catch (error) {
+
+      setChatbotActive(!active);
+      AppToast.error(AppError.parse(error).message);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
 
       (async () => {
@@ -350,11 +376,13 @@ export function useChatbotFlow() {
             return;
           }
 
+          const status = await api.getChatbotStatus({ id: whatsappProvider.id });
           const rootNode = await api.getChatbotFlow({ id: whatsappProvider.id }) ?? { id: 'inicial', label: 'Mensagem inicial', childs: [], output: [{ type: 'text', content: 'Olá! Pronto pra começar' }], patternType: ChatNodePatternType.Regex, pattern: AnyText };
 
           setRootNode(rootNode);
           setNodesPath([rootNode.id]);
           setProviderId(whatsappProvider.id);
+          setChatbotActive(status?.active ?? null);
           setReady(true);
         }
         catch (error) {
@@ -376,6 +404,7 @@ export function useChatbotFlow() {
     nodesPath,
     visible,
     isSaving: isLoading,
+    chatbotActive,
     getNodesList,
     handleToggleDropdown,
     handleNext,
@@ -395,6 +424,7 @@ export function useChatbotFlow() {
     handleRemoveOutput,
     handleOpenLink,
     handleSave,
+    handleSetChatbotStatus
   };
 }
 

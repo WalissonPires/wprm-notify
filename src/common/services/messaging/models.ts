@@ -80,3 +80,8 @@ export enum ChatNodePatternType {
 };
 
 export const AnyText = '.*';
+
+
+export interface ChatbotStatus {
+  active: boolean;
+}

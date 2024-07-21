@@ -1,7 +1,7 @@
 import { HttpClient } from "@/common/http/client";
 import { HttpClientFactory } from "@/common/http/client/factory";
 import { UrlFormatter } from "@/common/http/url/url-formatter";
-import { ChatNode, Provider, ProviderWithStatus } from "@/common/services/messaging/models";
+import { ChatbotStatus, ChatNode, Provider, ProviderWithStatus } from "@/common/services/messaging/models";
 
 export class MessageProvidersApi {
 
@@ -54,11 +54,29 @@ export class MessageProvidersApi {
   public async updateChatbotFlow({ providerId, ...args }: UpdateChatbotFlowInput): Promise<void> {
 
     const url = UrlFormatter.format('{id}/chatbot-flow', { id: providerId });
-    await this._client.put<ChatNode>(url, args)
+    await this._client.put<void>(url, args)
+  }
+
+  public async getChatbotStatus(args: { id : number }): Promise<ChatbotStatus | null> {
+
+    const url = UrlFormatter.format('{id}/chatbot-status', { id: args.id });
+    return await this._client.get<ChatbotStatus>(url) ?? null;
+  }
+
+  public async updateChatbotStatus({ providerId, ...args }: UpdateChatbotStatusInput): Promise<void> {
+
+    const url = UrlFormatter.format('{id}/chatbot-status', { id: providerId });
+    await this._client.put<void>(url, args)
   }
 }
 
 export interface UpdateChatbotFlowInput {
   providerId: number;
   chatbotFlow: ChatNode;
+}
+
+
+export interface UpdateChatbotStatusInput {
+  providerId: number;
+  active: boolean;
 }

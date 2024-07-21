@@ -1,7 +1,7 @@
 'use client'
 
 import Skeleton from "react-loading-skeleton";
-import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, ChatBubbleBottomCenterTextIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, EnvelopeIcon, EyeIcon, FilmIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, ChatBubbleBottomCenterTextIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, EnvelopeIcon, EyeIcon, FilmIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, ColSize, DropdownMenu, DropdownMenuItem, FormColumn, FormRow, Input, Select } from "../Form";
 import { ChatNodeActionDisplay, ChatNodePatternTypeAdditional, UserBuildinPatternsDisplay, useChatbotFlow } from "./hooks";
 import { AnyText, ChatNodeAction, ChatNodePatternType, GoToNodeParams } from "../../common/services/messaging/models";
@@ -18,6 +18,7 @@ export function ChatbotFlowView() {
     nodesPath,
     visible,
     isSaving,
+    chatbotActive,
     getNodesList,
     handleToggleDropdown,
     handleNext,
@@ -37,6 +38,7 @@ export function ChatbotFlowView() {
     handleRemoveOutput,
     handleOpenLink,
     handleSave,
+    handleSetChatbotStatus
   } = useChatbotFlow();
 
   if (!ready)
@@ -67,7 +69,17 @@ export function ChatbotFlowView() {
           </ul>
         </div>
         <div>
-          <div className="mb-2 text-right">
+          <div className="flex flex-row justify-between mb-2">
+            <div className="max-w-sm flex flex-row items-center">
+              <label>Status: </label>
+              <Select value={chatbotActive?.toString() ?? ''} onChange={handleSetChatbotStatus}>
+                {chatbotActive === null &&
+                <option value=''>Carregando...</option>}
+                {chatbotActive !== null && <>
+                <option value="true">Ativado</option>
+                <option value="false">Desativado</option></>}
+              </Select>
+            </div>
             <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Salvando ...' : 'Salvar'}</Button>
           </div>
           <div className="mb-6">

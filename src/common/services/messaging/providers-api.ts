@@ -1,7 +1,7 @@
 import { AppConfig } from "../../configuration";
 import { HttpClient } from "../../http/client";
 import { UrlFormatter } from "../../http/url/url-formatter";
-import { ChatNode, IProviderConfig, Provider, ProviderType, ProviderWithStatus } from "./models";
+import { ChatbotStatus, ChatNode, IProviderConfig, Provider, ProviderType, ProviderWithStatus } from "./models";
 
 
 export class ProvidersApi {
@@ -65,6 +65,18 @@ export class ProvidersApi {
     const url = UrlFormatter.format('{id}/chatbot-flow', { id: id });
     return await this._client.put<ChatNode>(url, args) ?? null;
   }
+
+  public async getChatbotStatus(args: GetChatbotStatusArgs) {
+
+    const url = UrlFormatter.format('{id}/chatbot-status', { id: args.id });
+    return await this._client.get<ChatbotStatus>(url) ?? null;
+  }
+
+  public async updateChatbotStatus({ id, ...args }: UpdateChatbotStatusArgs) {
+
+    const url = UrlFormatter.format('{id}/chatbot-status', { id: id });
+    return await this._client.put<void>(url, args) ?? null;
+  }
 }
 
 export interface ProviderCreateArgs {
@@ -100,4 +112,13 @@ export interface GetChatbotFlowArgs {
 export interface UpdateChatbotFlowArgs {
   id: number;
   chatbotFlow: ChatNode;
+}
+
+export interface GetChatbotStatusArgs {
+  id: number;
+}
+
+export interface UpdateChatbotStatusArgs {
+  id: number;
+  active: boolean;
 }
