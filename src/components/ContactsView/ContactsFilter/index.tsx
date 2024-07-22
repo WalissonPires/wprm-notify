@@ -1,27 +1,44 @@
 'use client'
 
+import { ChangeEvent } from "react";
 import { useSnapshot } from "valtio";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CheckIcon, FunnelIcon as FunnelIconOutline } from "@heroicons/react/24/outline";
-import { FunnelIcon as FunnelIconSolid } from "@heroicons/react/24/solid";
-import { AppLayoutAction } from "@/components/AppLayout/Actions";
+import { CheckIcon, AdjustmentsHorizontalIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Button, ColSize, FormColumn, FormRow, Input, Select } from "../../Form";
 import { Modal, ModalHeader, ModalBody } from "../../Modal";
-import { Button, ColSize, FormColumn, FormRow, Select } from "../../Form";
 import { useGroups } from "../../Groups/hooks";
-import { contactsFilterState } from "./state";
+import { contactsFilterState, searchActionState } from "./state";
 
 
 export function ContactsFilter() {
 
   const { opened } = useSnapshot(contactsFilterState);
+  const { hasFilters } = useSnapshot(contactsFilterState);
   const { isLoading: isLoadingGroups, groups } = useGroups();
+  const { register, handleSubmit, setValue, getValues } = useForm<Model>();
+  const { value: searchValue } = useSnapshot(searchActionState);
+
+  const handleClick = () => {
+
+    contactsFilterState.opened = true;
+  };
 
   const handleClose = () => {
 
     contactsFilterState.opened = false;
   };
 
-  const { register, handleSubmit } = useForm<Model>();
+  const handleClear = () => {
+
+    setValue('groups', []);
+    onSubmit(getValues());
+  };
+
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+    searchActionState.value = event.target.value;
+  };
 
   const onSubmit: SubmitHandler<Model> = async (data) => {
 
@@ -35,50 +52,43 @@ export function ContactsFilter() {
     contactsFilterState.opened = false;
   };
 
-  if (!opened) return null;
-
   return (
-    <Modal>
-      <ModalHeader onRequestClose={handleClose}>Filtrar contatos</ModalHeader>
-      <ModalBody>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FormRow>
-            <FormColumn size={ColSize.full}>
-              <label>Grupos</label>
-              <Select {...register('groups')} multiple>
-                {isLoadingGroups && <option value="">Carregando...</option>}
-                {groups.map(group => <option value={group.id} key={group.id}>{group.name}</option>)}
-              </Select>
-            </FormColumn>
-          </FormRow>
-          <FormRow>
-            <FormColumn size={ColSize.full}>
-              <div className="text-center">
-                <Button type="submit"><CheckIcon className="h-5 w-5 inline-block" /> Aplicar</Button>
-              </div>
-            </FormColumn>
-          </FormRow>
-        </form>
-      </ModalBody>
-    </Modal>
+    <>
+    <div className="container mx-auto">
+      <div className="bg-white border p-3 m-4">
+        <div className="flex flex-row">
+          <Input value={searchValue} onChange={handleChange} className="mr-3" placeholder="Nome, email ou telefone" />
+          <Button onClick={handleClick} variant="transparent"><AdjustmentsHorizontalIcon className={'h-5 w-5 inline-block' + (hasFilters ? ' text-green-500' : '')} /></Button>
+        </div>
+      </div>
+    </div>
+      {opened &&
+      <Modal>
+        <ModalHeader onRequestClose={handleClose}>Filtrar contatos</ModalHeader>
+        <ModalBody>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormRow>
+              <FormColumn size={ColSize.full}>
+                <label>Grupos</label>
+                <Select {...register('groups')} multiple>
+                  {isLoadingGroups && <option value="">Carregando...</option>}
+                  {groups.map(group => <option value={group.id} key={group.id}>{group.name}</option>)}
+                </Select>
+              </FormColumn>
+            </FormRow>
+            <FormRow>
+              <FormColumn size={ColSize.full}>
+                <div className="text-center">
+                  <Button type="submit" variant="primary"><CheckIcon className="h-5 w-5 inline-block" /> Aplicar</Button>
+                  <Button onClick={handleClear} variant="secondary" className="ml-3"><TrashIcon className="h-5 w-5 inline-block" /> Limpar</Button>
+                </div>
+              </FormColumn>
+            </FormRow>
+          </form>
+        </ModalBody>
+      </Modal>}
+    </>
   );
-}
-
-export function ContactsFilterAction() {
-
-  const { hasFilters } = useSnapshot(contactsFilterState);
-
-  const handleClick = () => {
-
-    contactsFilterState.opened = true;
-  };
-
-  return (
-    <AppLayoutAction onClick={handleClick} title={hasFilters ? 'Filtros ativos' : 'Nenhum filtro ativo'}>
-      {!hasFilters && <FunnelIconOutline className="h-5 w-5 " />}
-      {hasFilters && <FunnelIconSolid className="h-5 w-5 " />}
-    </AppLayoutAction>
-  )
 }
 
 interface Model {

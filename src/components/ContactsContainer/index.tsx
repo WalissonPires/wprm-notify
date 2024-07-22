@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from "react";
-import { useSeachAction } from "../AppLayout/Actions/SearchAction/hooks";
 import { useContacts } from "./hooks/use-contacts";
 import ContactsView from "../ContactsView";
-import { useContactsFilter } from "../ContactsView/ContactsFilter/hooks";
+import { useContactsSeachInput, useContactsFilter } from "../ContactsView/ContactsFilter/hooks";
 import { ContactsFilter } from "../ContactsView/ContactsFilter";
 import { useLoading } from "../AppLayout/Loading/hooks";
 import { Contact } from "../../domains/contacts/entities";
@@ -22,7 +21,7 @@ export default function ContactsContainer() {
   const { filters } = useContactsFilter();
   const { setLoading } = useLoading();
 
-  useSeachAction({
+  useContactsSeachInput({
     onChange: value => setQuery(value || undefined)
   });
 
