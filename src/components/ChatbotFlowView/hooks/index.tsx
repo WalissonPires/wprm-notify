@@ -1,6 +1,7 @@
 import { useState, useMemo, ChangeEvent, MouseEvent, useEffect } from "react";
 import { AppError } from "@/common/error";
-import { AnyText, ChatNode, ChatNodeAction, ChatNodeOutput, ChatNodePatternType, GoToNodeParams, ProviderType } from "@/common/services/messaging/models";
+import { AnyText, ChatNode, ChatNodeAction, ChatNodeActionParams, ChatNodeOutput, ChatNodePatternType, GoToNodeParams, ProviderType } from "@/common/services/messaging/models";
+import { parseBool } from "@/common/primitives/bool/bool-utils";
 import { AppToast } from "@/common/ui/toast";
 import { MessageProvidersApi } from "@/domains/message-providers/client-api";
 import { useLoading } from "../../AppLayout/Loading/hooks";
@@ -255,6 +256,32 @@ export function useChatbotFlow() {
     }));
   };
 
+  const handleActionParamTriggerAtStartChange =  (event: ChangeEvent<HTMLSelectElement>) => {
+
+    if (!currentNode || !rootNode) return;
+
+    setRootNode(updateNode(rootNode, node => {
+
+      if (node.id !== currentNode.id) return;
+
+      if (event.target.value === '') {
+
+        node.action = undefined;
+        return;
+      }
+
+      if (!node.action)
+        throw new Error('Action is empty');
+
+      const params: ChatNodeActionParams = {
+        ...node.action.params,
+        triggerAtStart: parseBool(event.target.value)
+      };
+
+      node.action.params = params;
+    }));
+  };
+
   const handleGoToNodeParamNodeIdChange = (event: ChangeEvent<HTMLSelectElement>) => {
 
     if (!currentNode || !rootNode) return;
@@ -274,7 +301,7 @@ export function useChatbotFlow() {
 
       const params: GoToNodeParams = {
         ...node.action.params,
-        nodeId: event.target.id
+        nodeId: event.target.value
       };
 
       node.action.params = params;
@@ -419,6 +446,7 @@ export function useChatbotFlow() {
     handleDelayChange,
     handlePatternTypeChange,
     handleActionTypeChange,
+    handleActionParamTriggerAtStartChange,
     handleGoToNodeParamNodeIdChange,
     handleOutputContentChange,
     handleRemoveOutput,

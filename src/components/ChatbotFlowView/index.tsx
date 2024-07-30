@@ -33,6 +33,7 @@ export function ChatbotFlowView() {
     handleDelayChange,
     handlePatternTypeChange,
     handleActionTypeChange,
+    handleActionParamTriggerAtStartChange,
     handleGoToNodeParamNodeIdChange,
     handleOutputContentChange,
     handleRemoveOutput,
@@ -58,12 +59,12 @@ export function ChatbotFlowView() {
               const node = nodesIndex[nodeId];
 
               return (
-              <>
-                {index > 0 && <li className="mx-2"><ChevronRightIcon className="h-5 w-5" /></li>}
-                <li key={node.id}>
-                  {node.id === currentNode?.id ? node.label : <a href="#" className="text-blue-500 hover:underline" onClick={handlePrevious(node)}>{node.label}</a>}
-                </li>
-              </>
+                <>
+                  {index > 0 && <li className="mx-2"><ChevronRightIcon className="h-5 w-5" /></li>}
+                  <li key={node.id}>
+                    {node.id === currentNode?.id ? node.label : <a href="#" className="text-blue-500 hover:underline" onClick={handlePrevious(node)}>{node.label}</a>}
+                  </li>
+                </>
               );
             })}
           </ul>
@@ -74,10 +75,10 @@ export function ChatbotFlowView() {
               <label>Status: </label>
               <Select value={chatbotActive?.toString() ?? ''} onChange={handleSetChatbotStatus}>
                 {chatbotActive === null &&
-                <option value=''>Carregando...</option>}
+                  <option value=''>Carregando...</option>}
                 {chatbotActive !== null && <>
-                <option value="true">Ativado</option>
-                <option value="false">Desativado</option></>}
+                  <option value="true">Ativado</option>
+                  <option value="false">Desativado</option></>}
               </Select>
             </div>
             <Button onClick={handleSave} disabled={isSaving}>{isSaving ? 'Salvando ...' : 'Salvar'}</Button>
@@ -114,19 +115,28 @@ export function ChatbotFlowView() {
                 <label className="block font-bold">Ação</label>
                 <Select defaultValue={''} value={currentNode?.action?.type ?? ''} onChange={handleActionTypeChange}>
                   <option value="">Nenhuma</option>
-                    {getEnumPairValue(ChatNodeActionDisplay).map(({ value, text }) => <option value={value} key={value}>{text}</option>)}
-                  </Select>
+                  {getEnumPairValue(ChatNodeActionDisplay).map(({ value, text }) => <option value={value} key={value}>{text}</option>)}
+                </Select>
               </FormColumn>
             </FormRow>
-            {currentNode?.action?.type == ChatNodeAction.GoToNode &&
-            <FormRow>
+            {currentNode?.action && <FormRow>
               <FormColumn size={ColSize.span2}>
-                <label className="block font-bold">Mensagem dest.</label>
-                <Select defaultValue={''} value={(currentNode?.action?.params as GoToNodeParams)?.nodeId} onChange={handleGoToNodeParamNodeIdChange}>
-                  {getNodesList().filter(x => x.id !== currentNode?.id).map(node => <option value={node.id} key={node.id}>{node.label}</option>)}
+                <label className="block font-bold">Quando acionar</label>
+                <Select defaultValue={'false'} value={currentNode?.action?.params?.triggerAtStart?.toString() ?? 'false'} onChange={handleActionParamTriggerAtStartChange}>
+                  <option value="false">No final, após enviar mensagem resposta</option>
+                  <option value="true">No início, sem enviar mensagem resposta</option>
                 </Select>
               </FormColumn>
             </FormRow>}
+            {currentNode?.action?.type == ChatNodeAction.GoToNode &&
+              <FormRow>
+                <FormColumn size={ColSize.span2}>
+                  <label className="block font-bold">Mensagem dest.</label>
+                  <Select defaultValue={''} value={(currentNode?.action?.params as GoToNodeParams)?.nodeId} onChange={handleGoToNodeParamNodeIdChange}>
+                    {getNodesList().filter(x => x.id !== currentNode?.id).map(node => <option value={node.id} key={node.id}>{node.label}</option>)}
+                  </Select>
+                </FormColumn>
+              </FormRow>}
           </Collapse>
 
           <div className="mt-3">
@@ -136,10 +146,10 @@ export function ChatbotFlowView() {
                 <DropdownMenu
                   visible={visible}
                   toggle={
-                  <Button onClick={handleToggleDropdown} variant="transparent">
-                    <span className="mr-2">Nova resposta</span>
-                    <ChevronDownIcon className="h-5 w-5 inline-block" title="Adicionar resposta" />
-                  </Button>
+                    <Button onClick={handleToggleDropdown} variant="transparent">
+                      <span className="mr-2">Nova resposta</span>
+                      <ChevronDownIcon className="h-5 w-5 inline-block" title="Adicionar resposta" />
+                    </Button>
                   }>
                   <DropdownMenuItem onClick={handleAddResponse('text')}>
                     <span><EnvelopeIcon className="h-5 w-5 inline-block" /> Texto</span>
@@ -157,7 +167,7 @@ export function ChatbotFlowView() {
                   {output.type === 'media-link' && <small>Link multimidia</small>}
                   <div className="flex flex-row">
                     {output.type === 'media-link' &&
-                    <EyeIcon className="h-5 w-5 text-blue-400 mr-2" onClick={handleOpenLink(output)} title="Visualizar mídia" />}
+                      <EyeIcon className="h-5 w-5 text-blue-400 mr-2" onClick={handleOpenLink(output)} title="Visualizar mídia" />}
                     <XMarkIcon className="h-5 w-5 text-red-400" onClick={handleRemoveOutput(output)} title="Remover mensagem" />
                   </div>
                 </div>
@@ -201,20 +211,20 @@ ChatbotFlowView.Skeleton = function ChatbotFlowViewSkeleton() {
           <Skeleton className="" />
         </div>
         <div className="mb-2 text-right">
-            <Button disabled>Salvar</Button>
+          <Button disabled>Salvar</Button>
+        </div>
+        <div>
+          <label className="block font-bold">Mensagem do usuário</label>
+          <Skeleton className="" />
+        </div>
+        <div className="mt-3">
+          <div className="flex flex-row flex-wrap justify-between items-center mb-3">
+            <label className="block  font-bold">Respostas</label>
           </div>
-          <div>
-            <label className="block font-bold">Mensagem do usuário</label>
-            <Skeleton className="" />
-          </div>
-          <div className="mt-3">
-            <div className="flex flex-row flex-wrap justify-between items-center mb-3">
-              <label className="block  font-bold">Respostas</label>
-            </div>
-            <Skeleton height={40} className="mb-2" />
-            <Skeleton height={40} className="mb-2" />
-            <Skeleton height={40} className="mb-2" />
-          </div>
+          <Skeleton height={40} className="mb-2" />
+          <Skeleton height={40} className="mb-2" />
+          <Skeleton height={40} className="mb-2" />
+        </div>
       </div>
     </div>
   );

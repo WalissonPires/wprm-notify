@@ -51,7 +51,7 @@ export interface ChatNode {
   delayChildren?: number; // Delay antes de selecionar o próximo estado. CasoUso: O bot pede para o cliente digitar algo. Só que o cliente enviar em varias mensagens. Para exibir que o bot responda na primeira mensagem esperar algum tempo
   action?: {
       type: ChatNodeAction;
-      params?: any;
+      params?: ChatNodeActionParams;
   };
   delay?: number; // seconds
 }
@@ -67,7 +67,11 @@ export enum ChatNodeAction {
   GoToNode = 2
 }
 
-export interface GoToNodeParams {
+export interface ChatNodeActionParams {
+  triggerAtStart?: boolean;
+}
+
+export interface GoToNodeParams extends ChatNodeActionParams {
   nodeId: string;
 }
 
