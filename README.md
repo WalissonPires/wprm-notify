@@ -24,6 +24,8 @@ COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789"
 
 NEXT_PUBLIC_SEND_MESSAGE_API_URL="http://localhost:3000/"
 NEXT_PUBLIC_SEND_MESSAGE_API_TOKEN="Bearer ACCESS_TOKEN"
+SEND_MESSAGE_API_URL="http://localhost:3000/"
+SEND_MESSAGE_API_TOKEN="Bearer ACCESS_TOKEN"
 ```
 
 Aplique as migrações:
