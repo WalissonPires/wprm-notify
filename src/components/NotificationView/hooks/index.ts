@@ -18,15 +18,17 @@ import { useMessageTemplates } from "./message-templates.hook";
 
 export interface UseNotificationViewProps {
   contactId: string;
+  triggerId?: string;
 }
 
-export function useNotificationView({ contactId }: UseNotificationViewProps) {
+export function useNotificationView({ contactId, triggerId }: UseNotificationViewProps) {
 
+  const [ isLoaded, setIsLoaded ] = useState(false);
   const [ isSaving, setIsLoading ] = useState(false);
   const { messageTemplates, isLoading: isLoadingMessageTemplates } = useMessageTemplates();
   const router = useRouter();
 
-  const { register, handleSubmit, watch, setValue, formState: { errors }, control } = useForm<ValidationSchema>({
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors }, control } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
     defaultValues: {
       triggerType: TriggerType.Monthy,
@@ -48,16 +50,33 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
       const api = new NotificationTriggersApi();
       setIsLoading(true);
 
-      await api.register({
-        contactId: contactId,
-        templateMessageId: data.templateMessageId,
-        day: (data.triggerType === TriggerType.Monthy || data.triggerType === TriggerType.Yearly) && data.day ? data.day : null,
-        month: (data.triggerType === TriggerType.Yearly) && data.month ? data.month : null,
-        type: data.triggerType,
-        paramsValue: data.messageTemplateParams
-      });
+      if (triggerId) {
 
-      AppToast.success('Notificação agendada');
+        await api.update({
+          triggerId: triggerId,
+          contactId: contactId,
+          templateMessageId: data.templateMessageId,
+          day: (data.triggerType === TriggerType.Monthy || data.triggerType === TriggerType.Yearly) && data.day ? data.day : null,
+          month: (data.triggerType === TriggerType.Yearly) && data.month ? data.month : null,
+          type: data.triggerType,
+          paramsValue: data.messageTemplateParams
+        });
+
+        AppToast.success('Notificação atualizada');
+
+      } else {
+
+        await api.register({
+          contactId: contactId,
+          templateMessageId: data.templateMessageId,
+          day: (data.triggerType === TriggerType.Monthy || data.triggerType === TriggerType.Yearly) && data.day ? data.day : null,
+          month: (data.triggerType === TriggerType.Yearly) && data.month ? data.month : null,
+          type: data.triggerType,
+          paramsValue: data.messageTemplateParams
+        });
+
+        AppToast.success('Notificação agendada');
+      }
 
       router.back();
     }
@@ -70,6 +89,36 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+
+    if (triggerId) return;
+
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+
+    if (!triggerId || messageTemplates.length === 0) return;
+
+    (async() => {
+
+      const api = new NotificationTriggersApi();
+      const trigger = await  api.getById({ id: triggerId });
+
+      reset({
+        day: trigger.day ?? undefined,
+        month: trigger.month ?? undefined,
+        triggerType: trigger.type as any,
+        templateMessageId: trigger.templateMessage?.id,
+        messageTemplateParams: trigger.paramsValue
+      });
+
+      setIsLoaded(true);
+
+    })();
+
+  }, [ triggerId, messageTemplates ]);
 
   useEffect(() => {
 
@@ -112,6 +161,7 @@ export function useNotificationView({ contactId }: UseNotificationViewProps) {
     register,
     isLoadingMessageTemplates,
     isSaving,
+    isLoaded,
     values,
     errors,
     control,

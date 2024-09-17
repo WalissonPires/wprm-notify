@@ -1,7 +1,9 @@
 'use client'
 
+import { useRouter } from "next/navigation";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { AppError } from "@/common/error";
+import { AppRoutes } from "@/common/routes";
 import { AppToast } from "@/common/ui/toast";
 import { NotificationTriggersApi } from "@/domains/notification-triggers/client-api";
 import { Button } from "../Form";
@@ -13,6 +15,7 @@ export default function ContactNotificationTriggersView({ contactId }: ContactNo
 
   const { data, isLoading: isLoadingTriggers, error, hasMore, loadNextPage, removeItem } = useNotificationTriggers({ contactId });
   const { setLoading } = useLoading();
+  const router = useRouter();
 
   const isEmpty = data.length == 0 && !isLoadingTriggers && !error;
   const isFirstLoading = isLoadingTriggers && data.length === 0;
@@ -39,13 +42,18 @@ export default function ContactNotificationTriggersView({ contactId }: ContactNo
     }
   };
 
+  const handleEditTrigger = (triggerId: string) => async () => {
+
+    router.push(AppRoutes.viewContactNotification(contactId, triggerId));
+  };
+
   return (
     <div className="container mx-auto">
       <div className="bg-white border m-4">
         <ul className="divide-y">
           {data.map(item =>
             <li key={item.id}>
-              <NotificationTriggerCard trigger={item} onDeleteClick={handleDeleteTrigger(item.id)} />
+              <NotificationTriggerCard trigger={item} onEditClick={handleEditTrigger(item.id)} onDeleteClick={handleDeleteTrigger(item.id)} />
             </li>)}
           {isEmpty && <p className="text-center text-slate-400 p-4">Nenhuma notificação encontrada</p>}
           {isFirstLoading && <NotificationTriggerCard.Skeleton />}

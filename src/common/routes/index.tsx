@@ -6,6 +6,7 @@ export abstract class AppRoutes {
   public static importContacts() { return '/contacts/import'; }
   public static viewContact(contactId: string) { return '/contacts/' + contactId; }
   public static newContactNotification(contactId: string) { return `/contacts/${contactId}/notification-triggers/new`; }
+  public static viewContactNotification(contactId: string, triggerId: string) { return `/contacts/${contactId}/notification-triggers/${triggerId}`; }
   public static contactNotificationTriggers(contactId: string) { return `/contacts/${contactId}/notification-triggers`; }
   public static contactNotifications(contactId: string) { return `/contacts/${contactId}/notifications`; }
   public static home() { return '/'; }

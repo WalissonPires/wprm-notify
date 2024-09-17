@@ -1,13 +1,14 @@
 'use client'
 
 import { Controller } from "react-hook-form";
+import Skeleton from "react-loading-skeleton";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { TriggerType } from "@/domains/notification-triggers/entities";
 import { FormRow, FormColumn, Input, Select, ButtonsGroup, ButtonItem, Button, DaysOfMonthSelect, MonthsSelect, ColSize } from "../Form";
 import { useNotificationView, DefaultParamValue } from "./hooks";
 
 
-export function NotificationView({ contactId }: NotificationViewProps) {
+export function NotificationView({ contactId, triggerId }: NotificationViewProps) {
 
   const {
     values,
@@ -18,9 +19,13 @@ export function NotificationView({ contactId }: NotificationViewProps) {
     messageTemplates,
     messageTemplatedSelected,
     isSaving,
+    isLoaded,
     register,
     handleSubmit
-  } = useNotificationView({ contactId });
+  } = useNotificationView({ contactId, triggerId });
+
+  if (!isLoaded)
+    return <NotificationView.Skeleton />;
 
   return (
     <div className="container mx-auto max-w-3xl">
@@ -96,7 +101,49 @@ export function NotificationView({ contactId }: NotificationViewProps) {
   );
 }
 
+NotificationView.Skeleton = function NotificationViewSkeleton() {
+
+  return (
+    <div className="container mx-auto max-w-3xl">
+      <div className="bg-white border m-4 p-4">
+        <div className="border-b pb-2 mb-4">
+          <h2 className="text-xl">Criar notificação</h2>
+        </div>
+        <div>
+          <FormRow>
+            <FormColumn size={ColSize.full}>
+              <label>Modelo de mensagem</label>
+              <Skeleton height={30}/>
+            </FormColumn>
+          </FormRow>
+          <FormRow>
+            <FormColumn size={ColSize.span2}>
+              <label>Dia</label>
+              <div className="block max-w-xs" >
+                <Skeleton height={30}/>
+              </div>
+            </FormColumn>
+          </FormRow>
+          <FormRow>
+            <FormColumn size={ColSize.full}>
+              <label>Parâmetros da mensagem</label>
+              <Skeleton height={80} />
+            </FormColumn>
+          </FormRow>
+          <FormRow>
+            <FormColumn size={ColSize.full}>
+              <div className="text-center mt-4">
+                <Skeleton height={30} width={80} />
+              </div>
+            </FormColumn>
+          </FormRow>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export interface NotificationViewProps {
   contactId: string;
+  triggerId?: string;
 }
