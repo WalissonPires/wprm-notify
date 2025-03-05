@@ -1,87 +1,98 @@
-## Wprm Notify
+# 🔔 WPRM Notify
 
-Aplicativo web para envio de notificações para seus contatos
+Uma aplicação web para notificações automatizadas via **WhatsApp**. O usuário pode cadastrar **contatos e grupos** e agendar notificações recorrentes (**diárias, mensais ou anuais**). Além disso, permite a criação de templates de mensagens, facilitando o envio sem precisar redigitar os textos para cada contato.
 
-## Desenvolvimento
+Ideal para **cobranças, mensagens de aniversário, lembretes de eventos e datas comemorativas**.
 
-Instale as seguintes dependências globais:
+Este projeto é integrado ao [Send Messaging API](https://github.com/WalissonPires/MessagingApi) para o envio das mensagens.
 
-```sh
+## 🎥 Demonstração
+
+Assista ao vídeo mostrando o funcionamento do **WPRM Notify**:
+
+[![Wprm Notify Demonstração Vídeo](https://img.youtube.com/vi/sU3n5tJiTQ8/0.jpg)](http://www.youtube.com/watch?v=sU3n5tJiTQ8 "Wprm Notify Demonstração Vídeo")
+
+
+## 🚀 Tecnologias Utilizadas
+
+- **Next.js** - Framework para aplicações web com React.
+- **TypeScript** - Tipagem estática para melhor manutenção do código.
+- **PostgreSQL** - Banco de dados relacional para armazenar contatos, grupos e notificações.
+- **Docker** - Facilita a execução e implantação do projeto.
+- **CI/CD Pipeline** - Deploy automático configurado (VPS com Coolify e VPS sem painel via SSH).
+- **Use Cases** - Arquitetura baseada em casos de uso para melhor organização do código.
+
+## 📦 Instalação e Execução
+
+### 🔹 Executando com Node.js
+
+```bash
+git clone https://github.com/WalissonPires/wprm-notify.git
+
+cd wprm-notify
+
 # Para carregar env vars para o script de migrações
 # Ref.: https://github.com/prisma/prisma/issues/1255
 npm install -G dotenv-cli
-```
 
-Crie um arquivo `.env-development.local` na raiz do projeto:
+npm install
 
-```sh
-NODE_ENV="development"
-LOG_LEVEL="debug"
-LOG_PATH="./logs"
-DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
-DIRECT_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
-COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789"
+cp .env.example .env
 
-NEXT_PUBLIC_SEND_MESSAGE_API_URL="http://localhost:3000/"
-NEXT_PUBLIC_SEND_MESSAGE_API_TOKEN="Bearer ACCESS_TOKEN"
-SEND_MESSAGE_API_URL="http://localhost:3000/"
-SEND_MESSAGE_API_TOKEN="Bearer ACCESS_TOKEN"
-```
+# Criar uma nova migração
+# npm run db-migrate -- --name name-migration
 
-Aplique as migrações:
-
-```sh
+# Aplicar migrações
 npm run db-apply
-```
 
-Executar servidor de desenvolvimento
-
-```bash
 npm run dev
 ```
 
-## Database
-
-Criar migração:
+### 🐳 Executando com Docker
 
 ```sh
-npm run db-migrate -- --name name-migration
-```
-
-account(id, name, email, password)
-Groups(id, name, color)
-
-Contacts(id, name, phone, email, obs)
-ContactMetadata(contactId, name, value)
-ContactGroups(contactId, groupId)
-
-TemplateMessages(id, name, content, params(name))
-
-Triggers(id, type(yearly, semi-annual, quarterly, biomonthly, monthly, daily), month, day, startAt(Vencimento. Usem: Bimestral, Trimestral, Semestral), contactId, templateMessageId, paramsValue(name, value))
-
-Notifications(id, scheduledAt, sendedAt, templateMessageId, content)
-
-## Docker
-
-Criar umage docker:
-
-```sh
+# Criar a imagem Docker
 docker build -t wprm-notify:latest .
-docker run -d -p 3000:3000 -e DATABASE_URL="postgresql://postgres:masterkey@host.docker.internal:5432/wprmnotify?schema=public" -e COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789" -e NEXT_PUBLIC_SEND_MESSAGE_API_URL="http://localhost:5000/" -e SEND_MESSAGE_API_URL="http://localhost:5000/" --add-host host.docker.internal:host-gateway wprm-notify:latest
+
+# Rodar o container
+docker run -d -p 3001:3000 \
+  -e DATABASE_URL="postgresql://postgres:masterkey@host.docker.internal:5432/wprmnotify?schema=public" \
+  -e COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789" \
+  -e SEND_MESSAGE_API_URL="http://localhost:3000/" \
+  --add-host host.docker.internal:host-gateway \
+  wprm-notify:latest
 ```
 
-## To DO
+## 🛠 Uso da Aplicação
 
-- [x] - Alterar Modelo de mensagem
-- [ ] - Adicionar pesquisa nos modelos de mensagem (Pesquisa por nome e conteudo)
-- [ ] - Adicionar pesquisa nas notificações (Pesquisa por nome cliente)
-- [ ] - Adicionar filtros nas notificações (Enviadas/Agendadas/Todas, Por grupo, Por modelo mensagem, Por Data Envio range)
-- [x] - Adicionar pesquisa nos contatos (Pesquisa por nome, telefone, email)
-- [x] - Adicionar filtros nos contatos (Por grupo)
-- [ ] - Adicionar visualização de contatos por grupo
-- [x] - Cadastrar contato
-- [x] - Alterar contato
-- [x] - Excluir contato
-- [x] - Criar tarefa cron para geração das notificações
-- [x] - Criar tarefa cron para envio das notificações
-- [x] - Logar na aplicação
+### 📌 Cadastro de Contatos e Grupos
+
+Os usuários podem cadastrar contatos manualmente ou importar da agenda do celular. Também é possível criar **grupos** para facilitar o envio de mensagens em massa.
+
+### 📆 Agendamento e Envio de Mensagens
+
+Cada contato pode ter mensagens agendadas para envio **diário, mensal ou anual**. Também é possível enviar mensagens manualmente para grupos de contatos.
+
+### 📑 Uso de Templates
+
+O sistema permite criar **templates de mensagens** reutilizáveis, facilitando o envio sem necessidade de reescrever os textos.
+
+### 📎 Suporte a Arquivos Multimídia
+
+Além de mensagens de texto, o sistema permite o envio de **imagens, vídeos e documentos**.
+
+### 🤖 Chatbot Integrado
+
+O chatbot responde mensagens recebidas automaticamente, podendo ser utilizado para interações personalizadas.
+
+### 📥 Importação contatos
+
+Suporte para importar contatos da agenda do celular. Basta exportar os contatos do app de agenda e importar para na aplicação.
+
+## ✅ Próximas Implementações
+
+- Adicionar pesquisa nos modelos de mensagem (Pesquisa por nome e conteúdo)
+- Adicionar pesquisa nas notificações (Pesquisa por nome cliente)
+- Adicionar filtros nas notificações (Enviadas/Agendadas/Todas), Por grupo, Por modelo mensagem, Por Data Envio
+- Adicionar visualização de contatos por grupo
+- Agendar notificações para grupos de contatos
