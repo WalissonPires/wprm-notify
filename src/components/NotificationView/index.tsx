@@ -74,12 +74,13 @@ export function NotificationView({ contactId, triggerId }: NotificationViewProps
               </div>}
             </FormColumn>
           </FormRow>
+          {(errors.day || errors.month) &&
           <FormRow>
             <FormColumn size={ColSize.full}>
               {errors.day && <small className="block text-red-400">Dia: {errors.day.message}</small>}
               {errors.month && <small className="block text-red-400">Mês: {errors.month.message}</small>}
             </FormColumn>
-          </FormRow>
+          </FormRow>}
           {messageTemplatedSelected?.params?.length as number > 0 &&
           <>
             <h4 className="mb-4">Parâmetros da mensagem</h4>

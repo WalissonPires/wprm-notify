@@ -28,7 +28,7 @@ export function useNotificationView({ contactId, triggerId }: UseNotificationVie
   const { messageTemplates, isLoading: isLoadingMessageTemplates } = useMessageTemplates();
   const router = useRouter();
 
-  const { register, handleSubmit, watch, setValue, reset, formState: { errors }, control } = useForm<ValidationSchema>({
+  const { register, handleSubmit, watch, setValue, getValues, reset, formState: { errors }, control } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
     defaultValues: {
       triggerType: TriggerType.Monthy,
@@ -41,8 +41,8 @@ export function useNotificationView({ contactId, triggerId }: UseNotificationVie
   });
 
 
-  const values = watch();
-  const messageTemplatedSelected = useMemo(() => messageTemplates.find(x => x.id === values.templateMessageId) ?? null, [ values.templateMessageId, messageTemplates ]);
+  const [ templateMessageId, triggerType ] = watch(['templateMessageId', 'triggerType']);
+  const messageTemplatedSelected = useMemo(() => messageTemplates.find(x => x.id === templateMessageId) ?? null, [ templateMessageId, messageTemplates ]);
 
   const onSubmit: SubmitHandler<ValidationSchema> = async data => {
 
@@ -126,11 +126,12 @@ export function useNotificationView({ contactId, triggerId }: UseNotificationVie
 
     const defaultParamsUtils = new DefaultParamsUtils();
     const defaultParams = Object.values(defaultParamsUtils.getAllParamsDefaultLanguage());
+    const { messageTemplateParams } = getValues();
 
     messageTemplateParamsField.replace(messageTemplatedSelected?.params.map(param => ({
       type: param.type,
       name: param.name,
-      value: defaultParams.includes(param.name) || param.type !== MessageTemplateParamType.Text ? DefaultParamValue : ''
+      value: defaultParams.includes(param.name) || param.type !== MessageTemplateParamType.Text ? DefaultParamValue : (messageTemplateParams.find(x => x.name === param.name)?.value ?? '')
     })) ?? []);
 
   }, [ messageTemplatedSelected ]);
@@ -162,7 +163,10 @@ export function useNotificationView({ contactId, triggerId }: UseNotificationVie
     isLoadingMessageTemplates,
     isSaving,
     isLoaded,
-    values,
+    values: {
+      templateMessageId,
+      triggerType
+    },
     errors,
     control,
     messageTemplateParamsField,
