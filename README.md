@@ -56,9 +56,9 @@ docker build -t wprm-notify:latest .
 
 # Rodar o container
 docker run -d -p 3001:3000 \
-  -e DATABASE_URL="postgresql://postgres:masterkey@host.docker.internal:5432/wprmnotify?schema=public" \
+  -e DATABASE_URL="postgresql://postgres:masterkey@host.docker.internal:5432/wprm_notify?schema=public" \
   -e COOKIE_PRIVATE_KEY="my-cookie-private-key-0123456789" \
-  -e SEND_MESSAGE_API_URL="http://localhost:3000/" \
+  -e SEND_MESSAGE_API_URL="http://host.docker.internal:3000/" \
   --add-host host.docker.internal:host-gateway \
   wprm-notify:latest
 ```
