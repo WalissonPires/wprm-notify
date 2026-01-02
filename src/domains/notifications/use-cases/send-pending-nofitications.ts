@@ -20,6 +20,7 @@ export class SendPendingNotifications implements UseCase<void, void> {
       where: {
         sendedAt: null,
         canceledAt: null,
+        errorAt: null,
         scheduledAt: {
           lte: currentDate
         }
@@ -119,26 +120,43 @@ export class SendPendingNotifications implements UseCase<void, void> {
 
           logger.debug(`Sending notification ${notify.id}`);
 
-          await messagingApi.sendMessage({
+          const sendResult = await messagingApi.sendMessage({
             to: '55' + phone,
             content: notify.content,
             medias: medias
           });
 
-          logger.debug(`Notification ${notify.id} sended`);
+          if (sendResult?.at(0)?.success) {
+            logger.debug(`Notification ${notify.id} sended`);
+
+            await db.notification.update({
+              where: {
+                id: notify.id
+              },
+              data: {
+                sendedAt: new Date(),
+                errorAt: null,
+                errorMessage: null
+              }
+            });
+          }
+          else {
+            const errorMessage = sendResult?.at(0)?.errorMessage || 'Unknown error';
+            throw new AppError(`Error sending notification ${notify.id}: ${errorMessage}`);
+          }
+        }
+        catch(error) {
+          logger.error(AppError.parse(error).message);
 
           await db.notification.update({
             where: {
               id: notify.id
             },
             data: {
-              sendedAt: new Date()
+              errorAt: new Date(),
+              errorMessage: AppError.parse(error).message.substring(0, 500)
             }
           });
-
-        }
-        catch(error) {
-          logger.error(AppError.parse(error).message);
         }
       }
     }

@@ -133,8 +133,10 @@ model Notification {
   sendedAt    DateTime?
   createdAt   DateTime?
   canceledAt  DateTime?
+  errorAt     DateTime?
   content     String    @db.VarChar(2000)
   notes       String?   @db.VarChar(100)
+  errorMessage String?   @db.VarChar(500)
 
   account Account              @relation(fields: [accountId], references: [id], onDelete: Cascade)
   trigger NotificationTrigger? @relation(fields: [triggerId], references: [id], onDelete: SetNull)
