@@ -119,22 +119,28 @@ export class SendPendingNotifications implements UseCase<void, void> {
 
           logger.debug(`Sending notification ${notify.id}`);
 
-          await messagingApi.sendMessage({
+          const sendResult = await messagingApi.sendMessage({
             to: '55' + phone,
             content: notify.content,
             medias: medias
           });
 
-          logger.debug(`Notification ${notify.id} sended`);
+          if (sendResult?.at(0)?.success) {
+            logger.debug(`Notification ${notify.id} sended`);
 
-          await db.notification.update({
-            where: {
-              id: notify.id
-            },
-            data: {
-              sendedAt: new Date()
-            }
-          });
+            await db.notification.update({
+              where: {
+                id: notify.id
+              },
+              data: {
+                sendedAt: new Date()
+              }
+            });
+          }
+          else {
+            const errorMessage = sendResult?.at(0)?.errorMessage || 'Unknown error';
+            logger.error(`Error sending notification ${notify.id}: ${errorMessage}`);
+          }
 
         }
         catch(error) {
