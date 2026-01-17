@@ -11,6 +11,8 @@ export class NotificationMapper {
       sendedAt: notificationDb.sendedAt?.toISOString() ?? null,
       canceledAt: notificationDb.canceledAt?.toISOString() ?? null,
       scheduledAt: notificationDb.scheduledAt.toISOString(),
+      errorAt: notificationDb.errorAt?.toISOString() ?? null,
+      errorMessage: notificationDb.errorMessage ?? null,
       content: notificationDb.content,
       contact: notificationDb.trigger?.contact ? {
         id: notificationDb.trigger.contact.id,
