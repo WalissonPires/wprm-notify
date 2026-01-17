@@ -146,17 +146,27 @@ export class SendPendingNotifications implements UseCase<void, void> {
           }
         }
         catch(error) {
-          logger.error(AppError.parse(error).message);
 
-          await db.notification.update({
-            where: {
-              id: notify.id
-            },
-            data: {
-              errorAt: new Date(),
-              errorMessage: AppError.parse(error).message.substring(0, 500)
-            }
-          });
+          const appError = AppError.parse(error);
+          logger.error(appError.message);
+
+          const ignoreErrors = [
+            'Provider is not ready'
+          ];
+
+          const isIgnoreError = ignoreErrors.some(msg => appError.message.includes(msg));
+
+          if (!isIgnoreError) {
+            await db.notification.update({
+              where: {
+                id: notify.id
+              },
+              data: {
+                errorAt: new Date(),
+                errorMessage: appError.message.substring(0, 500)
+              }
+            });
+          }
         }
       }
     }
