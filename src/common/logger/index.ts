@@ -13,13 +13,15 @@ export class LoggerFactory {
 
       const config = new AppConfig();
 
-      const fileTransport = new winston.transports.DailyRotateFile({
-        filename:  path.join(config.logPath(), '%DATE%.log'),
-        datePattern: 'YYYY-MM-DD-HH',
-        zippedArchive: true,
-        maxSize: '20m',
-        maxFiles: '14d'
-      });
+      // const fileTransport = new winston.transports.DailyRotateFile({
+      //   filename:  path.join(config.logPath(), '%DATE%.log'),
+      //   datePattern: 'YYYY-MM-DD-HH',
+      //   zippedArchive: true,
+      //   maxSize: '20m',
+      //   maxFiles: '14d'
+      // });
+
+      const consoleTransport = new winston.transports.Console();
 
       const messageFormat = winston.format.printf(({ level, message, scope, timestamp }) => `${timestamp} [${scope}] ${level}: ${message}`);
 
@@ -30,7 +32,7 @@ export class LoggerFactory {
           messageFormat
         ),
         defaultMeta: {},
-        transports: [ fileTransport ]
+        transports: [ consoleTransport/*, fileTransport*/ ]
       });
 
       if (process.env.NODE_ENV !== 'production') {
