@@ -84,14 +84,12 @@ export class SendMessage implements UseCase<SendMessageInput, SendMessageResult>
           to: '55' + contact.phone,
           content: input.message.content,
           medias: input.message.medias
-        });
+        }) ?? {};
 
-        let { success, errorMessage } = sendResult[0] ?? {};
+        const success = sendResult.every(x => x.success);
+        const errorMessage = sendResult.map(x => `Provider ${x.providerId}: ${x.success? 'OK' : x.errorMessage}`).filter(x => x).join('; ');
 
-        if (!success && !errorMessage)
-          errorMessage = 'Falha ao enviar mensagem';
-
-        if (errorMessage)
+        if (!success)
           throw new AppError(errorMessage);
 
         result.contacts.push({

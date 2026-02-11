@@ -37,8 +37,12 @@ export class CreateWhatsappProvider implements UseCase<void, Provider> {
     const provider = await api.create({
       provider: {
         name: 'Wprm-Notify Whatsapp',
-        type: ProviderType.Whatsapp,
-        config: {}
+        type: ProviderType.WhatsappEvolution,
+        config: {
+          apiUrl: "https://wprm-notify-fake.com.br",
+          token: "TOKEN_PLACEHOLDER",
+          instanceName: "wprm-notify-account-" + this._user.accountId.toString()
+        }
       }
     });
 

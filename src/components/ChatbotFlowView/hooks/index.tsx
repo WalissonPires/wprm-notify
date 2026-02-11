@@ -397,7 +397,7 @@ export function useChatbotFlow() {
           const api = new MessageProvidersApi();
           const providersStatus = await api.getProvidersStatus();
 
-          const whatsappProvider = providersStatus?.find(x => x.type === ProviderType.Whatsapp);
+          const whatsappProvider = providersStatus?.find(x => x.type === ProviderType.WhatsappEvolution);
           if (!whatsappProvider) {
             AppToast.error('Configure a integração com Whatsapp para ter acesso ao chatbot');
             return;

@@ -30,7 +30,7 @@ export function useProvidersSettings() {
         const api = new MessageProvidersApi();
         const providersStatus = await api.getProvidersStatus();
 
-        const whatsappProvider = providersStatus?.find(x => x.type === ProviderType.Whatsapp);
+        const whatsappProvider = providersStatus?.find(x => x.type === ProviderType.WhatsappEvolution);
 
         if (whatsappProvider) {
 
@@ -80,7 +80,7 @@ export function useProvidersSettings() {
 
         for (const provider of providersStatus) {
 
-          if (provider.type === ProviderType.Whatsapp) {
+          if (provider.type === ProviderType.WhatsappEvolution) {
 
             if (provider.id !== providers.whatsapp.id)
               continue;
