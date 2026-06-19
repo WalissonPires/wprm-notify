@@ -1,20 +1,21 @@
 import z from "zod";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { messages } from "@/common/validation/messages";
 import { AppToast } from "@/common/ui/toast";
 import { AppError } from "@/common/error";
 import { MessagesApi } from "@/domains/messages/client-api";
-import { SendMessageResult } from "@/domains/messages/use-cases/send-message-types";
+import { JobsApi } from "@/domains/jobs/client-api";
+import { Job } from "@/domains/jobs/job-types";
 import { useGroups } from "../../Groups/hooks";
 
 export function useSendMessageView() {
 
   const [ isSaving, setIsSaving ] = useState(false);
   const { groups, isLoading: isLoadingGroups } = useGroups();
-  const [ lastResult, setLastResult ] = useState<SendResult | null>(null);
-  const [ showResultDetails, setShowResultDetails ] = useState(false);
+  const [ activeJob, setActiveJob ] = useState<Job | null>(null);
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { register, handleSubmit, setValue, formState: { errors }, control } = useForm<Model>({
     resolver: zodResolver(validationSchema),
@@ -27,13 +28,50 @@ export function useSendMessageView() {
     }
   });
 
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const startPolling = (jobId: string) => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+    }
+
+    const jobsApi = new JobsApi();
+
+    pollIntervalRef.current = setInterval(async () => {
+      try {
+        const job = await jobsApi.getStatus(jobId);
+        setActiveJob(job);
+
+        if (job.status === 'completed' || job.status === 'failed') {
+          if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
+          }
+          setIsSaving(false);
+          if (job.status === 'completed') {
+            AppToast.success('Envio em lote finalizado com sucesso!');
+          } else {
+            AppToast.error(`Envio em lote falhou: ${job.error || 'Erro desconhecido'}`);
+          }
+        }
+      } catch (e) {
+        console.error('Error polling job status:', e);
+      }
+    }, 1000);
+  };
+
   const onSubmit: SubmitHandler<Model> = async (data) => {
 
     try {
       const api = new MessagesApi();
       setIsSaving(true);
-      setShowResultDetails(false);
-      setLastResult(null);
+      setActiveJob(null);
 
       const result = await api.send({
         groupsId: data.groupsId,
@@ -46,35 +84,38 @@ export function useSendMessageView() {
         }
       });
 
-      setLastResult({
-        sendedCount: result.contacts.filter(x => x.isSended).length,
-        errorCount: result.contacts.filter(x => !x.isSended).length,
-        contacts: result.contacts
+      setActiveJob({
+        id: result.jobId,
+        accountId: '',
+        type: 'send-message',
+        status: 'pending',
+        progress: {
+          total: 0,
+          success: 0,
+          failed: 0
+        },
+        createdAt: new Date()
       });
 
-      setShowResultDetails(false);
+      startPolling(result.jobId);
     }
     catch(e) {
 
       const error = AppError.parse(e);
       AppToast.error(error.getExtendedMessage());
-    }
-    finally {
       setIsSaving(false);
     }
   };
 
   return {
     handleSubmit: handleSubmit(onSubmit),
-    handleShowResultDetails: () => setShowResultDetails(true),
     register,
     isSaving,
     isLoadingGroups,
     errors,
     control,
     groups,
-    lastResult,
-    showResultDetails
+    activeJob
   };
 }
 
@@ -93,9 +134,3 @@ const validationSchema = z.object({
 });
 
 type Model = z.infer<typeof validationSchema>;
-
-interface SendResult {
-  sendedCount: number;
-  errorCount: number;
-  contacts: SendMessageResult['contacts'];
-}

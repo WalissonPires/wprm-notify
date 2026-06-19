@@ -5,7 +5,8 @@ const withPWA = require('next-pwa')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone'
+  output: 'standalone',
+  transpilePackages: ['p-queue', 'eventemitter3', 'p-timeout']
 }
 
 module.exports = withPWA(nextConfig);
